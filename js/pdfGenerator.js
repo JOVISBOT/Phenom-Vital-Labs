@@ -131,10 +131,18 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     // Column headers
     ['CONSERVATIVE', 'STANDARD', 'ADVANCED'].forEach((label, i) => {
         const x = margin + (i * colWidth);
-        doc.setFillColor(i === 1 ? ...primaryBlue : ...lightBlue);
+        if (i === 1) {
+            doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
+        } else {
+            doc.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
+        }
         doc.roundedRect(x, y, colWidth - 3, 55, 3, 3, 'F');
         
-        doc.setTextColor(i === 1 ? 255 : ...primaryBlue);
+        if (i === 1) {
+            doc.setTextColor(255, 255, 255);
+        } else {
+            doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
+        }
         doc.setFontSize(9);
         doc.text(label, x + (colWidth - 3) / 2, y + 8, { align: 'center' });
         
@@ -159,7 +167,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
         doc.text(unit, x + (colWidth - 3) / 2, y + 35, { align: 'center' });
         
         // Syringe units
-        doc.setTextColor(i === 1 ? 220 : ...gray);
+        doc.setTextColor(i === 1 ? 220 : gray[0], gray[1], gray[2]);
         doc.setFontSize(8);
         doc.text(`${units} units on ${inputs.syringe}U syringe`, x + (colWidth - 3) / 2, y + 45, { align: 'center' });
         
