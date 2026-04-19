@@ -57,15 +57,11 @@ export function calculateAdjustedWeight(weightLbs, age) {
  * @returns {number} Dose in mg (for blends) or mcg (for regular)
  */
 export function calculateDose(peptide, weightLbs, age, level = 'med') {
-    const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
+    const isFixed = peptide.fixed === true;
     
-    // Get age-based factor (older = higher dose needed)
-    const ageFactor = getAgeFactor(age);
-    
-    if (peptide.fixed) {
-        // For blends and fixed-dose: apply age factor
-        const baseDose = peptide[level];
-        return Math.round(baseDose * ageFactor * 10) / 10;
+    if (isFixed) {
+        // Fixed doses: use exact values (no age adjustment)
+        return peptide[level];
     }
     
     // Non-fixed doses are weight-based with age factor

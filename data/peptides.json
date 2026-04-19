@@ -1710,9 +1710,9 @@
       "halfLife": "~1 week",
       "freq": "Weekly",
       "cycle": "Continuous",
-      "low": 2,
-      "med": 4,
-      "high": 8,
+      "low": 1,
+      "med": 2,
+      "high": 4,
       "f": 1,
       "wks": 24,
       "pros": [
