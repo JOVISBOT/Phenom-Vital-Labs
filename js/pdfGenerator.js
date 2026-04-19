@@ -1,19 +1,18 @@
 /**
- * PDF Generator Module - Executive Report Style
- * Creates professional executive summary protocol reports
+ * PDF Generator Module - Executive Report Style v2
+ * Professional medical/executive summary format
  * 
  * @module pdfGenerator
  */
 
 /**
- * Generate executive-style protocol PDF
+ * Generate executive protocol PDF - Clean medical report style
  * @param {Object} peptide
  * @param {Object} results
  * @param {Object} inputs
- * @param {boolean} previewMode - If true, opens in new tab instead of downloading
+ * @param {boolean} previewMode
  */
 export function generatePDF(peptide, results, inputs, previewMode = false) {
-    // Check if jsPDF is loaded
     if (typeof window.jspdf === 'undefined') {
         console.error('jsPDF library not loaded');
         alert('PDF generation failed: library not loaded');
@@ -23,347 +22,324 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
-    // Check dosing type
     const isFixed = peptide.fixed === true;
     const unit = isFixed ? 'mg' : 'mcg';
     
-    // Colors - Professional blue theme
-    const primaryBlue = [30, 64, 175];
-    const darkBlue = [30, 58, 138];
+    // Professional color palette
+    const navy = [23, 37, 84];
+    const blue = [37, 99, 235];
     const lightBlue = [219, 234, 254];
-    const bgBlue = [239, 246, 255];
-    const cream = [254, 252, 243];
-    const gray = [107, 114, 128];
-    const darkGray = [55, 65, 81];
-    const successGreen = [16, 185, 129];
-    const warningOrange = [245, 158, 11];
+    const bgGray = [248, 250, 252];
+    const textGray = [71, 85, 105];
+    const mutedGray = [148, 163, 184];
+    const green = [22, 163, 74];
+    const amber = [245, 158, 11];
+    const red = [220, 38, 38];
     
-    // Page dimensions
-    const pageWidth = 210;
+    const pageW = 210;
     const margin = 15;
-    const contentWidth = pageWidth - (margin * 2);
+    const contentW = pageW - (margin * 2);
     
     let y = 10;
     
-    // ========== HEADER SECTION ==========
-    // Dark blue header bar
-    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.rect(0, 0, pageWidth, 45, 'F');
+    // ========== HEADER ==========
+    // Navy header bar
+    doc.setFillColor(navy[0], navy[1], navy[2]);
+    doc.rect(0, 0, pageW, 40, 'F');
     
-    // Logo area
+    // Logo
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
+    doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('PHENOM VITAL LABS', margin, 25);
+    doc.text('PHENOM VITAL LABS', margin, 22);
     
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Premium Peptide Protocol | Research Compounds', margin, 35);
+    doc.text('Peptide Protocol Report', margin, 32);
     
-    // Date badge on right
-    const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    // Date badge
+    const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(pageWidth - margin - 50, 12, 50, 22, 3, 3, 'F');
-    doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.setFontSize(8);
+    doc.roundedRect(pageW - margin - 55, 10, 55, 20, 3, 3, 'F');
+    doc.setTextColor(navy[0], navy[1], navy[2]);
+    doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
-    doc.text('GENERATED', pageWidth - margin - 25, 20, { align: 'center' });
+    doc.text('REPORT DATE', pageW - margin - 27, 17, { align: 'center' });
     doc.setFont('helvetica', 'normal');
-    doc.text(date, pageWidth - margin - 25, 30, { align: 'center' });
+    doc.text(date, pageW - margin - 27, 26, { align: 'center' });
     
-    // ========== TITLE SECTION ==========
-    y = 50;
-    doc.setFillColor(bgBlue[0], bgBlue[1], bgBlue[2]);
-    doc.roundedRect(margin, y, contentWidth, 30, 4, 4, 'F');
-    
-    doc.setTextColor(darkBlue[0], darkBlue[1], darkBlue[2]);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('PEPTIDE PROTOCOL', margin + 5, y + 12);
-    
-    doc.setFontSize(12);
-    doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.text(peptide.name.toUpperCase(), margin + 5, y + 23);
-    
-    // Category badge
+    // ========== EXECUTIVE SUMMARY BOX ==========
+    y = 48;
     doc.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
-    doc.roundedRect(pageWidth - margin - 70, y + 5, 65, 20, 3, 3, 'F');
-    doc.setTextColor(darkBlue[0], darkBlue[1], darkBlue[2]);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.text(peptide.category.toUpperCase(), pageWidth - margin - 37, y + 17, { align: 'center' });
-    
-    // ========== PATIENT OVERVIEW BOX ==========
-    y = 85;
-    doc.setFillColor(cream[0], cream[1], cream[2]);
-    doc.setDrawColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
+    doc.setDrawColor(blue[0], blue[1], blue[2]);
     doc.setLineWidth(0.5);
-    doc.roundedRect(margin, y, contentWidth, 35, 3, 3, 'FD');
+    doc.roundedRect(margin, y, contentW, 38, 4, 4, 'FD');
     
-    // Section title
-    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.rect(margin, y, contentWidth, 8, 'F');
+    // Summary header
+    doc.setFillColor(blue[0], blue[1], blue[2]);
+    doc.roundedRect(margin + 2, y + 2, contentW - 4, 10, 2, 2, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('PATIENT INFORMATION', margin + 5, y + 6);
+    doc.text('EXECUTIVE SUMMARY', margin + 6, y + 9);
     
-    // Patient details grid
-    y += 12;
-    doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    
-    const col1 = margin + 5;
-    const col2 = margin + 70;
-    const col3 = margin + 130;
-    
-    doc.setFont('helvetica', 'bold');
-    doc.text('Weight:', col1, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(inputs.weight + ' lbs', col1 + 25, y);
-    
-    doc.setFont('helvetica', 'bold');
-    doc.text('Age:', col2, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(inputs.age + ' years', col2 + 20, y);
-    
-    doc.setFont('helvetica', 'bold');
-    doc.text('Vial Size:', col3, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(inputs.vialSize + 'mg', col3 + 28, y);
-    
-    // ========== DOSING PROTOCOL SECTION ==========
-    y = 125;
-    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.rect(margin, y, contentWidth, 10, 'F');
-    doc.setTextColor(255, 255, 255);
+    // Summary content
+    doc.setTextColor(navy[0], navy[1], navy[2]);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('DOSING PROTOCOL', margin + 5, y + 7);
+    doc.text(peptide.name.toUpperCase(), margin + 5, y + 22);
     
-    // Three column layout for doses
-    y += 15;
-    const colW = contentWidth / 3;
+    doc.setTextColor(textGray[0], textGray[1], textGray[2]);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    const recDose = isFixed ? 
+        `${results.doses.med} mg (${(results.doses.med * 1000).toFixed(0)} mcg)` : 
+        `${results.doses.med.toLocaleString()} mcg`;
+    doc.text(`Recommended: ${recDose} | ${results.syringeUnits.med} units | ${peptide.freq}`, margin + 5, y + 30);
     
-    ['CONSERVATIVE', 'STANDARD (RECOMMENDED)', 'ADVANCED'].forEach((label, i) => {
-        const x = margin + (i * colW);
-        const isRec = i === 1;
+    // ========== PATIENT INFO ==========
+    y = 92;
+    doc.setTextColor(navy[0], navy[1], navy[2]);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PATIENT INFORMATION', margin, y);
+    
+    // Info grid
+    y += 8;
+    const infoItems = [
+        ['Weight', inputs.weight + ' lbs'],
+        ['Age', inputs.age + ' years'],
+        ['Vial Size', inputs.vialSize + 'mg'],
+        ['Syringe', inputs.syringe + 'U']
+    ];
+    
+    const colWidth = contentW / 4;
+    infoItems.forEach((item, i) => {
+        const x = margin + (i * colWidth);
         
-        // Card
-        if (isRec) {
-            doc.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
-            doc.setDrawColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-            doc.setLineWidth(1);
-        } else {
-            doc.setFillColor(250, 250, 250);
-            doc.setDrawColor(gray[0], gray[1], gray[2]);
-            doc.setLineWidth(0.3);
-        }
-        doc.roundedRect(x + 2, y, colW - 4, 55, 3, 3, 'FD');
+        // Box
+        doc.setFillColor(bgGray[0], bgGray[1], bgGray[2]);
+        doc.roundedRect(x, y, colWidth - 5, 22, 3, 3, 'F');
         
         // Label
-        doc.setTextColor(isRec ? primaryBlue[0] : gray[0], gray[1], gray[2]);
-        doc.setFontSize(8);
+        doc.setTextColor(mutedGray[0], mutedGray[1], mutedGray[2]);
+        doc.setFontSize(7);
         doc.setFont('helvetica', 'bold');
-        doc.text(label, x + colW/2, y + 8, { align: 'center' });
+        doc.text(item[0].toUpperCase(), x + 5, y + 8);
         
-        // Dose values
-        const dose = i === 0 ? results.doses.low : i === 1 ? results.doses.med : results.doses.high;
-        const units = i === 0 ? results.syringeUnits.low : i === 1 ? results.syringeUnits.med : results.syringeUnits.high;
+        // Value
+        doc.setTextColor(navy[0], navy[1], navy[2]);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(item[1], x + 5, y + 18);
+    });
+    
+    // ========== DOSING PROTOCOL ==========
+    y = 130;
+    doc.setTextColor(navy[0], navy[1], navy[2]);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('DOSING PROTOCOL', margin, y);
+    
+    y += 10;
+    const doseColW = contentW / 3;
+    const doses = [
+        { label: 'CONSERVATIVE', val: results.doses.low, units: results.syringeUnits.low, color: green, rec: false },
+        { label: 'STANDARD', val: results.doses.med, units: results.syringeUnits.med, color: blue, rec: true },
+        { label: 'ADVANCED', val: results.doses.high, units: results.syringeUnits.high, color: amber, rec: false }
+    ];
+    
+    doses.forEach((d, i) => {
+        const x = margin + (i * doseColW);
         
-        // Primary dose
-        doc.setTextColor(darkBlue[0], darkBlue[1], darkBlue[2]);
-        doc.setFontSize(isRec ? 16 : 14);
+        // Card background
+        if (d.rec) {
+            doc.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
+            doc.setDrawColor(blue[0], blue[1], blue[2]);
+            doc.setLineWidth(1);
+        } else {
+            doc.setFillColor(255, 255, 255);
+            doc.setDrawColor(220, 220, 220);
+            doc.setLineWidth(0.3);
+        }
+        doc.roundedRect(x + 2, y, doseColW - 4, 50, 4, 4, 'FD');
+        
+        // Color strip
+        doc.setFillColor(d.color[0], d.color[1], d.color[2]);
+        doc.rect(x + 2, y, doseColW - 4, 4, 'F');
+        
+        // Label
+        doc.setTextColor(d.rec ? blue[0] : textGray[0], textGray[1], textGray[2]);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.text(d.label, x + doseColW/2, y + 11, { align: 'center' });
+        
+        if (d.rec) {
+            doc.setFillColor(blue[0], blue[1], blue[2]);
+            doc.roundedRect(x + 25, y + 14, doseColW - 54, 8, 2, 2, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(6);
+            doc.text('RECOMMENDED', x + doseColW/2, y + 20, { align: 'center' });
+        }
+        
+        // Dose value
+        doc.setTextColor(navy[0], navy[1], navy[2]);
+        doc.setFontSize(d.rec ? 14 : 12);
         doc.setFont('helvetica', 'bold');
         
         if (isFixed) {
-            // Show mg primary
-            const mgValue = dose.toFixed(2).replace(/\.?0+$/, '');
-            doc.text(mgValue + ' mg', x + colW/2, y + 22, { align: 'center' });
-            
-            // Secondary mcg
-            doc.setFontSize(8);
-            doc.setTextColor(gray[0], gray[1], gray[2]);
-            const mcgValue = (dose * 1000).toFixed(0);
-            doc.text('(' + mcgValue + ' mcg)', x + colW/2, y + 30, { align: 'center' });
+            doc.text(d.val.toFixed(2).replace(/\.?0+$/, '') + ' mg', x + doseColW/2, y + 32, { align: 'center' });
+            doc.setFontSize(7);
+            doc.setTextColor(mutedGray[0], mutedGray[1], mutedGray[2]);
+            doc.text('(' + (d.val * 1000).toFixed(0) + ' mcg)', x + doseColW/2, y + 38, { align: 'center' });
         } else {
-            doc.text(dose.toLocaleString() + ' mcg', x + colW/2, y + 25, { align: 'center' });
+            doc.text(d.val.toLocaleString() + ' mcg', x + doseColW/2, y + 34, { align: 'center' });
         }
         
-        // Syringe units
-        doc.setFillColor(bgBlue[0], bgBlue[1], bgBlue[2]);
-        doc.roundedRect(x + 10, y + 35, colW - 24, 15, 2, 2, 'F');
-        doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Draw ' + units + ' units', x + colW/2, y + 45, { align: 'center' });
+        // Units
+        doc.setFillColor(bgGray[0], bgGray[1], bgGray[2]);
+        doc.roundedRect(x + 8, y + 42, doseColW - 20, 6, 2, 2, 'F');
+        doc.setTextColor(textGray[0], textGray[1], textGray[2]);
+        doc.setFontSize(6);
+        doc.text('Draw ' + d.units + ' units', x + doseColW/2, y + 46, { align: 'center' });
     });
     
-    // ========== PROJECT DETAILS TABLE ==========
-    y += 65;
-    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.rect(margin, y, contentWidth, 10, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(10);
+    // ========== PROTOCOL DETAILS TABLE ==========
+    y = 195;
+    doc.setTextColor(navy[0], navy[1], navy[2]);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.text('PROTOCOL SPECIFICATIONS', margin + 5, y + 7);
+    doc.text('PROTOCOL DETAILS', margin, y);
     
-    y += 12;
+    y += 8;
+    
+    // Table header
+    doc.setFillColor(navy[0], navy[1], navy[2]);
+    doc.rect(margin, y, contentW, 10, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PARAMETER', margin + 5, y + 7);
+    doc.text('VALUE', margin + 100, y + 7);
+    doc.text('NOTES', margin + 150, y + 7);
     
     // Table rows
-    const rowH = 12;
-    const specs = [
-        ['Half-Life', peptide.halfLife || 'N/A', 'Frequency', peptide.freq || 'N/A'],
-        ['Cycle Duration', peptide.wks + ' weeks', 'Injections/Week', peptide.f.toString()],
-        ['Timing', getTimingNote(peptide), 'Category', peptide.category]
+    const tableData = [
+        ['Half-Life', peptide.halfLife || 'N/A', 'Time in body'],
+        ['Frequency', peptide.freq || 'N/A', peptide.f + 'x per week'],
+        ['Cycle Length', peptide.wks + ' weeks', peptide.wks * 7 + ' days total'],
+        ['Vials Needed', results.vialsNeeded.toString(), 'For full cycle'],
+        ['Total Injections', (peptide.f * peptide.wks).toString(), 'Over ' + peptide.wks + ' weeks'],
+        ['Timing', getTimingNote(peptide), 'Optimal time of day'],
+        ['Category', peptide.category, isFixed ? 'Fixed dose' : 'Weight-based']
     ];
     
-    specs.forEach((row, i) => {
-        // Alternate row colors
+    y += 10;
+    tableData.forEach((row, i) => {
+        // Alternating row colors
         if (i % 2 === 0) {
             doc.setFillColor(250, 250, 250);
         } else {
             doc.setFillColor(255, 255, 255);
         }
-        doc.rect(margin, y + (i * rowH), contentWidth, rowH, 'F');
+        doc.rect(margin, y + (i * 12), contentW, 12, 'F');
         
-        // Labels and values
-        doc.setTextColor(gray[0], gray[1], gray[2]);
+        // Border lines
+        doc.setDrawColor(220, 220, 220);
+        doc.setLineWidth(0.2);
+        doc.line(margin, y + (i * 12) + 12, margin + contentW, y + (i * 12) + 12);
+        
+        // Data
+        doc.setTextColor(textGray[0], textGray[1], textGray[2]);
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.text(row[0] + ':', margin + 5, y + 8 + (i * rowH));
+        doc.text(row[0], margin + 5, y + 8 + (i * 12));
         
-        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
         doc.setFont('helvetica', 'normal');
-        doc.text(row[1], margin + 50, y + 8 + (i * rowH));
+        doc.setTextColor(navy[0], navy[1], navy[2]);
+        doc.text(row[1], margin + 100, y + 8 + (i * 12));
         
-        doc.setTextColor(gray[0], gray[1], gray[2]);
-        doc.setFont('helvetica', 'bold');
-        doc.text(row[2] + ':', margin + 105, y + 8 + (i * rowH));
-        
-        doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
-        doc.setFont('helvetica', 'normal');
-        doc.text(row[3], margin + 145, y + 8 + (i * rowH));
+        doc.setTextColor(mutedGray[0], mutedGray[1], mutedGray[2]);
+        doc.text(row[2], margin + 150, y + 8 + (i * 12));
     });
     
-    // ========== TIMELINE VISUAL ==========
-    y += 45;
-    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.rect(margin, y, contentWidth, 10, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(10);
+    // ========== CYCLE TIMELINE ==========
+    y += 100;
+    doc.setTextColor(navy[0], navy[1], navy[2]);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.text('CYCLE TIMELINE', margin + 5, y + 7);
+    doc.text('CYCLE TIMELINE', margin, y);
     
-    y += 18;
+    y += 10;
     
     // Timeline bar
     const weeks = peptide.wks;
-    const barW = contentWidth - 20;
-    const weekW = barW / weeks;
+    const barW = contentW - 20;
     
-    // Background bar
+    // Background
     doc.setFillColor(220, 220, 220);
-    doc.roundedRect(margin + 10, y, barW, 15, 3, 3, 'F');
+    doc.roundedRect(margin + 10, y, barW, 18, 4, 4, 'F');
     
-    // Active weeks (colored)
-    doc.setFillColor(successGreen[0], successGreen[1], successGreen[2]);
-    doc.roundedRect(margin + 10, y, barW, 15, 3, 3, 'F');
+    // Progress (full cycle)
+    doc.setFillColor(green[0], green[1], green[2]);
+    doc.roundedRect(margin + 10, y, barW, 18, 4, 4, 'F');
     
     // Week markers
-    doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
-    doc.setFontSize(6);
-    for (let i = 0; i <= weeks; i += Math.ceil(weeks / 6)) {
-        const x = margin + 10 + (i * weekW);
-        doc.line(x, y - 2, x, y + 17);
-        doc.text('W' + i, x, y + 22, { align: 'center' });
+    const markerCount = Math.min(weeks, 8);
+    for (let i = 0; i <= markerCount; i++) {
+        const weekNum = Math.round((i / markerCount) * weeks);
+        const x = margin + 10 + (i / markerCount) * barW;
+        
+        doc.setDrawColor(255, 255, 255);
+        doc.setLineWidth(0.5);
+        doc.line(x, y + 2, x, y + 16);
+        
+        doc.setTextColor(navy[0], navy[1], navy[2]);
+        doc.setFontSize(6);
+        doc.text('W' + weekNum, x, y + 24, { align: 'center' });
     }
     
-    doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.text(weeks + '-WEEK CYCLE', margin + 10 + barW/2, y + 8, { align: 'center' });
-    
-    // ========== KEY METRICS ==========
-    y += 35;
-    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.rect(margin, y, contentWidth, 10, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('KEY METRICS', margin + 5, y + 7);
-    
-    y += 15;
-    
-    // Metrics boxes
-    const metrics = [
-        ['Total Injections', (peptide.f * peptide.wks).toString()],
-        ['Vials Needed', results.vialsNeeded.toString()],
-        ['Days on Cycle', (peptide.wks * 7).toString() + ' days'],
-        ['Protocol Type', isFixed ? 'Fixed Dose' : 'Weight-Based']
-    ];
-    
-    const metricW = contentWidth / 4;
-    metrics.forEach((m, i) => {
-        const x = margin + (i * metricW) + 2;
-        
-        // Box
-        doc.setFillColor(bgBlue[0], bgBlue[1], bgBlue[2]);
-        doc.roundedRect(x, y, metricW - 4, 25, 2, 2, 'F');
-        
-        // Label
-        doc.setTextColor(gray[0], gray[1], gray[2]);
-        doc.setFontSize(7);
-        doc.setFont('helvetica', 'bold');
-        doc.text(m[0].toUpperCase(), x + (metricW - 4)/2, y + 8, { align: 'center' });
-        
-        // Value
-        doc.setTextColor(darkBlue[0], darkBlue[1], darkBlue[2]);
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'bold');
-        doc.text(m[1], x + (metricW - 4)/2, y + 20, { align: 'center' });
-    });
-    
-    // ========== SAFETY SECTION ==========
-    y += 35;
-    doc.setFillColor(warningOrange[0], warningOrange[1], warningOrange[2]);
-    doc.setDrawColor(warningOrange[0], warningOrange[1], warningOrange[2]);
-    doc.setLineWidth(0.5);
-    doc.roundedRect(margin, y, contentWidth, 40, 3, 3, 'FD');
-    
-    // Header
-    doc.setFillColor(255, 255, 255);
-    doc.rect(margin + 2, y + 2, contentWidth - 4, 8, 'F');
-    doc.setTextColor(warningOrange[0], warningOrange[1], warningOrange[2]);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('SAFETY & WARNINGS', margin + 8, y + 8);
+    doc.text(weeks + '-WEEK CYCLE', margin + 10 + barW/2, y + 12, { align: 'center' });
+    
+    // ========== IMPORTANT NOTES ==========
+    y += 35;
+    doc.setFillColor(254, 242, 242);
+    doc.setDrawColor(red[0], red[1], red[2]);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(margin, y, contentW, 35, 4, 4, 'FD');
+    
+    // Header
+    doc.setFillColor(red[0], red[1], red[2]);
+    doc.roundedRect(margin + 2, y + 2, contentW - 4, 8, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('IMPORTANT NOTES', margin + 6, y + 8);
     
     // Content
-    doc.setTextColor(darkGray[0], darkGray[1], darkGray[2]);
+    doc.setTextColor(textGray[0], textGray[1], textGray[2]);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
-    
-    const warnings = [
+    const notes = [
         '• Consult healthcare provider before starting any peptide protocol',
         '• Start with Conservative dose if new to peptides',
         '• Store reconstituted peptides refrigerated (2-8°C)',
-        '• Use sterile technique for all injections',
         '• This calculator is for research purposes only - not medical advice'
     ];
-    
-    warnings.forEach((w, i) => {
-        doc.text(w, margin + 5, y + 18 + (i * 5));
+    notes.forEach((note, i) => {
+        doc.text(note, margin + 5, y + 17 + (i * 5));
     });
     
     // ========== FOOTER ==========
-    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
-    doc.rect(0, 285, pageWidth, 12, 'F');
+    doc.setFillColor(navy[0], navy[1], navy[2]);
+    doc.rect(0, 285, pageW, 12, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
-    doc.text('Generated by Phenom Vital Labs Peptide Calculator | For research purposes only | Not medical advice', pageWidth/2, 292, { align: 'center' });
+    doc.text('Generated by Phenom Vital Labs | For research purposes only', pageW/2, 292, { align: 'center' });
     
     // Output
     const pdfBlob = doc.output('blob');
@@ -376,7 +352,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     }
 }
 
-// Helper function for timing notes
+// Helper for timing
 function getTimingNote(peptide) {
     const name = peptide.name.toLowerCase();
     const cat = peptide.category.toLowerCase();
@@ -385,10 +361,10 @@ function getTimingNote(peptide) {
         return 'Evening (before bed)';
     }
     if (name.includes('metabolic') || name.includes('tirze') || name.includes('sema') || cat.includes('metabolic')) {
-        return 'Morning (before breakfast)';
+        return 'Morning (fasted)';
     }
     if (name.includes('heal') || name.includes('bpc') || name.includes('tb')) {
-        return 'Post-workout or PM';
+        return 'Post-workout';
     }
     return 'As directed';
 }
