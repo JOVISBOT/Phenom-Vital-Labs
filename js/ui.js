@@ -155,20 +155,6 @@ export function populateAgeOptions() {
     });
     select.appendChild(optgroup);
 }
-    
-    // All ages
-    const allGroup = document.createElement('optgroup');
-    allGroup.label = 'All Ages';
-    for (let age = 18; age <= 80; age++) {
-        if (!commonAges.includes(age)) {
-            const option = document.createElement('option');
-            option.value = age;
-            option.textContent = `${age} years`;
-            allGroup.appendChild(option);
-        }
-    }
-    select.appendChild(allGroup);
-}
 
 /**
  * Populate peptide dropdown options - simplified 3 groups
