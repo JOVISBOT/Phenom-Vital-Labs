@@ -331,13 +331,41 @@ export function updateVialSizeForPeptide(peptide) {
     const vialSizeSelect = document.getElementById('vialSize');
     
     if (!peptide) {
-        // Reset to default options
+        // Reset to default options - include all sizes
         vialSizeSelect.innerHTML = `
             <option value="2">2mg</option>
             <option value="5" selected>5mg</option>
             <option value="10">10mg</option>
             <option value="15">15mg</option>
+            <option value="20">20mg</option>
+            <option value="30">30mg</option>
+            <option value="40">40mg</option>
+            <option value="50">50mg</option>
+            <option value="60">60mg</option>
+            <option value="80">80mg</option>
         `;
+        vialSizeSelect.disabled = false;
+        return;
+    }
+    
+    // Peptide-specific vial sizes based on supplier availability
+    const peptideSizes = {
+        'retatrutide': [5, 10, 15, 20, 30, 40, 50, 60],
+        'semaglutide': [2, 5, 10, 15, 20, 30],
+        'tirzepatide': [5, 10, 15, 20, 30, 40, 50, 60, 80],
+        'tesamorelin': [2, 5, 10, 20],
+        'bpc157': [2, 5, 10],
+        'ghrp2': [5, 10, 15],
+        'tb500': [2, 5, 10],
+        'hcg': [1000, 2000, 5000, 10000]
+    };
+    
+    const sizes = peptideSizes[peptide.id];
+    if (sizes) {
+        vialSizeSelect.innerHTML = sizes.map(s => {
+            const selected = s === sizes[Math.floor(sizes.length / 2)] ? 'selected' : '';
+            return `<option value="${s}" ${selected}>${s}mg</option>`;
+        }).join('');
         vialSizeSelect.disabled = false;
         return;
     }
@@ -366,12 +394,18 @@ export function updateVialSizeForPeptide(peptide) {
             vialSizeSelect.disabled = true;
         }
     } else {
-        // Reset to standard options
+        // Reset to standard options - include all sizes
         vialSizeSelect.innerHTML = `
             <option value="2">2mg</option>
             <option value="5" selected>5mg</option>
             <option value="10">10mg</option>
             <option value="15">15mg</option>
+            <option value="20">20mg</option>
+            <option value="30">30mg</option>
+            <option value="40">40mg</option>
+            <option value="50">50mg</option>
+            <option value="60">60mg</option>
+            <option value="80">80mg</option>
         `;
         vialSizeSelect.disabled = false;
     }
