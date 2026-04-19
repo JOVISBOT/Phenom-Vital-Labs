@@ -446,12 +446,14 @@ export function showInlineError(message) {
 export function renderResults(peptide, results, inputs) {
     const container = document.getElementById('results');
     const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
-    const unit = isBlend ? 'mg' : 'mcg';
-    const unitLabel = isBlend ? 'milligrams' : 'micrograms';
+    // Use fixed property to determine units, not blend status
+    const isFixed = peptide.fixed === true;
+    const unit = isFixed ? 'mg' : 'mcg';
+    const unitLabel = isFixed ? 'milligrams' : 'micrograms';
     
     // Format numbers appropriately
     const formatDose = (dose) => {
-        if (isBlend) {
+        if (isFixed) {
             // Always show in mg, even for small doses
             return dose.toFixed(2).replace(/\.?0+$/, '');
         }
