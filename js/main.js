@@ -32,7 +32,7 @@ async function init() {
         console.log('Peptide Calculator initialized successfully');
     } catch (error) {
         console.error('Failed to initialize:', error);
-        showError('Failed to load peptide data. Please refresh the page.');
+        showInlineError('Failed to load peptide data. Please refresh the page.');
     }
 }
 
