@@ -14,7 +14,7 @@
       "high": 1500,
       "f": 1,
       "wks": 6,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Rapid muscle mass increase (3+ lbs/month)",
         "Binds myostatin systemically",
@@ -102,7 +102,7 @@
       "high": 500,
       "f": 7,
       "wks": 5,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Targets fat cells directly",
         "Rapid fat loss in animal studies",
@@ -240,7 +240,7 @@
       "high": 6000,
       "f": 7,
       "wks": 12,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Tissue protective effects without RBC increase",
         "Neuropathic pain relief",
@@ -284,7 +284,7 @@
       "high": 2000,
       "f": 7,
       "wks": 12,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Potent anti-fibrotic effects",
         "Inhibits TGF-beta pathway",
@@ -441,7 +441,7 @@
       "high": 2000,
       "f": 7,
       "wks": 4,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Accelerates tendon and ligament healing by 30-40%",
         "Repairs damaged intestinal lining (IBD/IBS support)",
@@ -666,7 +666,7 @@
       "high": 10000,
       "f": 1,
       "wks": 3,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Adrenal cortex regulation",
         "Stress response normalization",
@@ -710,7 +710,7 @@
       "high": 10000,
       "f": 1,
       "wks": 3,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Immune system regulation",
         "T-cell function support",
@@ -841,7 +841,7 @@
       "high": 300,
       "f": 7,
       "wks": 4,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Promotes deep sleep without sedation",
         "No morning grogginess or hangover",
@@ -1114,7 +1114,7 @@
       "high": 800,
       "f": 21,
       "wks": 10,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Most potent GHRP (stronger than GHRP-6)",
         "Dramatic GH elevation (3-5x baseline)",
@@ -1160,7 +1160,7 @@
       "high": 800,
       "f": 21,
       "wks": 10,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Intense appetite stimulation (best for hardgainers)",
         "Strong GH release comparable to GHRP-2",
@@ -1251,7 +1251,7 @@
       "high": 400,
       "f": 21,
       "wks": 2,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Stimulates natural LH/FSH",
         "Diagnostic and therapeutic",
@@ -1341,7 +1341,7 @@
       "high": 800,
       "f": 21,
       "wks": 8,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Most potent GHRP available",
         "Cardioprotective effects (unique to Hexarelin)",
@@ -1620,7 +1620,7 @@
       "high": 300,
       "f": 3,
       "wks": 4,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Activates muscle satellite cells for repair/growth",
         "Extended half-life vs regular MGF (PEGylation)",
@@ -1901,7 +1901,7 @@
       "high": 15000,
       "f": 7,
       "wks": 2,
-      "fixed": true,
+      "fixed": false,
       "pros": [
         "Restores thymic function in aging",
         "Supports T-cell maturation",
