@@ -599,11 +599,12 @@ export function renderResults(peptide, results, inputs) {
             
             <!-- Calculation Reference -->
             <div class="calc-box animate-in" style="animation-delay: 0.48s; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 12px; padding: 16px 20px; margin: 20px 0; border: 1px solid #bae6fd;">
-                <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;">🧮 Quick Reference</h4>
+                <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;">🧮 Your Calculation</h4>
                 <p style="font-size: 0.85rem; color: var(--text); margin: 0;">
-                    <strong>Formula:</strong> Units = (Dose mg × 100) ÷ Concentration mg/ml<br>
-                    <strong>Example (10mg vial + 3ml water):</</strong> 3.33mg/ml concentration = 30 units per 1mg dose<br>
-                    <span style="color: var(--muted);">Tip: On U-100 syringes, 1ml = 100 units, 0.1ml = 10 units</span>
+                    <strong>Vial:</strong> ${inputs.vialSize}mg in 3ml water = ${(inputs.vialSize/3).toFixed(2)}mg/ml<br>
+                    <strong>Dose:</strong> ${formatDose(results.doses.med)}${unit} = ${isFixed ? results.doses.med : (results.doses.med/1000).toFixed(3)}mg<br>
+                    <strong>Units:</strong> ${(isFixed ? results.doses.med : results.doses.med/1000).toFixed(2)}mg ÷ ${(inputs.vialSize/3).toFixed(2)}mg/ml × 50 = <strong style="color: var(--primary);">${results.syringeUnits.med} units</strong><br>
+                    <span style="color: var(--muted);">${results.syringeUnits.med > 50 ? '⚠️ Requires ' + Math.ceil(results.syringeUnits.med/50) + ' syringe draws' : '✓ Fits in one 50U syringe'}</span>
                 </p>
             </div>
             
