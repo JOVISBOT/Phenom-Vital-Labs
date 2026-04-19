@@ -1,0 +1,90 @@
+=== ALL 44 PEPTIDES - CURRENT DOSING ===
+
+1. ACE 031
+   Doses: 500/1000/1500 mg | 1x/week
+2. Adamax
+   Doses: 200/300/500 mg | 7x/week
+3. Adipotide
+   Doses: 200/300/500 mg | 7x/week
+4. AICAR (Acadesine)
+   Doses: 50/100/200 mg | 7x/week
+5. AOD-9604
+   Doses: 0.6/1.2/2.4 mg | 21x/week
+6. ARA290 (Cibinetide)
+   Doses: 2000/4000/6000 mg | 7x/week
+7. B7-33
+   Doses: 500/1000/2000 mg | 7x/week
+8. CJC1295 NO DAC + Ipamorelin Blend
+   Doses: 0.2/0.4/0.8 mg | 7x/week
+9. BPC 157 + TB 500 Blend
+   Doses: 0.5/1.5/2.5 mg | 5x/week
+10. BPC 157 + TB 500 Blend (High Dose)
+   Doses: 1/2/3 mg | 5x/week
+11. BPC 157
+   Doses: 0.5/1/2 mg | 7x/week
+12. Cagrilintide
+   Doses: 100/200/300 mg | 1x/week
+13. Cagrisema (Cagrilintide + Semaglutide)
+   Doses: 125/250/500 mg | 1x/week
+14. CJC1295 DAC
+   Doses: 1000/2000/3000 mg | 2x/week
+15. CJC-1295 NO DAC (Mod GRF 1-29)
+   Doses: 0.2/0.4/0.8 mg | 21x/week
+16. Cortagen
+   Doses: 2000/5000/10000 mg | 1x/week
+17. Crystagen
+   Doses: 2000/5000/10000 mg | 1x/week
+18. Dermorphin
+   Doses: 10/20/40 mg | 1x/week
+19. Dihexa
+   Doses: 8/16/32 mg | 7x/week
+20. DSIP
+   Doses: 100/200/300 mg | 7x/week
+21. Dulaglutide (Trulicity)
+   Doses: 750/1500/4500 mg | 1x/week
+22. EPO (Erythropoietin)
+   Doses: 1000/3000/5000 mg | 3x/week
+23. Follistatin 344
+   Doses: 50/100/150 mg | 2x/week
+24. FOXO4-DRI (Senolytic)
+   Doses: 1/2/5 mg | 1x/week
+25. Fragment 17-23
+   Doses: 200/400/600 mg | 21x/week
+26. GHRP-2
+   Doses: 0.2/0.4/0.8 mg | 21x/week
+27. GHRP-6
+   Doses: 0.2/0.4/0.8 mg | 21x/week
+28. Glutathione (Reduced)
+   Doses: 100/200/500 mg | 3x/week
+29. Gonadorelin
+   Doses: 100/200/400 mg | 21x/week
+30. HCG (Human Chorionic Gonadotropin)
+   Doses: 250/500/1000 mg | 3x/week
+31. Hexarelin
+   Doses: 0.1/0.2/0.4 mg | 21x/week
+32. HGH (Human Growth Hormone)
+   Doses: 1000/2000/4000 mg | 7x/week
+33. HMG (Human Menopausal Gonadotropin)
+   Doses: 75/150/300 mg | 3x/week
+34. Melanotan II
+   Doses: 0.25/0.3/0.5 mg | 3x/week
+35. MOTS-C
+   Doses: 5/10/20 mg | 3x/week
+36. NAD+ (Nicotinamide Adenine Dinucleotide)
+   Doses: 50/100/250 mg | 7x/week
+37. PEG MGF
+   Doses: 100/200/300 mg | 3x/week
+38. PT-141 (Bremelanotide)
+   Doses: 1/2/4 mg | 1x/week
+39. Retatrutide
+   Doses: 2/4/8 mg | 1x/week
+40. Sermorelin
+   Doses: 0.5/1/2 mg | 7x/week
+41. TB 500
+   Doses: 7.5/15/30 mg | 2x/week
+42. Tesamorelin
+   Doses: 1/2/4 mg | 7x/week
+43. Thymalin
+   Doses: 5000/10000/15000 mg | 7x/week
+44. Tirzepatide
+   Doses: 2.5/5/10 mg | 1x/week
