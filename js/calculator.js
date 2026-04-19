@@ -8,36 +8,17 @@
 /**
  * Calculate metabolic adjustment factor based on age
  * Research: GH/IGF-1 declines ~14% per decade after age 30
+ * Returns factor where older = higher values (100% → 150%)
  * @param {number} age
- * @returns {number} Metabolic factor based on actual production decline data
+ * @returns {number} Age factor (1.0 - 1.5)
  */
-function getMetabolicFactor(age) {
-    // Research shows ~14% decline per decade after 30
-    // Age 20-30: 100% production (baseline)
-    // Age 40: ~86% remaining (+16% supplemental needed)
-    // Age 50: ~75% remaining (+33% supplemental needed)
-    // Age 60: ~65% remaining (+54% supplemental needed, capped at 50%)
-    if (age < 30) return 1.0;      // 18-29: 100% baseline
-    if (age < 40) return 1.08;     // 30-39: +8% (early decline)
-    if (age < 50) return 1.16;     // 40-49: +16% (14% per decade)
-    if (age < 60) return 1.33;     // 50-59: +33% (28% total decline)
-    return 1.5;                    // 60+: +50% (capped, 40%+ decline)
-}
-
-/**
- * Calculate recovery adjustment factor based on age
- * Based on clinical data: tissue repair slows 10-15% per decade after 35
- * @param {number} age
- * @returns {number} Recovery factor based on age-related decline
- */
-function getRecoveryFactor(age) {
-    // Tissue repair/healing declines ~10-15% per decade
-    // More conservative than metabolic factor
-    if (age < 30) return 1.0;      // 18-29: 100%
-    if (age < 40) return 1.06;     // 30-39: +6%
-    if (age < 50) return 1.12;     // 40-49: +12%
-    if (age < 60) return 1.25;     // 50-59: +25%
-    return 1.4;                    // 60+: +40%
+function getAgeFactor(age) {
+    // Simple age-based scaling: older = higher dose needed
+    if (age < 30) return 1.0;      // 18-29: baseline
+    if (age < 40) return 1.1;      // 30-39: +10%
+    if (age < 50) return 1.2;      // 40-49: +20%
+    if (age < 60) return 1.35;     // 50-59: +35%
+    return 1.5;                     // 60+: +50%
 }
 
 /**
@@ -61,11 +42,10 @@ function getLeanMassFactor(weightLbs) {
  */
 export function calculateAdjustedWeight(weightLbs, age) {
     const kg = weightLbs / 2.205;
-    const metabolicFactor = getMetabolicFactor(age);
-    const recoveryFactor = getRecoveryFactor(age);
     const leanMassFactor = getLeanMassFactor(weightLbs);
+    const ageFactor = getAgeFactor(age);
     
-    return kg * (metabolicFactor * 0.4 + recoveryFactor * 0.6) * leanMassFactor;
+    return kg * ageFactor * leanMassFactor;
 }
 
 /**
@@ -79,13 +59,16 @@ export function calculateAdjustedWeight(weightLbs, age) {
 export function calculateDose(peptide, weightLbs, age, level = 'med') {
     const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
     
+    // Get age-based factor (older = higher dose needed)
+    const ageFactor = getAgeFactor(age);
+    
     if (peptide.fixed) {
-        // For blends: return mg directly
-        // For regular peptides: return mcg directly
-        return peptide[level];
+        // For blends and fixed-dose: apply age factor
+        const baseDose = peptide[level];
+        return Math.round(baseDose * ageFactor * 10) / 10;
     }
     
-    // Non-fixed doses are weight-based
+    // Non-fixed doses are weight-based with age factor
     const adjustedKg = calculateAdjustedWeight(weightLbs, age);
     const baseDose = peptide[level] * adjustedKg;
     
@@ -120,10 +103,9 @@ export function calculateVialsNeeded(peptide, doseAmount, vialSizeMg = 5) {
  * @param {number} doseAmount - Dose in mg OR mcg
  * @param {number} vialSizeMg - Vial size in mg
  * @param {number} syringeUnits - Syringe capacity (30, 50, or 100)
- * @param {string} level - 'low', 'med', or 'high' - to add 4U for standard on mg peptides
  * @returns {number} Units to draw
  */
-export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syringeUnits = 100, level = 'med') {
+export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syringeUnits = 100) {
     const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
     
     // Convert dose to mg
@@ -137,11 +119,6 @@ export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syrin
     const unitsPerMl = parseInt(syringeUnits) === 30 ? 30 : parseInt(syringeUnits) === 50 ? 50 : 100;
     
     let units = Math.round(mlNeeded * unitsPerMl);
-    
-    // Add 4U to ALL doses for mg peptides (blends and fixed-dose)
-    if (isBlend || peptide.fixed) {
-        units += 4;
-    }
     
     return units;
 }
@@ -201,10 +178,10 @@ export function performCalculation(peptide, weightLbs, age, vialSize, syringeUni
     // Calculate vials needed (based on medium dose)
     const medVials = calculateVialsNeeded(peptide, medDose, vialSize);
     
-    // Calculate syringe units for ALL dose levels (pass level for +4U on standard)
-    const lowSyringeUnits = calculateSyringeUnits(peptide, lowDose, vialSize, syringeUnits, 'low');
-    const medSyringeUnits = calculateSyringeUnits(peptide, medDose, vialSize, syringeUnits, 'med');
-    const highSyringeUnits = calculateSyringeUnits(peptide, highDose, vialSize, syringeUnits, 'high');
+    // Calculate syringe units for ALL dose levels
+    const lowSyringeUnits = calculateSyringeUnits(peptide, lowDose, vialSize, syringeUnits);
+    const medSyringeUnits = calculateSyringeUnits(peptide, medDose, vialSize, syringeUnits);
+    const highSyringeUnits = calculateSyringeUnits(peptide, highDose, vialSize, syringeUnits);
     
     // Calculate total mg for the cycle (based on medium dose)
     const doseMg = isBlend ? medDose : medDose / 1000;
