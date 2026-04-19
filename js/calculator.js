@@ -88,7 +88,7 @@ export function calculateVialsNeeded(peptide, doseAmount, vialSizeMg = 5) {
     
     // For blends: dose is already in mg
     // For regular: dose is in mcg, convert to mg
-    const doseMg = isBlend ? doseAmount : doseAmount / 1000;
+    const doseMg = peptide.fixed ? doseAmount : doseAmount / 1000;
     const totalMg = doseMg * peptide.f * peptide.wks;
     
     // Vial total mg
@@ -106,10 +106,12 @@ export function calculateVialsNeeded(peptide, doseAmount, vialSizeMg = 5) {
  * @returns {number} Units to draw
  */
 export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syringeUnits = 100) {
-    const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
+    const isFixed = peptide.fixed === true;
     
     // Convert dose to mg
-    const doseMg = isBlend ? doseAmount : doseAmount / 1000;
+    // Fixed peptides (mg): use directly
+    // Non-fixed peptides (mcg): divide by 1000 to get mg
+    const doseMg = isFixed ? doseAmount : doseAmount / 1000;
     
     // Vial reconstituted with 3ml BAC water
     const vialTotalMg = vialSizeMg || 5;
@@ -184,7 +186,7 @@ export function performCalculation(peptide, weightLbs, age, vialSize, syringeUni
     const highSyringeUnits = calculateSyringeUnits(peptide, highDose, vialSize, syringeUnits);
     
     // Calculate total mg for the cycle (based on medium dose)
-    const doseMg = isBlend ? medDose : medDose / 1000;
+    const doseMg = peptide.fixed === true ? medDose : medDose / 1000;
     const totalMg = doseMg * peptide.f * peptide.wks;
     
     return {
