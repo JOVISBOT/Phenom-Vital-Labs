@@ -546,17 +546,13 @@ export function renderResults(peptide, results, inputs) {
                 </p>
             </div>
             
-            <!-- Calculation Breakdown -->
-            <div class="calc-box animate-in" style="animation-delay: 0.48s; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid #bae6fd;">
-                <h4 style="color: var(--primary); margin-bottom: 12px; font-size: 1rem;">🧮 Calculation Breakdown</h4>
-                <div style="font-family: monospace; font-size: 0.85rem; color: var(--text); line-height: 1.8;">
-                    <div><strong>Vial Concentration:</strong> ${inputs.vialSize}mg ÷ ${(inputs.vialSize / (results.doses.med * 100 / results.syringeUnits.med / 100)).toFixed(2)}ml = ${(results.doses.med * 100 / results.syringeUnits.med).toFixed(2)}mg/ml</div>
-                    <div><strong>Standard Dose:</strong> ${results.doses.med}mg ÷ ${(results.doses.med * 100 / results.syringeUnits.med).toFixed(2)}mg/ml = ${(results.doses.med / (results.doses.med * 100 / results.syringeUnits.med)).toFixed(2)}ml</div>
-                    <div><strong>Units to Draw:</strong> ${(results.doses.med / (results.doses.med * 100 / results.syringeUnits.med)).toFixed(2)}ml × 100 = <strong style="color: var(--primary); font-size: 1.1rem;">${results.syringeUnits.med} units</strong></div>
-                </div>
-                <p style="margin-top: 12px; font-size: 0.8rem; color: var(--muted);">
-                    Formula: Units = Dose (mg) × (100 ÷ Concentration mg/ml)<br>
-                    Tip: 1ml = 100 units on U-100 insulin syringe
+            <!-- Calculation Reference -->
+            <div class="calc-box animate-in" style="animation-delay: 0.48s; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 12px; padding: 16px 20px; margin: 20px 0; border: 1px solid #bae6fd;">
+                <h4 style="color: var(--primary); margin-bottom: 10px; font-size: 0.95rem;">🧮 Quick Reference</h4>
+                <p style="font-size: 0.85rem; color: var(--text); margin: 0;">
+                    <strong>Formula:</strong> Units = (Dose mg × 100) ÷ Concentration mg/ml<br>
+                    <strong>Example (10mg vial + 3ml water):</</strong> 3.33mg/ml concentration = 30 units per 1mg dose<br>
+                    <span style="color: var(--muted);">Tip: On U-100 syringes, 1ml = 100 units, 0.1ml = 10 units</span>
                 </p>
             </div>
             
