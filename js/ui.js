@@ -497,7 +497,7 @@ export function renderResults(peptide, results, inputs) {
                     <div class="mcg-box">
                         <div class="mcg-label">Starting Dose</div>
                         <div class="mcg-value">${formatDose(results.doses.low)}</div>
-                        <div class="dose-detail">${unitLabel}</div>
+                        <div class="dose-detail">${unitLabel}${isFixed ? ' <span style="font-size:0.75em;color:var(--muted)">(' + (results.doses.low * 1000).toFixed(0) + ' mcg)</span>' : ''}</div>
                     </div>
                     <div class="draw-box">
                         <div class="draw-label">Draw ${results.syringeUnits.low} units</div>
@@ -525,7 +525,7 @@ export function renderResults(peptide, results, inputs) {
                     <div class="mcg-box">
                         <div class="mcg-label">Maximum Dose</div>
                         <div class="mcg-value">${formatDose(results.doses.high)}</div>
-                        <div class="dose-detail">${unitLabel}</div>
+                        <div class="dose-detail">${unitLabel}${isFixed ? ' <span style="font-size:0.75em;color:var(--muted)">(' + (results.doses.high * 1000).toFixed(0) + ' mcg)</span>' : ''}</div>
                     </div>
                     <div class="draw-box">
                         <div class="draw-label">Draw ${results.syringeUnits.high} units</div>
