@@ -120,9 +120,10 @@ export function calculateVialsNeeded(peptide, doseAmount, vialSizeMg = 5) {
  * @param {number} doseAmount - Dose in mg OR mcg
  * @param {number} vialSizeMg - Vial size in mg
  * @param {number} syringeUnits - Syringe capacity (30, 50, or 100)
+ * @param {string} level - 'low', 'med', or 'high' - to add 4U for standard on mg peptides
  * @returns {number} Units to draw
  */
-export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syringeUnits = 100) {
+export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syringeUnits = 100, level = 'med') {
     const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
     
     // Convert dose to mg
@@ -135,7 +136,14 @@ export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syrin
     
     const unitsPerMl = parseInt(syringeUnits) === 30 ? 30 : parseInt(syringeUnits) === 50 ? 50 : 100;
     
-    return Math.round(mlNeeded * unitsPerMl);
+    let units = Math.round(mlNeeded * unitsPerMl);
+    
+    // Add 4U to standard dose for mg peptides
+    if ((isBlend || peptide.fixed) && level === 'med') {
+        units += 4;
+    }
+    
+    return units;
 }
 
 /**
@@ -193,10 +201,10 @@ export function performCalculation(peptide, weightLbs, age, vialSize, syringeUni
     // Calculate vials needed (based on medium dose)
     const medVials = calculateVialsNeeded(peptide, medDose, vialSize);
     
-    // Calculate syringe units for ALL dose levels
-    const lowSyringeUnits = calculateSyringeUnits(peptide, lowDose, vialSize, syringeUnits);
-    const medSyringeUnits = calculateSyringeUnits(peptide, medDose, vialSize, syringeUnits);
-    const highSyringeUnits = calculateSyringeUnits(peptide, highDose, vialSize, syringeUnits);
+    // Calculate syringe units for ALL dose levels (pass level for +4U on standard)
+    const lowSyringeUnits = calculateSyringeUnits(peptide, lowDose, vialSize, syringeUnits, 'low');
+    const medSyringeUnits = calculateSyringeUnits(peptide, medDose, vialSize, syringeUnits, 'med');
+    const highSyringeUnits = calculateSyringeUnits(peptide, highDose, vialSize, syringeUnits, 'high');
     
     // Calculate total mg for the cycle (based on medium dose)
     const doseMg = isBlend ? medDose : medDose / 1000;
