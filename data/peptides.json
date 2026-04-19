@@ -360,9 +360,9 @@
       "halfLife": "Mixed (4hrs + days)",
       "freq": "5x weekly",
       "cycle": "6 on, 4 off",
-      "low": 750,
-      "med": 1500,
-      "high": 2250,
+      "low": 0.5,
+      "med": 1.5,
+      "high": 2.5,
       "f": 5,
       "wks": 6,
       "fixed": true,
@@ -386,7 +386,8 @@
         "Subcutaneous injection 5 days per week",
         "Rotate injection sites",
         "Can dose higher initially for acute injuries"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "blend_heal_20",
@@ -397,9 +398,9 @@
       "halfLife": "Mixed (4hrs + days)",
       "freq": "5x weekly",
       "cycle": "6 on, 4 off",
-      "low": 1000,
-      "med": 2000,
-      "high": 3000,
+      "low": 1,
+      "med": 2,
+      "high": 3,
       "f": 5,
       "wks": 6,
       "fixed": true,
@@ -423,7 +424,8 @@
         "Subcutaneous injection 5 days per week",
         "Lower volume per injection vs standard blend",
         "Ideal for severe injuries or faster recovery"
-      ]
+      ],
+      "vialSize": 20
     },
     {
       "id": "bpc157",
