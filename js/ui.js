@@ -546,6 +546,20 @@ export function renderResults(peptide, results, inputs) {
                 </p>
             </div>
             
+            <!-- Calculation Breakdown -->
+            <div class="calc-box animate-in" style="animation-delay: 0.48s; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 12px; padding: 20px; margin: 24px 0; border: 1px solid #bae6fd;">
+                <h4 style="color: var(--primary); margin-bottom: 12px; font-size: 1rem;">🧮 Calculation Breakdown</h4>
+                <div style="font-family: monospace; font-size: 0.85rem; color: var(--text); line-height: 1.8;">
+                    <div><strong>Vial Concentration:</strong> ${inputs.vialSize}mg ÷ ${(inputs.vialSize / (results.doses.med * 100 / results.syringeUnits.med / 100)).toFixed(2)}ml = ${(results.doses.med * 100 / results.syringeUnits.med).toFixed(2)}mg/ml</div>
+                    <div><strong>Standard Dose:</strong> ${results.doses.med}mg ÷ ${(results.doses.med * 100 / results.syringeUnits.med).toFixed(2)}mg/ml = ${(results.doses.med / (results.doses.med * 100 / results.syringeUnits.med)).toFixed(2)}ml</div>
+                    <div><strong>Units to Draw:</strong> ${(results.doses.med / (results.doses.med * 100 / results.syringeUnits.med)).toFixed(2)}ml × 100 = <strong style="color: var(--primary); font-size: 1.1rem;">${results.syringeUnits.med} units</strong></div>
+                </div>
+                <p style="margin-top: 12px; font-size: 0.8rem; color: var(--muted);">
+                    Formula: Units = Dose (mg) × (100 ÷ Concentration mg/ml)<br>
+                    Tip: 1ml = 100 units on U-100 insulin syringe
+                </p>
+            </div>
+            
             <!-- Top PDF Buttons - Easy Access -->
             <div class="pdf-buttons animate-in" style="display: flex; gap: 12px; margin: 24px 0; animation-delay: 0.35s;">
                 <button class="btn" id="previewPDFTop" style="flex: 1; background: linear-gradient(135deg, var(--primary-light), var(--primary)); box-shadow: 0 4px 12px rgba(30,64,175,0.3);">
