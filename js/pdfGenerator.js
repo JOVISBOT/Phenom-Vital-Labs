@@ -41,7 +41,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     
     // HEADER SECTION
     // Top bar with logo area
-    doc.setFillColor(...primaryBlue);
+    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.rect(0, 0, pageWidth, 35, 'F');
     
     // Logo text
@@ -57,20 +57,20 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     
     // Protocol title box
     let y = 42;
-    doc.setFillColor(...lightBlue);
+    doc.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
     doc.roundedRect(margin, y, contentWidth, 22, 3, 3, 'F');
     
-    doc.setTextColor(...primaryBlue);
+    doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.text(isBlend ? 'PEPTIDE BLEND PROTOCOL' : 'PEPTIDE PROTOCOL', margin + 5, y + 13);
     
     // Category badge
-    doc.setFillColor(...cream);
-    doc.setDrawColor(...primaryBlue);
+    doc.setFillColor(cream[0], cream[1], cream[2]);
+    doc.setDrawColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.setLineWidth(0.5);
     doc.roundedRect(pageWidth - margin - 55, y + 4, 55, 14, 2, 2, 'FD');
-    doc.setTextColor(...primaryBlue);
+    doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.setFontSize(8);
     doc.text(peptide.category.toUpperCase(), pageWidth - margin - 27, y + 13, { align: 'center' });
     
@@ -80,7 +80,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     doc.roundedRect(margin, y, contentWidth, 28, 3, 3, 'F');
     
     // Section label
-    doc.setTextColor(...gray);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.text('PATIENT PROTOCOL', margin + 5, y + 6);
@@ -96,17 +96,17 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     
     // PRODUCT INFO BOX
     y += 34;
-    doc.setFillColor(...cream);
+    doc.setFillColor(cream[0], cream[1], cream[2]);
     doc.roundedRect(margin, y, contentWidth, 32, 3, 3, 'F');
     
     // Product name (large)
-    doc.setTextColor(...darkBlue);
+    doc.setTextColor(darkBlue[0], darkBlue[1], darkBlue[2]);
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text(peptide.name.toUpperCase(), margin + 5, y + 10);
     
     // Product specs row
-    doc.setTextColor(...gray);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.text(`Half-Life: ${peptide.halfLife || 'N/A'}`, margin + 5, y + 20);
@@ -119,7 +119,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     
     // DOSING PROTOCOL - Three columns
     y += 38;
-    doc.setFillColor(...primaryBlue);
+    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
@@ -148,7 +148,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
         
         if (i === 1) {
             doc.setFillColor(255, 255, 255);
-            doc.setTextColor(...primaryBlue);
+            doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
             doc.setFontSize(7);
             doc.text('RECOMMENDED', x + (colWidth - 3) / 2, y + 14, { align: 'center' });
         }
@@ -181,7 +181,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     doc.setFillColor(250, 250, 250);
     doc.roundedRect(margin, y, contentWidth, 25, 3, 3, 'F');
     
-    doc.setTextColor(...gray);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.text('PROTOCOL SUMMARY', margin + 5, y + 6);
@@ -198,10 +198,10 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     
     // ADMINISTRATION GUIDANCE
     y += 32;
-    doc.setFillColor(...lightBlue);
+    doc.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
     doc.roundedRect(margin, y, contentWidth, 38, 3, 3, 'F');
     
-    doc.setTextColor(...primaryBlue);
+    doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
     doc.text('ADMINISTRATION GUIDANCE', margin + 5, y + 7);
@@ -227,12 +227,12 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     doc.setDrawColor(200, 200, 200);
     doc.roundedRect(margin, y, contentWidth, 22, 3, 3, 'FD');
     
-    doc.setTextColor(...primaryBlue);
+    doc.setTextColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.text('CLINICAL NOTES', margin + 5, y + 6);
     
-    doc.setTextColor(...gray);
+    doc.setTextColor(gray[0], gray[1], gray[2]);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.text('• Bioavailability: 40-90% via subcutaneous route', margin + 5, y + 12);
@@ -275,7 +275,7 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     }
     
     // FOOTER
-    doc.setFillColor(...primaryBlue);
+    doc.setFillColor(primaryBlue[0], primaryBlue[1], primaryBlue[2]);
     doc.rect(0, 280, pageWidth, 17, 'F');
     
     doc.setTextColor(255, 255, 255);
