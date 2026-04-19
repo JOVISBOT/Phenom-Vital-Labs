@@ -452,7 +452,8 @@ export function renderResults(peptide, results, inputs) {
     // Format numbers appropriately
     const formatDose = (dose) => {
         if (isBlend) {
-            return dose < 1 ? (dose * 1000).toFixed(0) : dose.toFixed(1);
+            // Always show in mg, even for small doses
+            return dose.toFixed(2).replace(/\.?0+$/, '');
         }
         return dose.toLocaleString();
     };
