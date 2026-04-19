@@ -1710,9 +1710,9 @@
       "halfLife": "~1 week",
       "freq": "Weekly",
       "cycle": "Continuous",
-      "low": 1,
-      "med": 2,
-      "high": 4,
+      "low": 2,
+      "med": 4,
+      "high": 8,
       "f": 1,
       "wks": 24,
       "pros": [
@@ -1741,12 +1741,13 @@
         "Gallbladder: pancreatitis risk"
       ],
       "inst": [
-        "Week 1-4: 1mg weekly",
-        "Week 5-8: 2mg weekly",
-        "Week 9-12: 4mg weekly",
-        "Week 13+: 8-12mg weekly (therapeutic)",
+        "Week 1-4: 2mg weekly (clinical trial starting dose)",
+        "Week 5-8: 4mg weekly",
+        "Week 9-12: 8mg weekly",
+        "Week 13+: 9-12mg weekly (therapeutic)",
+        "Titrate every 4 weeks for GI tolerance",
         "Monitor resting heart rate - elevation expected",
-        "Cardiovascular clearance recommended before starting"
+        "Cardiovascular clearance recommended"
       ],
       "fixed": true
     },
@@ -1942,9 +1943,9 @@
       "halfLife": "5 days (weekly dosing)",
       "freq": "Weekly",
       "cycle": "Continuous",
-      "low": 7.5,
-      "med": 15,
-      "high": 30,
+      "low": 2.5,
+      "med": 5,
+      "high": 10,
       "f": 1,
       "wks": 20,
       "pros": [
