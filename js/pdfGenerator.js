@@ -152,56 +152,65 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
     doses.forEach((d, i) => {
         const x = margin + (i * doseColW);
         
-        // Card background
+        // Card background - clean like UI
         if (d.rec) {
+            // Featured card - light blue background
             doc.setFillColor(lightBlue[0], lightBlue[1], lightBlue[2]);
             doc.setDrawColor(blue[0], blue[1], blue[2]);
-            doc.setLineWidth(1);
+            doc.setLineWidth(1.5);
         } else {
             doc.setFillColor(255, 255, 255);
-            doc.setDrawColor(220, 220, 220);
-            doc.setLineWidth(0.3);
+            doc.setDrawColor(230, 230, 230);
+            doc.setLineWidth(0.5);
         }
-        doc.roundedRect(x + 2, y, doseColW - 4, 50, 4, 4, 'FD');
+        doc.roundedRect(x + 2, y, doseColW - 4, 55, 6, 6, 'FD');
         
-        // Color strip
+        // Color strip at top
         doc.setFillColor(d.color[0], d.color[1], d.color[2]);
-        doc.rect(x + 2, y, doseColW - 4, 4, 'F');
+        doc.rect(x + 2, y, doseColW - 4, 5, 'F');
         
         // Label
-        doc.setTextColor(d.rec ? blue[0] : textGray[0], textGray[1], textGray[2]);
-        doc.setFontSize(7);
+        doc.setTextColor(d.rec ? blue[0] : textGray[0], d.rec ? blue[1] : textGray[1], d.rec ? blue[2] : textGray[2]);
+        doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.text(d.label, x + doseColW/2, y + 11, { align: 'center' });
+        doc.text(d.label, x + doseColW/2, y + 12, { align: 'center' });
         
+        // RECOMMENDED pill badge (cleaner)
         if (d.rec) {
+            const badgeW = 38;
+            const badgeH = 6;
+            const badgeX = x + (doseColW - badgeW) / 2;
             doc.setFillColor(blue[0], blue[1], blue[2]);
-            doc.roundedRect(x + 25, y + 14, doseColW - 54, 8, 2, 2, 'F');
+            doc.roundedRect(badgeX, y + 15, badgeW, badgeH, 3, 3, 'F');
             doc.setTextColor(255, 255, 255);
-            doc.setFontSize(6);
-            doc.text('RECOMMENDED', x + doseColW/2, y + 20, { align: 'center' });
+            doc.setFontSize(5);
+            doc.setFont('helvetica', 'bold');
+            doc.text('RECOMMENDED', x + doseColW/2, y + 19, { align: 'center' });
         }
         
-        // Dose value
+        // Dose value - large
+        const valY = d.rec ? y + 35 : y + 30;
         doc.setTextColor(navy[0], navy[1], navy[2]);
-        doc.setFontSize(d.rec ? 14 : 12);
+        doc.setFontSize(d.rec ? 16 : 13);
         doc.setFont('helvetica', 'bold');
         
         if (isFixed) {
-            doc.text(d.val.toFixed(2).replace(/\.?0+$/, '') + ' mg', x + doseColW/2, y + 32, { align: 'center' });
-            doc.setFontSize(7);
+            doc.text(d.val.toFixed(2).replace(/\.?0+$/, '') + ' mg', x + doseColW/2, valY, { align: 'center' });
+            doc.setFontSize(8);
             doc.setTextColor(mutedGray[0], mutedGray[1], mutedGray[2]);
-            doc.text('(' + (d.val * 1000).toFixed(0) + ' mcg)', x + doseColW/2, y + 38, { align: 'center' });
+            doc.text('(' + (d.val * 1000).toFixed(0) + ' mcg)', x + doseColW/2, valY + 7, { align: 'center' });
         } else {
-            doc.text(d.val.toLocaleString() + ' mcg', x + doseColW/2, y + 34, { align: 'center' });
+            doc.text(d.val.toLocaleString() + ' mcg', x + doseColW/2, valY, { align: 'center' });
         }
         
-        // Units
+        // Units box at bottom
+        const boxY = y + 47;
         doc.setFillColor(bgGray[0], bgGray[1], bgGray[2]);
-        doc.roundedRect(x + 8, y + 42, doseColW - 20, 6, 2, 2, 'F');
+        doc.roundedRect(x + 10, boxY, doseColW - 24, 7, 3, 3, 'F');
         doc.setTextColor(textGray[0], textGray[1], textGray[2]);
-        doc.setFontSize(6);
-        doc.text('Draw ' + d.units + ' units', x + doseColW/2, y + 46, { align: 'center' });
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Draw ' + d.units + ' units', x + doseColW/2, boxY + 5, { align: 'center' });
     });
     
     // ========== PROTOCOL DETAILS TABLE ==========
