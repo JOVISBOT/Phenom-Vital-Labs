@@ -252,66 +252,122 @@ export function generatePDF(peptide, results, inputs, previewMode = false) {
         doc.text('• ' + c.substring(0, 40), rightX + 3, ry + 6 + (i * 5.5));
     });
     
-    // ===== SYRINGE GUIDE =====
+    // ===== SYRINGE GUIDE - Styled like UI =====
     y = Math.max(y + 20, ry + 42);
     
     doc.setTextColor(navy[0], navy[1], navy[2]);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.text('SYRINGE GUIDE', margin, y);
-    y += 5;
+    y += 6;
     
-    // Draw syringe
-    const syringeW = contentW * 0.6;
-    const syringeH = 22;
+    // Background box for syringe
+    const guideW = contentW;
+    const guideH = 28;
+    doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(226, 232, 240);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(margin, y, guideW, guideH, 3, 3, 'FD');
     
-    // Syringe barrel
-    doc.setFillColor(white[0], white[1], white[2]);
-    doc.setDrawColor(gray[0], gray[1], gray[2]);
+    // Syringe dimensions (inside the box)
+    const syrY = y + 8;
+    const syrH = 14;
+    const syrX = margin + 15;
+    const syrW = guideW - 100;
+    
+    // Needle tip
+    doc.setDrawColor(59, 130, 246);
     doc.setLineWidth(0.5);
-    doc.roundedRect(margin, y, syringeW, syringeH, 2, 2, 'FD');
+    doc.line(syrX + syrW, syrY + syrH/2, syrX + syrW + 6, syrY + syrH/2);
     
-    // Measurement lines
-    for (let i = 0; i <= 5; i++) {
-        const x = margin + 10 + (i * (syringeW - 20) / 5);
-        doc.setDrawColor(gray[0], gray[1], gray[2]);
-        doc.setLineWidth(0.2);
-        doc.line(x, y + 5, x, y + 17);
-        doc.setTextColor(slate[0], slate[1], slate[2]);
-        doc.setFontSize(4);
-        doc.text((i * 10) + '', x, y + 20, { align: 'center' });
+    // Barrel outline
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(37, 99, 235);
+    doc.setLineWidth(0.8);
+    doc.roundedRect(syrX, syrY, syrW, syrH, 1, 1, 'FD');
+    
+    // Scale marks (0, 10, 20, 30, 40, 50)
+    const scaleX = syrX + 8;
+    const scaleW = syrW - 16;
+    const steps = 5;
+    
+    doc.setDrawColor(180, 180, 180);
+    doc.setLineWidth(0.3);
+    for (let i = 0; i <= steps; i++) {
+        const markX = scaleX + (i * scaleW / steps);
+        doc.line(markX, syrY + 3, markX, syrY + syrH - 3);
+        
+        // Numbers
+        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(5);
+        doc.setFont('helvetica', 'normal');
+        doc.text((i * 10) + '', markX, syrY + syrH + 3, { align: 'center' });
     }
     
-    // Mark positions for each dose
+    // Draw filled sections for each dose (stacked from left)
+    const fillY = syrY + 2;
+    const fillH = syrH - 4;
+    
     configs.forEach((c, i) => {
         const pct = Math.min(c.units / 50, 1);
-        const pos = margin + 10 + (pct * (syringeW - 20));
-        const colors = [green, blue, amber];
+        const fillW = pct * scaleW;
+        const colors = [
+            [34, 197, 94],   // green
+            [59, 130, 246],  // blue
+            [245, 158, 11]   // amber
+        ];
         
+        // Fill from left
         doc.setFillColor(colors[i][0], colors[i][1], colors[i][2]);
-        doc.circle(pos, y + 11, 2.5, 'F');
-        doc.setTextColor(white[0], white[1], white[2]);
-        doc.setFontSize(4);
-        doc.text(c.units + '', pos, y + 12, { align: 'center' });
+        doc.roundedRect(scaleX, fillY, fillW, fillH, 1, 1, 'F');
+        
+        // Plunger line at end of fill
+        doc.setDrawColor(colors[i][0] - 20, colors[i][1] - 20, colors[i][2] - 20);
+        doc.setLineWidth(1);
+        const endX = scaleX + fillW;
+        doc.line(endX, fillY - 1, endX, fillY + fillH + 1);
+        
+        // Plunger handle (T shape)
+        doc.setFillColor(30, 41, 59);
+        doc.rect(endX - 3, fillY - 3, 6, 2, 'F'); // crossbar
+        doc.rect(endX - 1, fillY - 6, 2, 5, 'F'); // handle
     });
     
-    // Syringe labels
-    doc.setTextColor(slate[0], slate[1], slate[2]);
+    // "50U Insulin Syringe" label in center
+    doc.setTextColor(150, 150, 150);
     doc.setFontSize(6);
-    doc.text('50 Unit Syringe', margin, y - 2);
+    doc.setFont('helvetica', 'italic');
+    doc.text('50U Insulin Syringe', syrX + syrW/2, syrY + syrH/2 + 1, { align: 'center' });
     
-    // Key
-    const keyX = margin + syringeW + 8;
+    // Legend on right
+    const legX = margin + guideW - 65;
+    const legY = y + 6;
+    
+    doc.setTextColor(navy[0], navy[1], navy[2]);
+    doc.setFontSize(6);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Draw Amounts:', legX, legY);
+    
     configs.forEach((c, i) => {
-        const colors = [green, blue, amber];
+        const colors = [
+            [34, 197, 94],
+            [59, 130, 246],
+            [245, 158, 11]
+        ];
+        const ly = legY + 6 + (i * 6);
+        
+        // Color box
         doc.setFillColor(colors[i][0], colors[i][1], colors[i][2]);
-        doc.circle(keyX, y + 5 + (i * 7), 2, 'F');
+        doc.roundedRect(legX, ly - 2, 8, 4, 1, 1, 'F');
+        
+        // Text
         doc.setTextColor(slate[0], slate[1], slate[2]);
         doc.setFontSize(5);
-        doc.text(c.label + ': ' + c.units + 'U', keyX + 5, y + 6.5 + (i * 7));
+        doc.setFont('helvetica', 'normal');
+        doc.text(c.label + ': ' + c.units + ' units', legX + 11, ly + 0.5);
     });
     
-    y += 30;
+    y += 34;
     
     // ===== IMPORTANT =====
     doc.setFillColor(254, 242, 242);
