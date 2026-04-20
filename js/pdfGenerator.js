@@ -171,10 +171,14 @@ export function generatePDF(peptide, results, inputs, previewMode) {
             const fillW = pct * (barrelW - 8);
             
             if (fillW > 0) {
-                doc.setFillColor(c.color[0], c.color[1], c.color[2]);
-                doc.setAlpha(0.7);
+                // Fill with lighter version of color (no alpha support in jsPDF)
+                const lighterColor = [
+                    Math.min(255, c.color[0] + 100),
+                    Math.min(255, c.color[1] + 100),
+                    Math.min(255, c.color[2] + 100)
+                ];
+                doc.setFillColor(lighterColor[0], lighterColor[1], lighterColor[2]);
                 doc.roundedRect(barrelX + 4, barrelY + 2, fillW, barrelH - 4, 0.5, 0.5, 'F');
-                doc.setAlpha(1);
                 
                 // Plunger
                 doc.setFillColor(80, 80, 80);
