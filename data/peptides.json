@@ -42,7 +42,8 @@
         "Monitor for nosebleeds",
         "Cycle 4-8 weeks then break",
         "Combine with resistance training"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "adamax",
@@ -86,7 +87,8 @@
         "Morning dosing preferred",
         "Cycle 3 months on",
         "1 month off optional"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "adipotide",
@@ -132,7 +134,8 @@
         "Hydration critical",
         "Cycle limited to 4-6 weeks maximum",
         "Medical supervision mandatory"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "aicar",
@@ -178,7 +181,8 @@
         "Combine with exercise for synergistic effects",
         "Cycle 8 weeks on",
         "4 weeks off"
-      ]
+      ],
+      "vialSize": 50
     },
     {
       "id": "aod9604",
@@ -224,7 +228,8 @@
         "Before bed (optional third dose)",
         "Subcutaneous abdominal fat preferred",
         "Works best with caloric deficit and exercise"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "ara290",
@@ -268,7 +273,8 @@
         "Commit to 12 weeks for full effects",
         "Can combine with other nerve support",
         "Monitor pain levels and nerve function"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "b733",
@@ -312,7 +318,8 @@
         "Commit to 12-week minimum protocol",
         "Monitor for tissue changes",
         "Combine with other anti-fibrotics if indicated"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "blend_gh1",
@@ -349,7 +356,8 @@
         "Inject once daily before bed on empty stomach",
         "Evening dosing optimal for natural GH pulse timing",
         "Empty stomach: wait 30 min after injection before eating"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "blend_heal",
@@ -469,8 +477,9 @@
         "Morning on empty stomach",
         "30 minutes before eating",
         "Can be stacked with TB-500 for enhanced healing",
-        "Store reconstituted vial refrigerated (2-8°C)"
-      ]
+        "Store reconstituted vial refrigerated (2-8\u00c2\u00b0C)"
+      ],
+      "vialSize": 5
     },
     {
       "id": "cagrilintide",
@@ -515,7 +524,8 @@
         "Combine with semaglutide for maximum effect",
         "Take on same day each week",
         "Monitor for nausea - may need antiemetics initially"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "cagrisema",
@@ -559,7 +569,8 @@
         "Start low and titrate every 2-4 weeks",
         "Take on same day each week",
         "Monitor for nausea - may need antiemetics initially"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "cjc1295",
@@ -604,7 +615,8 @@
         "Best stacked with GHRP for enhanced GH release",
         "Evening injection may improve sleep",
         "Rotate injection sites weekly"
-      ]
+      ],
+      "vialSize": 2
     },
     {
       "id": "cjc1295_nodac",
@@ -650,7 +662,8 @@
         "Empty stomach 30min before eating",
         "Subcutaneous abdominal injection",
         "Creates pulsatile GH release - natural pattern"
-      ]
+      ],
+      "vialSize": 2
     },
     {
       "id": "cortagen",
@@ -694,7 +707,8 @@
         "Morning dosing (adrenal support timing)",
         "Can combine with other bioregulators",
         "Monitor stress response and energy"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "crystagen",
@@ -738,7 +752,8 @@
         "Can combine with other bioregulators",
         "Take during immune challenge periods",
         "Monitor immune function markers"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "dermorphin",
@@ -781,7 +796,8 @@
         "Extreme potency requires caution",
         "Legal compliance mandatory",
         "Professional research use only"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "dihexa",
@@ -825,7 +841,8 @@
         "Consistent daily use for 8-12 weeks",
         "Cycle off 4 weeks before repeating",
         "Monitor cognitive clarity and memory"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "dsip",
@@ -873,7 +890,8 @@
         "Can combine with other sleep hygiene practices",
         "Cycle 4 weeks on",
         "then assess need for continuation"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "dulaglutide",
@@ -921,7 +939,8 @@
         "Titrate from 0.75mg to 1.5mg to 3mg",
         "Take with food if nausea occurs",
         "Monitor blood glucose and weight"
-      ]
+      ],
+      "vialSize": 1.5
     },
     {
       "id": "epo",
@@ -965,7 +984,8 @@
         "Monitor hemoglobin/hematocrit",
         "Target Hgb 10-12 g/dL",
         "Medical supervision required"
-      ]
+      ],
+      "vialSize": 3000
     },
     {
       "id": "follistatin",
@@ -1011,7 +1031,8 @@
         "Cycle length typically 10-12 weeks",
         "Often stacked with IGF-1 for synergistic growth",
         "Monitor for tendon issues as muscles grow faster"
-      ]
+      ],
+      "vialSize": 1
     },
     {
       "id": "foxo4",
@@ -1056,7 +1077,8 @@
         "Higher doses less frequently may be optimal",
         "Combine with other longevity strategies",
         "Monitor for improved energy/recovery"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "frag1723",
@@ -1098,7 +1120,8 @@
         "Pre-workout for fat oxidation",
         "Combine with diet and exercise",
         "Morning and evening dosing"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "ghrp2",
@@ -1144,7 +1167,8 @@
         "Prepare for significant hunger after dosing",
         "Cycle 8-12 weeks maximum before break",
         "Consider P5P supplement to manage prolactin"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "ghrp6",
@@ -1191,7 +1215,8 @@
         "Best for bulking phases",
         "not cutting",
         "Consider if struggling to consume enough calories"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "glutathione",
@@ -1235,7 +1260,8 @@
         "Morning dosing may enhance detox",
         "Combine with vitamin C for synergy",
         "For skin: higher doses (1500-2000mcg)"
-      ]
+      ],
+      "vialSize": 200
     },
     {
       "id": "gonadorelin",
@@ -1278,7 +1304,8 @@
         "Or continuous pump for fertility",
         "Short courses (2 weeks max)",
         "Monitor testosterone and LH/FSH"
-      ]
+      ],
+      "vialSize": 2
     },
     {
       "id": "hcg",
@@ -1325,7 +1352,8 @@
         "Higher doses (1000 IU) for PCT",
         "Monitor testosterone and estradiol",
         "Keep refrigerated after reconstitution"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "hexarelin",
@@ -1372,7 +1400,8 @@
         "Cardioprotective benefits require consistent use",
         "Subcutaneous or intramuscular both effective",
         "Best stacked with GHRH for amplified GH release"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "hgh",
@@ -1418,7 +1447,8 @@
         "Monitor IGF-1 levels quarterly",
         "Minimum 6-month commitment for benefits",
         "Requires physician supervision"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "hmg",
@@ -1461,7 +1491,8 @@
         "Use during PCT or fertility treatment",
         "Monitor testosterone and estrogen",
         "Cycle 3-6 weeks maximum"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "melanotan2",
@@ -1509,7 +1540,8 @@
         "Subcutaneous injection",
         "Start LOW to assess nausea (250mcg first dose)",
         "Sun exposure accelerates tanning once started"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "motsc",
@@ -1556,7 +1588,8 @@
         "Cycle 4 weeks on",
         "4 weeks off",
         "Consider with other mitochondrial support supplements"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "nadplus",
@@ -1604,7 +1637,8 @@
         "Large injection volume - split doses if needed",
         "Combine with TMG or methyl donors",
         "Cycling optional but continuous OK"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "pegmgf",
@@ -1650,7 +1684,8 @@
         "Intramuscular injection (not subcutaneous)",
         "Typically 2-3 times per week per muscle group",
         "Can combine with systemic IGF-1 or GH peptides"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "pt141",
@@ -1699,7 +1734,8 @@
         "Can increase to 1000-1500mcg if tolerated",
         "Take with anti-nausea medication if needed",
         "Effects last 2-4 hours typically"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "retatrutide",
@@ -1749,7 +1785,8 @@
         "Monitor resting heart rate - elevation expected",
         "Cardiovascular clearance recommended"
       ],
-      "fixed": true
+      "fixed": true,
+      "vialSize": 5
     },
     {
       "id": "sermorelin",
@@ -1793,7 +1830,8 @@
         "Rotate injection sites to prevent lipodystrophy",
         "Effects cumulative - commit to 3+ months",
         "Can be combined with Ipamorelin for enhanced effect"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "tb500",
@@ -1839,7 +1877,8 @@
         "glute)",
         "Best stacked with BPC-157 for acute injuries",
         "Can continue longer cycles with 4-week breaks"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "tesamorelin",
@@ -1885,7 +1924,8 @@
         "Monitor injection sites for reactions",
         "Combine with diet/exercise for optimal VAT reduction",
         "Regular monitoring of IGF-1 and glucose recommended"
-      ]
+      ],
+      "vialSize": 5
     },
     {
       "id": "thymalin",
@@ -1932,7 +1972,8 @@
         "Often stacked with Epitalon for longevity synergy",
         "Subcutaneous injection",
         "Best in morning on empty stomach"
-      ]
+      ],
+      "vialSize": 10
     },
     {
       "id": "tirzepatide",
@@ -1982,7 +2023,8 @@
         "Subcutaneous injection weekly",
         "Monitor for GI tolerance at each escalation"
       ],
-      "fixed": true
+      "fixed": true,
+      "vialSize": 5
     }
   ]
 }
