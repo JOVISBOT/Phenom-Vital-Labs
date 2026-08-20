@@ -1,5 +1,74 @@
 # Changelog
 
+## 2.4.0 - 2026-08-20
+
+Growth work, not correctness work: the calculator was right and invisible. It had
+one indexable URL, no measurement of any kind, and nothing that turned a visit
+into a way of reaching that person again.
+
+### 44 compounds came out from behind the dropdown
+
+Every peptide now has a static page at `/p/<id>/`, with a directory at `/p/`.
+Each carries its own title, meta description, canonical, breadcrumb and FAQ
+structured data, plus content that answers the question without JavaScript
+running: the dose tiers, the arithmetic written out, a reconstitution table
+showing where the dose lands at 1 / 2 / 3 / 5 ml of bacteriostatic water, cycle
+and vial maths, mechanism, warnings, and links to related compounds.
+
+The reconstitution table is the part that did not exist anywhere before, on this
+site or in the app - it answers "how far up the barrel", which is the question
+someone standing at the fridge actually has.
+
+**None of those numbers are written by hand.** `tools/build-pages.js` renders them
+through the same `js/calculator.js` the app uses, at build time. `npm test` fails
+if the committed HTML no longer matches `data/peptides.json`, so a page cannot
+quietly keep showing an old dose while looking authoritative. Proven by tampering
+with a dose and watching two independent tests fail.
+
+`sitemap.xml` went from 1 URL to 46.
+
+### A bucketing bug, found by looking at the rendered directory
+
+The theme grouping matched `gh` as a bare substring, and **"weight" contains
+"gh"** - so Cagrisema, a GLP-1/amylin fat-loss combo, was filed under growth
+hormone. Anchored the short tokens; `nad` would have done the same thing to
+goNADorelin. Pinned with a regression test naming each case.
+
+### Analytics, cookie-free and provider-agnostic (`js/analytics.js`)
+
+Which peptide people come for, whether they reach a result, whether anyone takes
+the PDF - none of it was measurable. One module now speaks Plausible,
+GoatCounter, Cloudflare Web Analytics and Umami; the provider is one line in
+`js/config.js`. No cookies, so no consent banner, which is why Google Analytics
+is not among them.
+
+Body weight, age and email addresses are never sent - they are health data about
+a named person, where a peptide id is a catalogue fact. A test fails the build if
+an event ever picks them up. Do Not Track and Global Privacy Control are honoured.
+
+### Email capture on the PDF export (`js/emailCapture.js`)
+
+The protocol sheet is the one thing here a visitor wants to keep, so the ask is
+attached to it rather than fired at a page load. Soft-gated by default: a "no
+thanks" link, and the download proceeds regardless - declined, network failure or
+blocked endpoint. Asked once, remembered locally. The preview button is never
+gated.
+
+### Ships switched off, on purpose
+
+Analytics and email capture both need an account only the owner can create, so
+both are inert until an id is pasted into `js/config.js`. Nothing is sent, no
+third-party script loads, and no visitor is ever asked for an address there is
+nowhere to store. A half-wired analytics call that silently fails is worse than
+none: it looks like measurement while measuring nothing. Setup for all three
+switches - plus the custom domain - is in `GROWTH.md`.
+
+### Verified
+
+58 tests (was 35). Driven in Chromium at desktop and phone width: zero console
+errors, no horizontal overflow, the CTA lands on a calculated result with the
+right draw, and the email dialog opens, validates, stores and does not re-ask.
+
 ## 2.3.0 - 2026-08-20
 
 Closes the last fixable item in `data/DATA-REVIEW.md` - the vial-size catalogue

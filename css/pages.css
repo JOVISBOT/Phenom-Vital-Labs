@@ -1,0 +1,78 @@
+/* Styles for the generated reference pages (/p/ and /p/<id>/).
+   Kept out of styles.css so the calculator's audited stylesheet is untouched;
+   these pages reuse its variables, card, badge and pros/cons classes. */
+
+.brand-text{text-decoration:none;color:var(--text)}
+.crumbs{font-size:0.82rem;color:var(--muted);margin-bottom:24px}
+.crumbs a{color:var(--primary);text-decoration:none}
+.crumbs a:hover{text-decoration:underline}
+.crumbs span[aria-hidden]{margin:0 6px;color:var(--border)}
+
+.intro-left{text-align:left;margin-bottom:20px}
+.peptide-page h2{font-size:1.25rem;font-weight:700;margin-bottom:14px}
+.peptide-page h3{font-size:0.95rem;font-weight:700;margin:18px 0 8px}
+.peptide-page p{color:var(--muted);font-size:0.92rem;line-height:1.7}
+.peptide-page .card{padding:28px}
+
+.answer-card{border:2px solid var(--primary)}
+.answer-lede{font-size:1.05rem;color:var(--text);line-height:1.7;margin-bottom:14px}
+.answer-lede strong{color:var(--primary)}
+.working{background:#f8fafc;border-left:3px solid var(--primary-light);border-radius:6px;padding:12px 14px;margin-bottom:20px}
+.working code{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;font-size:0.86rem;color:var(--text)}
+
+.data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.88rem}
+.data-table caption{caption-side:top;text-align:left;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--primary);font-weight:600;padding-bottom:10px}
+.data-table th,.data-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.data-table thead th{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);font-weight:600;border-bottom:2px solid var(--border)}
+.data-table tbody th{font-weight:600;color:var(--text)}
+.data-table tbody th a{color:var(--primary);text-decoration:none}
+.data-table tbody th a:hover{text-decoration:underline}
+.data-table tr.is-featured{background:#eff6ff}
+.data-table tr.is-featured th{color:var(--primary)}
+.flag{color:var(--danger);font-weight:600}
+
+.component-list{background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;padding:16px;margin-bottom:20px}
+.component-list h3{margin:0 0 10px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--primary)}
+.component-list ul{list-style:none}
+.component-list li{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:0.88rem;color:var(--muted)}
+.component-list li strong{color:var(--text);font-weight:600}
+.component-list .note{margin-top:8px}
+
+.cta{margin-top:8px;text-decoration:none}
+.note{font-size:0.8rem;color:var(--muted);line-height:1.6;margin-top:12px}
+.note a{color:var(--primary)}
+
+.facts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.facts>div{background:#f8fafc;border-radius:10px;padding:12px 14px}
+.facts dt{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);font-weight:600;margin-bottom:4px}
+.facts dd{font-size:0.95rem;font-weight:600;color:var(--text)}
+
+.pros-cons{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.pc-list{list-style:none;margin:0}
+.pc-list li{position:relative;padding:5px 0 5px 18px;font-size:0.86rem;color:var(--muted);line-height:1.55}
+.pc-list li::before{content:'';position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:var(--primary-light)}
+
+.faq details{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.faq details[open]{border-color:var(--primary-light);background:#f8fafc}
+.faq summary{font-weight:600;font-size:0.92rem;cursor:pointer;color:var(--text)}
+.faq summary::marker{color:var(--primary)}
+.faq details p{margin-top:10px}
+
+.related{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.related li{background:#f8fafc;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.related a{color:var(--primary);font-weight:600;font-size:0.92rem;text-decoration:none}
+.related a:hover{text-decoration:underline}
+.related span{font-size:0.75rem;color:var(--muted)}
+
+footer a{color:var(--primary)}
+
+@media(max-width:640px){
+    .facts,.pros-cons,.related{grid-template-columns:1fr}
+    .data-table{font-size:0.82rem}
+    .data-table th,.data-table td{padding:8px 8px}
+    .peptide-page .card{padding:22px 18px}
+}
+
+/* directory teaser on the calculator home page */
+.directory-teaser h2{font-size:1.25rem;font-weight:700;margin-bottom:10px}
+.directory-teaser p{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:18px}

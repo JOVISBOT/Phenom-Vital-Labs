@@ -187,3 +187,17 @@ footer strong{color:var(--primary)}
 @media(max-width:900px){.form-grid{grid-template-columns:repeat(2,1fr)}.info-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){.container{padding:24px 16px}.card{padding:24px 20px}.dose-grid,.pros-cons-grid{grid-template-columns:1fr}.intro h1{font-size:1.6rem}.dose-card.featured{transform:none}}
 @media(max-width:500px){.form-grid,.info-grid{grid-template-columns:1fr}.pdf-buttons .btn{min-width:100%}}
+
+/* --- email capture dialog ------------------------------------------------ */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;animation:fadeIn 0.2s ease-out}
+.modal{background:var(--card);border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,0.25);padding:32px;max-width:440px;width:100%;animation:slideIn 0.25s ease-out}
+.modal h2{font-size:1.25rem;font-weight:700;margin-bottom:10px}
+.modal p{font-size:0.88rem;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.modal-form{display:flex;flex-direction:column}
+.modal-label{font-size:0.75rem;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
+.modal input[type=email]{width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:12px;font-size:0.95rem;font-family:inherit;margin-bottom:14px}
+.modal input[type=email]:focus-visible{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
+.modal-error{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:14px;color:var(--danger);font-size:0.85rem}
+.modal-skip{background:none;border:none;color:var(--muted);font-family:inherit;font-size:0.85rem;padding:14px 0 0;cursor:pointer;text-decoration:underline}
+.modal-skip:hover{color:var(--text)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}

@@ -11,6 +11,8 @@ import {
     showInlineError, updateVialSizeForPeptide, setCustomVial, readVialSize
 } from './ui.js';
 import { generatePDF } from './pdfGenerator.js';
+import { track } from './analytics.js';
+import { requestEmail } from './emailCapture.js';
 
 let currentPeptide = null;
 let lastResults = null;
@@ -30,7 +32,10 @@ async function init() {
         populateAgeOptions();
 
         $('calculateBtn').addEventListener('click', handleCalculate);
-        $('peptide').addEventListener('change', () => handlePeptideChange());
+        $('peptide').addEventListener('change', () => {
+            handlePeptideChange();
+            if (currentPeptide) track('peptide_selected', { peptide: currentPeptide.id });
+        });
 
         // Changing the vial or the water changes the answer, so re-run rather
         // than leaving a stale result on screen next to the new inputs.
@@ -112,6 +117,15 @@ async function handleCalculate() {
 
     hideLoading();
     renderResults(currentPeptide, lastResults, inputs);
+
+    // What was asked for, not who asked. Weight and age are deliberately absent.
+    track('calculate', {
+        peptide: currentPeptide.id,
+        category: currentPeptide.category,
+        reconMl: inputs.reconMl,
+        syringe: inputs.syringe,
+        overflow: lastResults.overflow.med ? 'yes' : 'no'
+    });
     writeUrl(inputs);
     wireResultButtons();
 }
@@ -120,7 +134,17 @@ async function handleCalculate() {
  * Attach handlers to the buttons that only exist once results are rendered.
  */
 function wireResultButtons() {
-    const pdf = preview => () => generatePDF(currentPeptide, lastResults, lastInputs, preview);
+    const pdf = preview => async () => {
+        track(preview ? 'pdf_preview' : 'pdf_download', { peptide: currentPeptide.id });
+
+        // Preview stays frictionless; the ask rides the download only.
+        if (!preview) {
+            const { proceed } = await requestEmail({ source: 'pdf', peptide: currentPeptide.id });
+            if (!proceed) return;
+        }
+
+        generatePDF(currentPeptide, lastResults, lastInputs, preview);
+    };
 
     for (const id of ['downloadPDF', 'downloadPDFTop']) {
         const btn = $(id);
@@ -136,6 +160,7 @@ function wireResultButtons() {
         copy.onclick = async () => {
             try {
                 await navigator.clipboard.writeText(window.location.href);
+                track('copy_link', { peptide: currentPeptide.id });
                 copy.textContent = 'Link copied';
                 setTimeout(() => { copy.textContent = 'Copy link'; }, 2000);
             } catch {
