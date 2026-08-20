@@ -29,8 +29,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=30">
-    <link rel="stylesheet" href="css/pages.css?v=30">
+    <link rel="stylesheet" href="css/styles.css?v=31">
+    <link rel="stylesheet" href="css/pages.css?v=31">
+    <link rel="stylesheet" href="css/theme.css?v=31">
+
+    <!-- Set the theme before first paint. Doing this from a module would flash
+         white first. Mirrors js/theme.js THEME_BOOT; the test asserts they agree. -->
+    <script>(function(){try{var s=localStorage.getItem('pvl-theme');var d=s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
             integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk"
@@ -41,7 +46,13 @@
     <header>
         <div class="header-inner">
             <div class="brand-text"><span>Phenom</span> Vital Labs</div>
-            <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+            <div class="header-actions">
+                <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+                <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -135,6 +146,6 @@
         <a href="p/">All peptides</a>
     </footer>
 
-    <script type="module" src="js/main.js?v=30"></script>
+    <script type="module" src="js/main.js?v=31"></script>
 </body>
 </html>

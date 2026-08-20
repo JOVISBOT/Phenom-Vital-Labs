@@ -632,7 +632,7 @@ function doseCard(level, cfg, results) {
 
     return `
         <div class="dose-card ${level} ${cfg.featured ? 'featured' : ''} animate-in" style="animation-delay: ${cfg.delay}s;">
-            ${cfg.featured ? '<div class="recommended-badge">Recommended</div>' : ''}
+            ${cfg.featured ? `<div class="recommended-badge">${esc(cfg.badge || 'Recommended')}</div>` : ''}
             <div class="dose-label ${level}">${cfg.label}</div>
             <div class="mcg-box">
                 <div class="mcg-label">${cfg.sublabel}</div>
@@ -655,11 +655,29 @@ export function renderResults(peptide, results, inputs) {
     const container = document.getElementById('results');
     const u = results.vialUnit;
 
-    const cards = [
-        ['low', { label: 'Conservative', sublabel: 'Starting Dose', delay: 0.2, hint: 'Best for first-time users' }],
-        ['med', { label: 'Standard', sublabel: 'Recommended Dose', delay: 0.3, featured: true }],
-        ['high', { label: 'Advanced', sublabel: 'Maximum Dose', delay: 0.4, hint: 'For experienced users' }]
-    ].map(([level, cfg]) => doseCard(level, cfg, results)).join('');
+    // Three tiers are a ladder for 43 records and are not for tesamorelin,
+    // whose low/med/high are the labelled daily doses of three different
+    // formulations. Its own instructions said "not an escalating ladder" while
+    // the cards above them read CONSERVATIVE / Best for first-time users ->
+    // ADVANCED / For experienced users. The data says which it is.
+    const variants = peptide.tiersAreVariants === true;
+    const vLabel = peptide.tierLabels || {};
+    const cards = (variants
+        ? [
+            ['low', { label: vLabel.low || 'Variant', sublabel: 'Labelled Dose', delay: 0.2 }],
+            // "Recommended" would contradict the note directly above it, which
+            // says moving up one is not a stronger protocol.
+            ['med', { label: vLabel.med || 'Variant', sublabel: 'Labelled Dose', delay: 0.3, featured: true, badge: 'Shown above' }],
+            ['high', { label: vLabel.high || 'Variant', sublabel: 'Labelled Dose', delay: 0.4 }]
+        ]
+        : [
+            ['low', { label: 'Conservative', sublabel: 'Starting Dose', delay: 0.2, hint: 'Best for first-time users' }],
+            ['med', { label: 'Standard', sublabel: 'Recommended Dose', delay: 0.3, featured: true }],
+            ['high', { label: 'Advanced', sublabel: 'Maximum Dose', delay: 0.4, hint: 'For experienced users' }]
+        ]).map(([level, cfg]) => doseCard(level, cfg, results)).join('');
+
+    const tierNote = variants && peptide.tierNote
+        ? `<p class="blend-note tier-note">${esc(peptide.tierNote)}</p>` : '';
 
     const medPooled = (results.vialsPooled && results.vialsPooled.med) || 1;
     const medConc = (results.concentrationAt && results.concentrationAt.med) || results.concentration;
@@ -684,6 +702,43 @@ export function renderResults(peptide, results, inputs) {
             the per-peptide amount is shown under each.
         </p>` : '';
 
+    // The number a visitor came for, first and at a size you can read holding a
+    // vial. It used to sit ~1,400px down a 4,100px page on desktop and past
+    // 3,000px on a phone, under the form, the protocol summary and three tier
+    // cards. Nothing below changed; this is the same med-tier figure promoted.
+    const heroOverflow = !results.noRecon && (results.overflow.med || results.exceedsVial.med);
+    const heroSplit = results.components && results.components.med
+        ? `<div class="answer-hero-split">${results.components.med
+            .map(c => `<span>${esc(c.name)} ${trim(c.mcg, 1)} mcg</span>`).join('')}</div>`
+        : '';
+    const heroHtml = results.noRecon
+        ? `
+            <div class="answer-hero" id="answer">
+                <div class="answer-hero-label">Your dose</div>
+                <div class="answer-hero-value">${esc(formatDose(results.doses.med, results.doseUnit))}</div>
+                <div class="answer-hero-dose">pre-filled ${esc(results.device)} &mdash; nothing to draw</div>
+                <div class="answer-hero-meta">
+                    ${results.vialSize}${u} per ${esc(results.device)} &middot; ${esc(peptide.freq)}
+                </div>
+                ${heroSplit}
+            </div>`
+        : `
+            <div class="answer-hero${heroOverflow ? ' is-overflow' : ''}" id="answer">
+                <div class="answer-hero-label">Draw</div>
+                <div class="answer-hero-value">${formatUnits(results.syringeUnits.med)}<span class="unit">units</span></div>
+                <div class="answer-hero-dose">= ${esc(formatDose(results.doses.med, results.doseUnit))} of ${esc(peptide.name)}</div>
+                ${heroSplit}
+                <div class="answer-hero-meta">
+                    ${medPooled > 1 ? `${medPooled} &times; ` : ''}${results.vialSize}${u} vial${medPooled > 1 ? 's pooled' : ''}
+                    &middot; ${results.reconMl} ml bacteriostatic water
+                    &middot; ${trim(medConc, 2)} ${u}/ml
+                    &middot; ${results.syringe}U syringe
+                </div>
+                ${heroOverflow ? `<div class="answer-hero-warn">${results.exceedsVial.med
+                    ? 'This dose needs more peptide than one vial holds - adding water will not fix it.'
+                    : `More than a ${results.syringe}U barrel holds - split it into more than one injection.`}</div>` : ''}
+            </div>`;
+
     const html = `
         <div class="results" style="display: block;">
             <div class="peptide-header animate-in">
@@ -692,7 +747,9 @@ export function renderResults(peptide, results, inputs) {
                 ${evidenceHtml}
             </div>
 
-            <div class="summary-card animate-in" style="animation-delay: 0.1s;">
+            ${heroHtml}
+
+            <div class="summary-card animate-in" style="animation-delay: 0.03s;">
                 <div class="summary-header">
                     <div class="summary-icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -721,12 +778,13 @@ export function renderResults(peptide, results, inputs) {
                 ${deviceNote}
                 ${multiVialNote}
                 ${componentNote}
+                ${tierNote}
             </div>
 
             <div class="dose-grid">${cards}</div>
 
             ${results.noRecon ? `
-            <div class="calc-box animate-in" style="animation-delay: 0.45s;">
+            <div class="calc-box animate-in" style="animation-delay: 0.14s;">
                 <h4>💉 No Draw To Calculate</h4>
                 <p class="calc-footnote">
                     ${esc(peptide.name)} is dispensed as a pre-filled ${esc(results.device)} at a fixed strength.
@@ -736,7 +794,7 @@ export function renderResults(peptide, results, inputs) {
                     reconstitution volume and syringe units belongs to lyophilised vials and does not apply here.
                 </p>
             </div>` : `
-            <div class="syringe-visual animate-in" style="animation-delay: 0.45s;">
+            <div class="syringe-visual animate-in" style="animation-delay: 0.14s;">
                 <h4>💉 Syringe Draw Guide (Recommended Dose)</h4>
                 ${generateSyringeSVG(results.syringeUnits.med, results.syringe)}
                 <p class="syringe-caption">
@@ -745,7 +803,7 @@ export function renderResults(peptide, results, inputs) {
                 </p>
             </div>
 
-            <div class="calc-box animate-in" style="animation-delay: 0.48s;">
+            <div class="calc-box animate-in" style="animation-delay: 0.15s;">
                 <h4>🧮 Your Calculation</h4>
                 <ol class="calc-steps">
                     <li>Reconstitute: <strong>${medPooled > 1 ? `${medPooled} &times; ${results.vialSize}${u}` : `${results.vialSize}${u}`}</strong> ${medPooled > 1 ? 'pooled' : 'vial'} &divide; <strong>${results.reconMl} ml</strong> water = <strong>${trim(medConc, 2)} ${u}/ml</strong>${medPooled > 1 ? ' <em>(the same water dissolves every vial)</em>' : ''}</li>
@@ -759,13 +817,13 @@ export function renderResults(peptide, results, inputs) {
                 </p>
             </div>`}
 
-            <div class="pdf-buttons animate-in" style="animation-delay: 0.5s;">
+            <div class="pdf-buttons animate-in" style="animation-delay: 0.16s;">
                 <button class="btn" id="previewPDFTop" type="button">Preview PDF</button>
                 <button class="btn" id="downloadPDFTop" type="button">Download PDF</button>
                 <button class="btn btn-secondary" id="copyLink" type="button">Copy link</button>
             </div>
 
-            <div class="info-grid animate-in" style="animation-delay: 0.55s;">
+            <div class="info-grid animate-in" style="animation-delay: 0.18s;">
                 <div class="info-card">
                     <div class="info-card-icon" aria-hidden="true">⏱️</div>
                     <h4>Half-Life</h4>
@@ -796,7 +854,7 @@ export function renderResults(peptide, results, inputs) {
                 </div>
             </div>
 
-            <div class="pros-cons-grid animate-in" style="animation-delay: 0.6s;">
+            <div class="pros-cons-grid animate-in" style="animation-delay: 0.19s;">
                 <div class="pc-card pros">
                     <div class="pc-title pros">Benefits</div>
                     <ul class="pc-list pros">
@@ -812,7 +870,7 @@ export function renderResults(peptide, results, inputs) {
             </div>
 
             ${peptide.warnings && peptide.warnings.length ? `
-                <div class="pc-card warnings animate-in" style="animation-delay: 0.7s;">
+                <div class="pc-card warnings animate-in" style="animation-delay: 0.22s;">
                     <div class="pc-title warnings">Important Warnings</div>
                     <ul class="pc-list warnings">
                         ${peptide.warnings.map(w => `<li>${esc(w)}</li>`).join('')}
@@ -820,18 +878,24 @@ export function renderResults(peptide, results, inputs) {
                 </div>
             ` : ''}
 
-            <div class="research-box animate-in" style="animation-delay: 0.8s;">
-                <h4>Research Overview</h4>
-                <p>${esc(peptide.research)}</p>
-            </div>
+            <details class="fold animate-in" style="animation-delay: 0.11s;">
+                <summary>Research overview</summary>
+                <div class="fold-body"><div class="research-box" style="margin:0">
+                    <p>${esc(peptide.research)}</p>
+                </div></div>
+            </details>
 
-            <div class="mechanism-box animate-in" style="animation-delay: 0.9s;">
-                <h4>How It Works</h4>
-                <p>${esc(peptide.mechanism)}</p>
-            </div>
+            <details class="fold animate-in" style="animation-delay: 0.12s;">
+                <summary>How it works</summary>
+                <div class="fold-body"><div class="mechanism-box" style="margin:0">
+                    <p>${esc(peptide.mechanism)}</p>
+                </div></div>
+            </details>
 
-            <div class="clinical-box animate-in" style="animation-delay: 0.95s;">
-                <h4>Clinical Dosing Notes</h4>
+            <details class="fold animate-in" style="animation-delay: 0.12s;">
+                <summary>Clinical dosing notes</summary>
+                <div class="fold-body">
+            <div class="clinical-box" style="margin:0">
                 <ul class="clinical-list">
                     <li><strong>Bioavailability:</strong> 40-90% via subcutaneous route | Peak plasma: 2-6 hours post-injection</li>
                     <li><strong>Timing Strategy:</strong> Consistent daily timing reduces variability. ${getTimingRecommendation(peptide)}</li>
@@ -842,15 +906,17 @@ export function renderResults(peptide, results, inputs) {
                     <li class="renal-warning"><strong>Renal Function:</strong> Patients with GFR &lt;60 may require 25-50% dose reduction. Peptides under 5 kDa are cleared renally.</li>
                 </ul>
             </div>
+                </div>
+            </details>
 
-            <div class="protocol-box animate-in" style="animation-delay: 1s;">
+            <div class="protocol-box animate-in" style="animation-delay: 0.13s;">
                 <h3>Administration Instructions</h3>
                 <ul class="protocol-list">
                     ${peptide.inst.map(i => `<li>${esc(i)}</li>`).join('')}
                 </ul>
             </div>
 
-            <div class="pdf-buttons animate-in" style="animation-delay: 1.1s;">
+            <div class="pdf-buttons animate-in" style="animation-delay: 0.35s;">
                 <button class="btn" id="previewPDF" type="button">Preview Protocol PDF</button>
                 <button class="btn" id="downloadPDF" type="button">Download PDF</button>
             </div>
@@ -860,9 +926,12 @@ export function renderResults(peptide, results, inputs) {
     container.innerHTML = html;
     container.style.display = 'block';
 
-    setTimeout(() => {
-        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    // Deliberately does not scroll. This ran on every render, including the
+    // re-render triggered by nudging the BAC-water or vial dropdown -- which
+    // pulled the page out from under someone who was standing on that control
+    // watching the number move. Whether a render deserves to move the viewport
+    // depends on what caused it, which only the caller knows, so main.js owns
+    // it and scrolls to #answer on a deliberate Generate.
 }
 
 /**
@@ -875,7 +944,7 @@ export function renderResults(peptide, results, inputs) {
  */
 export function disclaimerHTML() {
     return `
-        <div class="footer-disclaimer animate-in" style="animation-delay: 1.05s;" role="note">
+        <div class="footer-disclaimer animate-in" style="animation-delay: 0.34s;" role="note">
             <strong>${DISCLAIMER_TITLE}</strong>
             <p>${DISCLAIMER_BODY}</p>
         </div>

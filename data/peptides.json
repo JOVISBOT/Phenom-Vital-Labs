@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "peptides": [
     {
       "id": "ace031",
@@ -2554,7 +2554,14 @@
         "Reconstitute with the vial size and volume set above"
       ],
       "evidence": "approved",
-      "doseAnchor": "label"
+      "doseAnchor": "label",
+      "tiersAreVariants": true,
+      "tierNote": "These are the labelled daily doses of three different formulations - EGRIFTA WR 1.28 mg, EGRIFTA SV 1.4 mg and the original EGRIFTA 2 mg - which give similar systemic exposure. They are not a low-to-high ladder, and moving up one is not a stronger protocol.",
+      "tierLabels": {
+        "low": "EGRIFTA WR",
+        "med": "EGRIFTA SV",
+        "high": "EGRIFTA"
+      }
     },
     {
       "id": "thymalin",

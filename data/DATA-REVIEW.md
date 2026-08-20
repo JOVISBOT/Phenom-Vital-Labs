@@ -245,3 +245,73 @@ to the 503A bulks list in July 2026.
 epo). That is now labelled rather than hidden, but the figures themselves are
 still community practice. Anchoring them would mean changing what the site is
 for, which is a decision about the product, not a defect to fix.
+
+---
+
+## SECOND INDEPENDENT PASS - 2026-08-20 (schema v7/v8)
+
+Run by `tools/verify-data.js`, deliberately written without reading `test/`
+first: assertions written alongside the fix they guard can only confirm what was
+already known. It walks every record and every vial x water combination the UI
+can reach (620), and it now runs as part of `npm test`.
+
+### Found: thirteen ranges published as single facts
+
+| Record | Prose | Stored | Published as | Actually |
+|---|---|---|---|---|
+| `cjc1295_nodac` | 1-3x daily | f=21 | 252 inj, 51 vials | **84-252 inj, 17-51 vials** |
+| `aod9604` `frag1723` `ghrp2` `ghrp6` `hexarelin` | 2-3x daily | f=21 | ceiling | 14-21/wk |
+| `nadplus` `ara290` | Daily or 3x weekly | f=7 | ceiling | 3-7/wk |
+| `glutathione` `motsc` `pegmgf` | 2-3x weekly | f=3 | ceiling | 2-3/wk |
+| `follistatin` | 1-2x weekly | f=2 | ceiling | 1-2/wk |
+| `melanotan2` | Every 2-3 days | f=3 | midpoint | 2.33-3.5/wk |
+| `ace031` | 4-8 weeks | wks=6 | midpoint | 4-8 |
+| `dihexa` | 4-6 weeks | wks=6 | **ceiling** | 4-6 |
+| `hmg` | 3-6 weeks | wks=4 | **near floor** | 3-6 |
+
+The last three matter as a set: a point estimate picked three different ways is
+not a convention. `fMin`/`fMax` and `wksMin`/`wksMax` now carry the range and
+the UI, the generated pages, the FAQ JSON-LD and the PDF all render it.
+
+Fourteen more records name no cadence or no window at all -- "Multiple daily",
+"Continuous OK", "As needed", "6 months minimum". Their `f`/`wks` are house
+assumptions and now say so via `fAssumed`/`wksAssumed`.
+
+### Found: a tier set that is not a ladder
+
+`tesamorelin`'s low/med/high are the labelled daily doses of EGRIFTA WR
+(1.28 mg), EGRIFTA SV (1.4 mg) and the original EGRIFTA (2 mg), which give
+similar systemic exposure. The record said so in `inst`; the cards above it said
+CONSERVATIVE / *Best for first-time users* through ADVANCED / *For experienced
+users*. Now flagged `tiersAreVariants` with per-tier `tierLabels` and a
+`tierNote`. It is the only such record in the catalogue, and a test now fails if
+another is added without the flag.
+
+### Checked and clean
+
+Schema and enum coverage on all 44 - no missing fields, no duplicate ids, no
+unconvertible dose/vial unit pair, no non-ascending tier, no unsorted or
+mismatched vial catalogue, no record whose own default recon volume the dropdown
+cannot select. No computed zero and no dose overflowing a 100u barrel at any
+record's defaults. Prose fields carry no placeholders, no mojibake, no empty
+lists. Every record has a generated page.
+
+The eight `approved` records were re-checked against the openFDA label data in
+`.fda/`. `labelSizes`, `labelSource` and `doseAnchor` all hold up, including the
+two that look wrong and are not: `pt141` is `approved` with vendor-only vial
+sizes because Vyleesi is an autoinjector and no approved product is supplied as
+a vial, and `hgh`/`hcg`/`epo`/`hmg` carry `doseAnchor: protocol` because the
+molecule is approved while the dose shown is not.
+
+### Open, and not a defect
+
+`nadplus` and `glutathione` default to 500 and 600 mg/ml respectively - above
+the ~400 mg/ml where lyophilised powder generally stops dissolving. Both are
+genuinely dosed in hundreds of milligrams, so the doses are right; whether the
+water volume is achievable is a question for the vendor's own reconstitution
+note, and not something to change on a guess. Reported as a NOTE, not an error.
+
+The vial-count warnings that remain (`aod9604` 26, `ara290` 34, `hgh` 34,
+`nadplus` 42, `cjc1295_nodac` 17-51) are consequences of a long cycle at a high
+cadence rather than arithmetic faults. Worth a second look if a larger vial size
+exists; none is wrong.

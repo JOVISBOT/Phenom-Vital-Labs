@@ -13,6 +13,8 @@ import {
 import { generatePDF } from './pdfGenerator.js';
 import { track } from './analytics.js';
 import { requestEmail } from './emailCapture.js';
+import { initThemeToggle } from './theme.js';
+import { enhanceSelect } from './combobox.js';
 
 let currentPeptide = null;
 let lastResults = null;
@@ -31,10 +33,30 @@ async function init() {
         populateWeightOptions();
         populateAgeOptions();
 
-        $('calculateBtn').addEventListener('click', handleCalculate);
+        initThemeToggle();
+        // Type-ahead over the 44 options. The <select> stays the source of
+        // truth, so a failure here leaves a working native dropdown rather
+        // than an unusable page.
+        // loadPeptideData returns a map keyed by id, not an array.
+        const records = Object.values(peptidesData);
+        try {
+            enhanceSelect($('peptide'), { records, placeholder: `Search ${records.length} peptides...` });
+        } catch (e) {
+            console.warn('Peptide search unavailable, falling back to the plain dropdown:', e);
+        }
+
+        $('calculateBtn').addEventListener('click', () => handleCalculate(true));
+        // Switching peptide has to move the result with it. It did not: after
+        // calculating BPC-157 and then picking Tirzepatide, the dropdown read
+        // Tirzepatide while the card below still read "BPC 157 - 500 mcg". The
+        // vial and water controls already re-ran for exactly this reason; the
+        // one control that changes the compound did not.
         $('peptide').addEventListener('change', () => {
             handlePeptideChange();
             if (currentPeptide) track('peptide_selected', { peptide: currentPeptide.id });
+            if (!lastResults) return;
+            if (currentPeptide) handleCalculate(true);
+            else clearResults();
         });
 
         // Changing the vial or the water changes the answer, so re-run rather
@@ -74,6 +96,16 @@ function handlePeptideChange(prefs = {}) {
 }
 
 /**
+ * Drop a stale result rather than leave it under an empty selection.
+ */
+function clearResults() {
+    lastResults = null;
+    lastInputs = null;
+    document.getElementById('results').innerHTML = '';
+    history.replaceState(null, '', window.location.pathname);
+}
+
+/**
  * Read the current form state.
  * @returns {Object}
  */
@@ -91,7 +123,7 @@ function readInputs() {
 /**
  * Handle calculate button click
  */
-async function handleCalculate() {
+async function handleCalculate(scrollToAnswer = false) {
     if (!currentPeptide) {
         showInlineError('Please select a peptide first');
         return;
@@ -117,6 +149,24 @@ async function handleCalculate() {
 
     hideLoading();
     renderResults(currentPeptide, lastResults, inputs);
+
+    // Put the answer on screen. Re-running because a vial or water volume
+    // changed must NOT scroll -- the user is standing at that control watching
+    // the number move, and yanking the page away from them is worse than not
+    // scrolling at all.
+    if (scrollToAnswer) {
+        const answer = document.getElementById('answer');
+        if (answer) {
+            const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            // 'instant' when the answer arrived with the page: a shared link is
+            // opened FOR the protocol, so landing on it reads as where the page
+            // starts. Animating there instead looks like the page moved on its own.
+            answer.scrollIntoView({
+                behavior: scrollToAnswer === 'instant' || reduce ? 'instant' : 'smooth',
+                block: 'start'
+            });
+        }
+    }
 
     // What was asked for, not who asked. Weight and age are deliberately absent.
     track('calculate', {
@@ -208,7 +258,7 @@ function restoreFromUrl() {
         syringe: params.get('s') || DEFAULT_SYRINGE
     });
 
-    handleCalculate();
+    handleCalculate('instant');
 }
 
 function setIfPresent(id, value) {

@@ -1,0 +1,322 @@
+/* ==========================================================================
+   theme.css - dark mode, the answer-first hero, the searchable picker,
+   and a print sheet you can stick on a fridge.
+
+   Loaded after styles.css so it can move the palette without rewriting two
+   hundred lines of hand-tuned rules. The tinted panels in styles.css were
+   written as literal hex values; each role gets a token here, and the dark
+   theme reassigns tokens rather than restating every selector.
+
+   `data-theme` is set on <html> by an inline script before first paint, so
+   there is exactly one dark block rather than a media query and a class
+   version that can drift apart. The calculator needs JavaScript to compute
+   anything, so a no-JS visitor losing the dark default costs nothing.
+   ========================================================================== */
+
+:root {
+    color-scheme: light;
+
+    --tint-info: #eff6ff;
+    --tint-info-2: #dbeafe;
+    --tint-info-line: #bfdbfe;
+    --tint-good: #f0fdf4;
+    --tint-good-2: #dcfce7;
+    --tint-good-line: #a7f3d0;
+    --tint-warn: #fffbeb;
+    --tint-warn-line: #fcd34d;
+    --tint-warn-ink: #92400e;
+    --tint-bad: #fef2f2;
+    --tint-bad-line: #fecaca;
+    --tint-accent: #f5f3ff;
+    --tint-accent-line: #c4b5fd;
+    --tint-neutral: #f9fafb;
+    --tint-neutral-2: #f1f5f9;
+    --ink-info: #1e3a8a;
+    --ink-good: #14532d;
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --focus-ring: 0 0 0 3px rgba(30, 64, 175, 0.15);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --primary: #7aa5ff;
+    --primary-light: #a8c4ff;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --bg: #0b1120;
+    --card: #161e30;
+    --text: #e7eef9;
+    --muted: #98a5ba;
+    --border: #2b364d;
+
+    --tint-info: #16233c;
+    --tint-info-2: #1b2c4a;
+    --tint-info-line: #2f4368;
+    --tint-good: #10261d;
+    --tint-good-2: #123024;
+    --tint-good-line: #245c44;
+    --tint-warn: #2b2312;
+    --tint-warn-line: #6b5220;
+    --tint-warn-ink: #fbbf24;
+    --tint-bad: #2b1618;
+    --tint-bad-line: #6b2f33;
+    --tint-accent: #1e1b33;
+    --tint-accent-line: #443a72;
+    --tint-neutral: #131a2a;
+    --tint-neutral-2: #1a2336;
+    --ink-info: #cfe0ff;
+    --ink-good: #b8f0d4;
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --focus-ring: 0 0 0 3px rgba(122, 165, 255, 0.3);
+}
+
+/* --- re-point the literal colours in styles.css at the tokens ------------ */
+:root[data-theme="dark"] body { background: var(--bg); }
+:root[data-theme="dark"] header,
+:root[data-theme="dark"] .card { background: var(--card); box-shadow: var(--shadow-card); }
+:root[data-theme="dark"] .verified { background: var(--tint-neutral-2); }
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] .modal input[type=email],
+:root[data-theme="dark"] .custom-vial input { background: var(--tint-neutral); color: var(--text); }
+:root[data-theme="dark"] select:disabled { background: var(--tint-neutral-2); color: var(--muted); }
+:root[data-theme="dark"] optgroup { background: var(--tint-info); color: var(--primary); }
+:root[data-theme="dark"] optgroup option { background: var(--card); color: var(--text); }
+:root[data-theme="dark"] select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%237aa5ff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+}
+:root[data-theme="dark"] .btn { background: linear-gradient(135deg, #2c5bd0, #1e3a8a); }
+:root[data-theme="dark"] .btn-secondary { background: var(--card); color: var(--primary); }
+:root[data-theme="dark"] .peptide-header { background: linear-gradient(135deg, var(--tint-info), var(--tint-info-2)); }
+:root[data-theme="dark"] .summary-card,
+:root[data-theme="dark"] .dose-card,
+:root[data-theme="dark"] .info-card,
+:root[data-theme="dark"] .modal { background: var(--card); }
+:root[data-theme="dark"] .dose-badge { background: var(--tint-neutral); }
+:root[data-theme="dark"] .dose-label { background: var(--card); }
+:root[data-theme="dark"] .scaling-note,
+:root[data-theme="dark"] .blend-note { background: var(--tint-neutral); }
+:root[data-theme="dark"] .mcg-box { background: var(--tint-accent); border-color: var(--tint-accent-line); }
+:root[data-theme="dark"] .component-split { border-top-color: var(--tint-accent-line); }
+:root[data-theme="dark"] .draw-box { background: var(--tint-good); border-color: var(--tint-good-line); }
+:root[data-theme="dark"] .draw-box.overflow { background: var(--tint-bad); border-color: var(--tint-bad-line); }
+:root[data-theme="dark"] .syringe-container { background: var(--tint-neutral-2); border-color: var(--border); }
+:root[data-theme="dark"] .calc-box { background: var(--tint-info); border-color: var(--tint-info-line); }
+:root[data-theme="dark"] .calc-footnote { border-top-color: var(--tint-info-line); }
+:root[data-theme="dark"] .info-card.highlight { background: linear-gradient(135deg, var(--tint-info), var(--tint-info-2)); border-color: var(--tint-info-line); }
+:root[data-theme="dark"] .pc-card.pros { background: var(--tint-good); border-color: var(--tint-good-line); }
+:root[data-theme="dark"] .pc-card.cons { background: var(--tint-bad); border-color: var(--tint-bad-line); }
+:root[data-theme="dark"] .pc-card.warnings { background: var(--tint-warn); border-color: var(--tint-warn-line); }
+:root[data-theme="dark"] .pc-title.warnings,
+:root[data-theme="dark"] .pc-list.warnings li::before { color: var(--tint-warn-ink); }
+:root[data-theme="dark"] .pc-list li { border-bottom-color: rgba(255, 255, 255, 0.06); }
+:root[data-theme="dark"] .research-box { background: linear-gradient(135deg, var(--tint-info), var(--tint-info-2)); border-color: var(--tint-info-line); }
+:root[data-theme="dark"] .research-box h4 { color: var(--primary); }
+:root[data-theme="dark"] .research-box p { color: var(--ink-info); }
+:root[data-theme="dark"] .mechanism-box { background: linear-gradient(135deg, var(--tint-good), var(--tint-good-2)); border-color: var(--tint-good-line); }
+:root[data-theme="dark"] .mechanism-box h4 { color: var(--success); }
+:root[data-theme="dark"] .mechanism-box p { color: var(--ink-good); }
+:root[data-theme="dark"] .clinical-box { background: var(--tint-info); border-color: var(--tint-info-line); }
+:root[data-theme="dark"] .clinical-list li.renal-warning { background: var(--tint-bad); border-color: var(--tint-bad-line); }
+:root[data-theme="dark"] .protocol-box { background: var(--tint-neutral); }
+:root[data-theme="dark"] .footer-disclaimer { background: var(--tint-bad); border-color: var(--tint-bad-line); }
+:root[data-theme="dark"] .inline-error,
+:root[data-theme="dark"] .modal-error { background: var(--tint-bad); border-color: var(--tint-bad-line); }
+:root[data-theme="dark"] .evidence-badge { background: rgba(255, 255, 255, 0.04); }
+:root[data-theme="dark"] .modal-overlay { background: rgba(0, 0, 0, 0.7); }
+:root[data-theme="dark"] select:focus-visible,
+:root[data-theme="dark"] .custom-vial input:focus-visible { box-shadow: var(--focus-ring); }
+
+/* --- theme toggle -------------------------------------------------------- */
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; padding: 0;
+    background: var(--tint-neutral-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    cursor: pointer; transition: border-color .2s, background .2s;
+}
+.theme-toggle:hover { border-color: var(--primary); }
+.theme-toggle:focus-visible { outline: 3px solid var(--primary-light); outline-offset: 2px; }
+.theme-toggle svg { width: 18px; height: 18px; }
+.theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+/* --- the answer, first --------------------------------------------------- */
+/* The number a visitor came for used to sit roughly 1,400px down a 4,100px
+   page, under the form, a header, a protocol summary and three tier cards.
+   On a phone it was past 3,000px. This puts it directly under the peptide
+   name, at a size you can read holding a vial at arm's length. */
+.answer-hero {
+    background: linear-gradient(135deg, #1e40af, #312e81);
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(30, 64, 175, 0.28);
+}
+:root[data-theme="dark"] .answer-hero {
+    background: linear-gradient(135deg, #21386f, #241f57);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+.answer-hero-label {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 1.4px;
+    text-transform: uppercase; opacity: .75;
+}
+.answer-hero-value {
+    font-size: clamp(2.6rem, 12vw, 4rem);
+    font-weight: 800; line-height: 1.05; margin: 6px 0 2px;
+    font-variant-numeric: tabular-nums;
+}
+.answer-hero-value .unit { font-size: .42em; font-weight: 600; opacity: .8; margin-left: .25em; }
+.answer-hero-dose { font-size: 1.05rem; font-weight: 600; opacity: .95; }
+.answer-hero-meta {
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.22);
+    font-size: 0.84rem; line-height: 1.6; opacity: .9;
+}
+.answer-hero-split {
+    display: flex; justify-content: center; gap: 18px; flex-wrap: wrap;
+    margin-top: 10px; font-size: 0.84rem;
+}
+.answer-hero-split span { background: rgba(255, 255, 255, 0.14); padding: 4px 12px; border-radius: 999px; }
+.answer-hero.is-overflow { background: linear-gradient(135deg, #b91c1c, #7f1d1d); box-shadow: 0 12px 40px rgba(185, 28, 28, .3); }
+.answer-hero-warn { margin-top: 12px; font-size: 0.9rem; font-weight: 600; }
+
+/* --- searchable peptide picker ------------------------------------------- */
+/* Forty-four options in a bare <select> is a scroll-and-hunt. The native
+   element stays in the DOM and stays the source of truth -- restoreFromUrl,
+   the change handler and every test still read it -- and this sits on top. */
+.combo { position: relative; }
+.combo-input {
+    width: 100%; padding: 14px 42px 14px 16px;
+    border: 2px solid var(--border); border-radius: 12px;
+    background: var(--card); color: var(--text);
+    font-size: 0.95rem; font-family: inherit;
+}
+.combo-input::placeholder { color: var(--muted); }
+.combo-input:hover { border-color: var(--primary-light); }
+.combo-input:focus-visible { border-color: var(--primary); outline: none; box-shadow: var(--focus-ring); }
+.combo-caret {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    pointer-events: none; color: var(--primary); width: 14px; height: 14px;
+}
+.combo-list {
+    /* Wider than the form column it sits in: names like "CJC-1295 NO DAC 5mg +
+       Ipamorelin 5mg" wrapped to three lines inside a third-of-a-card box. */
+    position: absolute; z-index: 40; left: 0; top: calc(100% + 6px);
+    min-width: 100%; width: max-content; max-width: min(460px, calc(100vw - 48px));
+    max-height: 320px; overflow-y: auto;
+    background: var(--card); border: 2px solid var(--border); border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    padding: 6px; margin: 0; list-style: none;
+}
+.combo-list[hidden] { display: none; }
+.combo-group {
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--muted);
+    padding: 10px 12px 6px;
+}
+.combo-option {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 0.92rem;
+}
+.combo-option:hover, .combo-option[aria-selected="true"] { background: var(--tint-info); }
+.combo-option[aria-selected="true"] { outline: 2px solid var(--primary); outline-offset: -2px; }
+.combo-option-meta { font-size: 0.76rem; color: var(--muted); white-space: nowrap; }
+.combo-option mark { background: transparent; color: var(--primary); font-weight: 700; }
+.combo-empty { padding: 14px 12px; font-size: 0.88rem; color: var(--muted); }
+
+/* --- assumption marker on generated pages -------------------------------- */
+.assumed { color: var(--muted); font-weight: 400; font-size: 0.85em; }
+
+/* --- tier cards: three across on a phone, not three screens -------------- */
+@media (max-width: 768px) {
+    .dose-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .dose-card { padding: 22px 8px 14px; }
+    .dose-label { left: 50%; transform: translateX(-50%); font-size: 0.6rem; padding: 3px 8px; white-space: nowrap; }
+    .recommended-badge { right: 50%; transform: translateX(50%); font-size: 0.6rem; padding: 3px 8px; }
+    .mcg-box, .draw-box { padding: 10px 6px; }
+    .mcg-value, .draw-value { font-size: 1.05rem; }
+    .mcg-label, .draw-label { font-size: 0.58rem; letter-spacing: 0; }
+    .component-split, .dose-hint, .draw-hint { display: none; }
+    .dose-card:hover { transform: none; }
+}
+
+/* --- long reference prose folds away on a phone -------------------------- */
+/* 7,900px of scroll for one number. The research, mechanism, clinical and
+   protocol panels are worth having and are not worth scrolling past every
+   time. Warnings never fold. */
+.fold { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; background: var(--card); }
+.fold > summary {
+    cursor: pointer; padding: 14px 18px; font-size: 0.85rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary);
+    list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+}
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::after { content: '+'; font-size: 1.2rem; line-height: 1; color: var(--muted); }
+.fold[open] > summary::after { content: '\2212'; }
+.fold > summary:focus-visible { outline: 3px solid var(--primary-light); outline-offset: -3px; border-radius: 12px; }
+.fold-body { padding: 0 18px 18px; }
+.fold-body > *:last-child { margin-bottom: 0; }
+
+/* --- print: one page, the numbers, the disclaimer ------------------------ */
+@media print {
+    @page { margin: 14mm; }
+
+    /* Print is always light. Printing while the dark theme was on produced a
+       page with a near-black hero and, because the rule below forces colours
+       to render exactly, `color: #000` on top of it -- black text on black.
+       It also asks a printer for a full-bleed dark background on every panel.
+       Resetting the tokens here beats overriding each of the forty selectors
+       that consume them. */
+    :root[data-theme="dark"] {
+        --primary: #1e40af; --primary-light: #3b82f6;
+        --success: #059669; --warning: #d97706; --danger: #dc2626;
+        --bg: #fff; --card: #fff; --text: #111; --muted: #444; --border: #ccc;
+        --tint-info: #fff; --tint-info-2: #fff; --tint-info-line: #bbb;
+        --tint-good: #fff; --tint-good-2: #fff; --tint-good-line: #bbb;
+        --tint-warn: #fff; --tint-warn-line: #999; --tint-warn-ink: #7a4a00;
+        --tint-bad: #fff; --tint-bad-line: #bbb;
+        --tint-accent: #fff; --tint-accent-line: #bbb;
+        --tint-neutral: #fff; --tint-neutral-2: #fff;
+        --ink-info: #111; --ink-good: #111;
+        --shadow-card: none;
+    }
+    :root[data-theme="dark"] body,
+    :root[data-theme="dark"] .card,
+    :root[data-theme="dark"] .summary-card,
+    :root[data-theme="dark"] .dose-card,
+    :root[data-theme="dark"] .info-card,
+    :root[data-theme="dark"] .peptide-header,
+    :root[data-theme="dark"] .research-box,
+    :root[data-theme="dark"] .mechanism-box,
+    :root[data-theme="dark"] .info-card.highlight {
+        background: #fff !important;
+        color: #111 !important;
+    }
+    :root[data-theme="dark"] .evidence-badge { background: #fff !important; }
+    body { background: #fff !important; color: #111 !important; }
+    header, footer, .intro, .card, .directory-teaser, .pdf-buttons,
+    .theme-toggle, .research-box, .mechanism-box, .clinical-box, .fold,
+    .pc-card.pros, .pc-card.cons { display: none !important; }
+    .container { padding: 0; max-width: none; }
+    .answer-hero {
+        background: none !important; color: #000 !important;
+        border: 3px solid #000; box-shadow: none; border-radius: 0;
+        padding: 12px; margin-bottom: 12px;
+    }
+    .answer-hero-meta { border-top-color: #000; opacity: 1; }
+    .answer-hero-split span { background: none; border: 1px solid #666; }
+    .dose-grid { grid-template-columns: repeat(3, 1fr) !important; }
+    .info-grid { grid-template-columns: repeat(4, 1fr) !important; }
+    .pc-card.warnings, .footer-disclaimer { break-inside: avoid; }
+    .summary-card, .syringe-visual, .calc-box { break-inside: avoid; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* A tier set that is not a ladder says so above the cards. */
+.tier-note { border-left-color: var(--warning) !important; }

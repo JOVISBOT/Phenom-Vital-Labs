@@ -26,10 +26,11 @@ import {
     dosesPerCycle, dosesPerCycleRange, RECON_VOLUMES, DEFAULT_SYRINGE
 } from '../js/calculator.js';
 import { evidenceFor, vialProvenanceFor, formatDose, formatRange, ASSUMED_NOTE } from '../js/ui.js';
+import { THEME_BOOT } from '../js/theme.js';
 import { SITE, siteUrl } from '../js/config.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ASSET_V = 30;
+const ASSET_V = 31;
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -178,13 +179,24 @@ function head({ title, description, canonical, extraCss = '', jsonLd = [] }) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${extraCss}css/styles.css?v=${ASSET_V}">
     <link rel="stylesheet" href="${extraCss}css/pages.css?v=${ASSET_V}">
+    <link rel="stylesheet" href="${extraCss}css/theme.css?v=${ASSET_V}">
+
+    <!-- Theme before first paint. Inlined from js/theme.js THEME_BOOT so the
+         boot logic and the toggle cannot drift; a test asserts they match. -->
+    <script>${THEME_BOOT}</script>
     ${ld}
 </head>
 <body>
     <header>
         <div class="header-inner">
             <a class="brand-text" href="${extraCss}"><span>Phenom</span> Vital Labs</a>
-            <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+            <div class="header-actions">
+                <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+                <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
         </div>
     </header>
 `;
@@ -197,6 +209,10 @@ function foot(rel) {
         <a href="${rel}p/">All peptides</a>
     </footer>
     <script type="module" src="${rel}js/analytics.js?v=${ASSET_V}"></script>
+    <script type="module">
+        import { initThemeToggle } from '${rel}js/theme.js?v=${ASSET_V}';
+        initThemeToggle();
+    </script>
 </body>
 </html>
 `;
@@ -323,7 +339,12 @@ function peptidePage(p, all) {
     ];
 
     const tiers = ['low', 'med', 'high'];
-    const tierLabel = { low: 'Conservative', med: 'Recommended', high: 'Advanced' };
+    // tesamorelin's three tiers are three formulations' labelled daily doses,
+    // not a ladder -- its own instructions say so. Naming them
+    // Conservative/Recommended/Advanced contradicted the record on its own page.
+    const tierLabel = p.tiersAreVariants
+        ? (p.tierLabels || { low: 'Variant A', med: 'Variant B', high: 'Variant C' })
+        : { low: 'Conservative', med: 'Recommended', high: 'Advanced' };
 
     const doseRows = tiers.map(t => `
                     <tr${t === 'med' ? ' class="is-featured"' : ''}>

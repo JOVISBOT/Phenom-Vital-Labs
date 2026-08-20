@@ -1,5 +1,91 @@
 # Changelog
 
+## 2.5.0 - 2026-08-20
+
+Two jobs: verify the data independently, and make the thing usable. The audit
+found one class the existing suite could not see, and driving the real UI found
+two bugs that no amount of reading the code would have surfaced.
+
+### The data: a range is not a fact
+
+`tools/verify-data.js` walks all 44 records from scratch, asking a different set
+of questions from `test/` -- schema, unit envelopes, self-contradiction, and
+every vial x water combination the UI can reach (620 of them). It found that
+thirteen records state a frequency *range* in prose and store a single number,
+and everything downstream published the collapsed figure as measured.
+
+`cjc1295_nodac` says "1-3x daily" and stored 21/week, so its page read *"a
+typical course runs 12 on, 4 off, which is 252 injections"* and *"about 51 2 mg
+vials"*. True for someone dosing three times a day. Three times too high for
+someone dosing once -- 84 injections and 17 vials. Both figures were also in the
+FAQ JSON-LD served to search engines. Week ranges had the same problem and had
+each been collapsed a different way: `ace031` took the midpoint of "4-8 weeks",
+`dihexa` the ceiling of "4-6", `hmg` near the floor of "3-6".
+
+`fMin`/`fMax` and `wksMin`/`wksMax` now hold the range where the prose gives
+one, and `fAssumed`/`wksAssumed` mark the records whose prose names no cadence
+or window at all ("Multiple daily", "Continuous OK") and whose stored figure is
+a house assumption. `f` and `wks` are untouched, so no existing figure moved.
+
+Most of the audit's first run was the audit being wrong. A 100 mg dose ceiling
+flagged NAD+ and glutathione, which are genuinely dosed in hundreds of
+milligrams; "2-3x daily" fell through to a bare /daily/ match; "Every 2-3 days"
+is an interval and was read as a count of the same digits; `doseAnchor` is an
+enum and was checked as prose. Each fix carries the reason next to it.
+
+### Two bugs found by using it, not by reading it
+
+**Switching peptide left the previous result on screen.** Calculate BPC-157,
+then pick Tirzepatide: the dropdown read Tirzepatide and the card below still
+read *"BPC 157 - 500 mcg"*. The vial and water controls already re-ran for
+exactly this reason. The one control that changes the compound did not.
+
+**Every render scrolled the page.** `renderResults` called `scrollIntoView`
+unconditionally, including on the re-render caused by nudging the BAC-water
+dropdown -- pulling the page away from someone standing on that control watching
+the number move. Navigation now belongs to `main.js`, which scrolls on a
+deliberate Generate and stays put otherwise.
+
+### tesamorelin's tiers were never a ladder
+
+Its own instructions read *"These three are the labelled daily doses of the
+three formulations, not an escalating ladder"* -- directly under cards labelled
+CONSERVATIVE / *Best for first-time users* through ADVANCED / *For experienced
+users*. They now read EGRIFTA WR / EGRIFTA SV / EGRIFTA, "Labelled dose", with
+the note above them. `tiersAreVariants` is in the data, and a test fails if a
+record says the same thing in prose without carrying the flag.
+
+### The UI
+
+- **The answer, first.** "Draw 12 units" now sits directly under the peptide
+  name at a size readable at arm's length, with the per-component split and the
+  vial/water/syringe context. It used to be ~1,400px down a 4,100px page, and
+  past 3,000px on a phone.
+- **A searchable picker.** Typing "cjc" narrows 44 options to 3, with the dose
+  and vial size on each row and full keyboard support. The native `<select>`
+  stays in the DOM and stays the source of truth, so a failure here leaves a
+  working dropdown rather than a dead page.
+- **Dark mode**, following the OS until the toggle is used, applied before first
+  paint on all 46 pages so there is no white flash.
+- **Phone.** Tier cards go three-across instead of three-screens; research,
+  mechanism and clinical notes fold away. Warnings never fold. 7,950px of scroll
+  down to 6,595px, with the answer near the top rather than 40% down it.
+- **Print.** A fridge card: the answer, the tiers, the working, the warnings,
+  the disclaimer. Printing while dark mode was on produced a black-on-black hero
+  and asked the printer for full-bleed dark panels; print now forces light.
+- The reveal cascade ran 1.1s, so everything below the fold was invisible for
+  over a second and any capture caught it mid-flight. Now 0.35s.
+
+### Guards
+
+`npm test` 59 -> 77. The data audit runs as part of it, so a record added next
+month cannot ship a dose that overflows a syringe, a cadence that argues with
+its own prose, or a range quietly republished as a fact. Every new guard was
+proven by breaking it and watching it go red.
+
+Also: `.gitignore`'s unanchored `verify-*.js` swallowed `tools/verify-data.js`,
+so the audit that now gates the build would have shipped untracked.
+
 ## 2.4.0 - 2026-08-20
 
 Growth work, not correctness work: the calculator was right and invisible. It had

@@ -24,8 +24,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/styles.css?v=30">
-    <link rel="stylesheet" href="../../css/pages.css?v=30">
+    <link rel="stylesheet" href="../../css/styles.css?v=31">
+    <link rel="stylesheet" href="../../css/pages.css?v=31">
+    <link rel="stylesheet" href="../../css/theme.css?v=31">
+
+    <!-- Theme before first paint. Inlined from js/theme.js THEME_BOOT so the
+         boot logic and the toggle cannot drift; a test asserts they match. -->
+    <script>(function(){try{var s=localStorage.getItem('pvl-theme');var d=s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Peptide Dosage Calculator","item":"https://jovisbot.github.io/Phenom-Vital-Labs/"},{"@type":"ListItem","position":2,"name":"All peptides","item":"https://jovisbot.github.io/Phenom-Vital-Labs/p/"},{"@type":"ListItem","position":3,"name":"HCG (Human Chorionic Gonadotropin)","item":"https://jovisbot.github.io/Phenom-Vital-Labs/p/hcg/"}]}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How many units is 500 IU of HCG (Human Chorionic Gonadotropin) on an insulin syringe?","acceptedAnswer":{"@type":"Answer","text":"30 units on a U-100 insulin syringe, when a 5000 IU vial is reconstituted with 3 ml of bacteriostatic water. That is 0.3 ml. A U-100 syringe reads 100 units per millilitre whether the barrel holds 30, 50 or 100 units - the barrel size changes how much fits, not what a unit means."}},{"@type":"Question","name":"How much bacteriostatic water should I add to a 5000 IU vial of HCG (Human Chorionic Gonadotropin)?","acceptedAnswer":{"@type":"Answer","text":"3 ml is the volume used here, giving 1666.67 IU per ml. Water changes the concentration, not the amount of peptide: the vial holds 5000 IU however much you add. More water means a larger, easier-to-read draw for the same dose."}},{"@type":"Question","name":"How often is HCG (Human Chorionic Gonadotropin) injected?","acceptedAnswer":{"@type":"Answer","text":"3x weekly. A typical course runs As needed, which is 12 injections (assumed - the record states no fixed course). Reported half-life is 24-36 hours."}},{"@type":"Question","name":"How many vials does one HCG (Human Chorionic Gonadotropin) cycle take?","acceptedAnswer":{"@type":"Answer","text":"About 2 5000 IU vials for the full course - 12 doses at 500 IU each, 6000 IU in total."}},{"@type":"Question","name":"Is HCG (Human Chorionic Gonadotropin) approved for human use?","acceptedAnswer":{"@type":"Answer","text":"FDA-approved, off-label dose. An approved product containing this active ingredient is marketed in the US. The doses here are community and off-label protocol figures. The label prints different ones, for a different purpose, under supervision."}}]}</script>
 </head>
@@ -33,7 +38,13 @@
     <header>
         <div class="header-inner">
             <a class="brand-text" href="../../"><span>Phenom</span> Vital Labs</a>
-            <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+            <div class="header-actions">
+                <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+                <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -208,6 +219,10 @@
         <strong>Phenom Vital Labs</strong> &middot; Reference calculator, no products sold &middot;
         <a href="../../p/">All peptides</a>
     </footer>
-    <script type="module" src="../../js/analytics.js?v=30"></script>
+    <script type="module" src="../../js/analytics.js?v=31"></script>
+    <script type="module">
+        import { initThemeToggle } from '../../js/theme.js?v=31';
+        initThemeToggle();
+    </script>
 </body>
 </html>
