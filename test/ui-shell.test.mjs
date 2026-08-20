@@ -350,6 +350,31 @@ test('the planner labels a blend dose as combined, from one place', () => {
         'the mixing card no longer prints the per-component split');
 });
 
+test('every way the vial card can know its position is labelled on the page', () => {
+    // The card prints one number - doses used - that can come from a measured
+    // volume, a typed count, or an elapsed-time guess. They are not equally
+    // true, and the measured one is the only one that survives a dose change
+    // mid-vial. A source the planner can return but the page has no wording
+    // for renders as a bare figure with no provenance, which reads as fact.
+    const plan = read('js/plan.js');
+    const planner = read('js/planner.js');
+    const html = read('plan/index.html');
+
+    assert.ok(/id="mlLeft"/.test(html), 'plan/index.html has no millilitres-left input');
+
+    const sources = new Set(
+        (planner.match(/source\s*=\s*measured\s*\?\s*'(\w+)'\s*:\s*logged\s*\?\s*'(\w+)'\s*:\s*'(\w+)'/) || [])
+            .slice(1)
+    );
+    assert.equal(sources.size, 3, 'the planner no longer names three sources in one expression');
+
+    for (const s of sources) {
+        assert.ok(new RegExp(`\\b${s}:`).test(plan), `SOURCE_TAG has no entry for "${s}"`);
+        assert.ok(new RegExp(`'${s}'`).test(plan), `sourceNote never branches on "${s}"`);
+    }
+    assert.ok(/function sourceNote/.test(plan), 'sourceNote is gone');
+});
+
 test('no source file carries an invisible control character', () => {
     // A scripted edit wrote a raw 0x08 into a regex in this very file. It is
     // invisible in a terminal, in a diff, and in an editor - the regex simply

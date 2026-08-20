@@ -201,6 +201,68 @@ test('a logged count is never allowed to exceed what the vial holds', () => {
     assert.equal(v.mlLeft, 0, 'never a negative volume');
 });
 
+test('a dose change partway through a vial is only survived by measuring it', () => {
+    // The case the measured override exists for, with real numbers.
+    //
+    // 14 nights pulled at 15 units is 2.1 ml gone, 0.9 ml left. Step the draw
+    // down to 10 units and ask the planner where the vial stands: a COUNT of
+    // 14 is converted at the CURRENT draw, so it reports 1.4 ml used and 1.6
+    // ml left - 0.7 ml, seven doses, that are not in the glass.
+    //
+    // The consequence is not cosmetic. It moves the empty date a week out,
+    // past the expiry date, and the card's headline claim inverts.
+    const stepped = { ...VIAL, doseAmount: 333.33 };  // 10 units at 3 ml
+    const counted = vialProjection(stepped);           // estimated: 14 days x 1/day
+    const measured = vialProjection({ ...stepped, mlLeft: 0.9 });
+
+    assert.equal(counted.dosesTakenSource, 'estimated');
+    assert.equal(counted.mlLeft, 1.6, 'a count re-priced at the new, smaller draw');
+    assert.equal(counted.dosesLeft, 16);
+    assert.equal(counted.limiting, 'expiry', 'and so it claims the window binds first');
+
+    assert.equal(measured.dosesTakenSource, 'measured');
+    assert.equal(measured.mlLeft, 0.9, 'the volume actually in the vial');
+    assert.equal(measured.dosesLeft, 9);
+    assert.equal(measured.limiting, 'empty', 'it runs dry with days of window to spare');
+    assert.equal(measured.emptyDate, addDays(VIAL.today, 9));
+});
+
+test('a measured volume outranks a logged count, which outranks the estimate', () => {
+    const both = vialProjection({ ...VIAL, dosesTaken: 3, mlLeft: 0.9 });
+    assert.equal(both.dosesTakenSource, 'measured');
+    assert.equal(both.mlLeft, 0.9, 'the count is not allowed back in through the side door');
+
+    assert.equal(vialProjection({ ...VIAL, dosesTaken: 3 }).dosesTakenSource, 'logged');
+    assert.equal(vialProjection(VIAL).dosesTakenSource, 'estimated');
+});
+
+test('an empty vial is a measurement, not a missing one', () => {
+    // 0 ml is falsy. Read as "no value given" it silently reverts to the
+    // elapsed-time guess and reports a vial with doses left in it.
+    const v = vialProjection({ ...VIAL, mlLeft: 0 });
+    assert.equal(v.dosesTakenSource, 'measured');
+    assert.equal(v.dosesLeft, 0);
+    assert.equal(v.dosesTaken, v.dosesPerVial);
+    assert.equal(v.daysToEmpty, 0);
+    assert.equal(v.pctUsed, 100);
+});
+
+test('a measured volume is clamped to what the vial can hold', () => {
+    // A negative volume is not a measurement of anything, so it is refused
+    // rather than clamped: clamping -5 to 0 would announce an empty vial on
+    // the strength of a typo.
+    for (const [mlLeft, expected] of [[99, 3], [3, 3], [-5, null], ['', null],
+        ['abc', null], [NaN, null], [null, null], [undefined, null]]) {
+        const v = vialProjection({ ...VIAL, mlLeft });
+        if (expected === null) {
+            assert.equal(v.dosesTakenSource, 'estimated', `${mlLeft} is not a measurement`);
+        } else {
+            assert.equal(v.mlLeft, expected, `${mlLeft} ml clamps to ${expected}`);
+            assert.ok(Math.abs((v.mlUsed + v.mlLeft) - VIAL.reconMl) < 0.005, 'still adds up');
+        }
+    }
+});
+
 test('plain sterile water is a one-day vial, not a four-week one', () => {
     const bac = vialProjection({ ...VIAL, dosesTaken: 0, diluent: 'bac' });
     const sterile = vialProjection({ ...VIAL, dosesTaken: 0, diluent: 'sterile' });

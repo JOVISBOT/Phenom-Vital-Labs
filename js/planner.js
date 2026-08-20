@@ -223,6 +223,7 @@ export function reconOptions(peptide, doseAmount, opts = {}) {
  * @param {number} opts.dosesPerWeek
  * @param {string} opts.mixDate - ISO
  * @param {string} opts.today - ISO
+ * @param {number} [opts.mlLeft] - millilitres actually left, measured off the vial
  * @param {number} [opts.dosesTaken] - defaults to elapsed days x cadence
  * @param {'bac'|'sterile'} [opts.diluent='bac']
  * @returns {Object|null}
@@ -242,14 +243,37 @@ export function vialProjection(opts) {
     const dosesPerVial = Math.floor(round(reconMl / mlPerDose, 6));
     const perDay = dosesPerWeek / 7;
 
-    // Elapsed-time estimate, unless the user has logged an actual count.
-    const estimated = opts.dosesTaken === undefined || opts.dosesTaken === null;
-    const taken = Math.max(0, Math.min(dosesPerVial,
-        estimated ? Math.floor(Math.max(0, age) * perDay) : Math.round(opts.dosesTaken)));
+    // Three ways to know where the vial stands, in descending order of how much
+    // they can be trusted.
+    //
+    // A measured volume is the only one that survives a dose change mid-vial.
+    // Both of the others are a COUNT, and a count only becomes millilitres by
+    // multiplying it by the CURRENT dose - so 14 doses pulled at 15 units and
+    // then read back at 10 units returns 1.4 ml used when 2.1 ml is gone. The
+    // error is silent, it is 50% of the volume, and it lands on exactly the
+    // person who changed their dose and came here to find out what that did.
+    // That flips which limit binds, which is the one thing this card exists
+    // to say.
+    const measured = opts.mlLeft !== undefined && opts.mlLeft !== null && opts.mlLeft !== ''
+        && Number.isFinite(Number(opts.mlLeft)) && Number(opts.mlLeft) >= 0;
+    const logged = !measured && opts.dosesTaken !== undefined && opts.dosesTaken !== null;
+    const source = measured ? 'measured' : logged ? 'logged' : 'estimated';
 
-    const dosesLeft = Math.max(0, dosesPerVial - taken);
-    const mlUsed = round(taken * mlPerDose, 3);
-    const mlLeft = round(Math.max(0, reconMl - mlUsed), 3);
+    let taken, dosesLeft, mlLeft, mlUsed;
+    if (measured) {
+        mlLeft = round(Math.min(reconMl, Math.max(0, Number(opts.mlLeft))), 3);
+        mlUsed = round(reconMl - mlLeft, 3);
+        dosesLeft = Math.floor(round(mlLeft / mlPerDose, 6));
+        // A count inferred from volume, not a count anybody kept.
+        taken = Math.max(0, dosesPerVial - dosesLeft);
+    } else {
+        taken = Math.max(0, Math.min(dosesPerVial,
+            logged ? Math.round(opts.dosesTaken) : Math.floor(Math.max(0, age) * perDay)));
+        dosesLeft = Math.max(0, dosesPerVial - taken);
+        mlUsed = round(taken * mlPerDose, 3);
+        mlLeft = round(Math.max(0, reconMl - mlUsed), 3);
+    }
+    const estimated = source === 'estimated';
 
     const daysToEmpty = Math.ceil(dosesLeft / perDay);
     const emptyDate = addDays(today, daysToEmpty);
@@ -273,6 +297,7 @@ export function vialProjection(opts) {
         dosesPerVial,
         dosesTaken: taken,
         dosesTakenEstimated: estimated,
+        dosesTakenSource: source,
         dosesLeft,
         mlUsed,
         mlLeft,

@@ -98,6 +98,11 @@ with sync_playwright() as pw:
     # The per-component trap: someone types the dose they carry in their head,
     # which for a blend is per peptide. The page has to name what it planned.
     run(page, "13-blend-half-dose", form={**jo, "#doseAmount": "0.167"})
+    # A vial whose doses were not all the same size: 14 nights at 15 units, then
+    # a step down to 10. The elapsed-time guess re-prices the count at the new
+    # draw and finds 0.7 ml that is not in the glass; the measured volume is the
+    # only input that gets this vial right, and it flips which limit binds.
+    run(page, "14-measured-volume", form={**jo, "#mlLeft": "0.9"})
 
     # Save round trip: write, reload, confirm it came back.
     page.goto(BASE + "plan/", wait_until="networkidle")

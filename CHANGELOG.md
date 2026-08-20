@@ -1,5 +1,53 @@
 # Changelog
 
+## 2.7.2 - 2026-08-20
+
+### A vial that saw two dose sizes was read at only one of them
+
+"This vial" knew where the vial stood from a COUNT of doses -- typed, or
+guessed from the mix date. A count only becomes millilitres by multiplying it
+by the dose, and the only dose the card has is the one in the box right now.
+
+So the arithmetic is exact right up until the draw changes mid-vial, which is
+the single most common reason to open this page at all. Fourteen nights pulled
+at 15 units is 2.1 ml gone. Step down to 10 units, and the card re-prices those
+same fourteen doses at the new draw: 1.4 ml used, 1.6 ml left. Seven doses that
+are not in the glass.
+
+It does not stop at a wrong volume. Sixteen doses left instead of nine moves
+the empty date a week out -- past the discard date -- and the card's headline
+claim inverts: *"Expiry comes first, not empty"* on a vial that will be dry
+five days before the window closes. The card exists to say which of those two
+binds. On the one protocol shape that most needs the answer, it said the other
+one.
+
+**The fix is an input, because the fix cannot be a calculation.** Nothing the
+page holds can reconstruct a history of dose changes. What the person holds is
+the vial: **Millilitres left in it**, read off the barrel, overriding the count
+outright. Precedence is measured, then logged, then estimated, and the card
+names which one it used on the figure itself -- `from the volume`, `logged`,
+`estimated` -- rather than printing a number with no provenance.
+
+Two details worth keeping:
+
+- **0 ml is a measurement.** It is also falsy, and read as "nothing entered" it
+  reverts to the elapsed-time guess and reports doses left in an empty vial.
+- **A negative volume is refused, not clamped.** Clamping -5 to 0 would
+  announce an empty vial on the strength of a typo.
+
+### Guards
+
+- The measured/logged/estimated split is a single expression in `planner.js`,
+  and a test walks the three names out of it and fails unless each one has both
+  a tag and a sentence in `plan.js`. A fourth source added later with no
+  wording would otherwise render as a bare figure, which reads as fact.
+- `test/planner.test.mjs` carries the 15-units-then-10 vial with its real
+  numbers, asserting the flip from `expiry` to `empty` -- and precedence, the
+  empty-vial edge, and the clamp.
+- `tools/drive-plan.py` scenario 14 drives it in a real browser.
+- Asset stamps bumped to `v=34`, so a returning visitor is not served the
+  planner that cannot be told.
+
 ## 2.7.1 - 2026-08-20
 
 ### A blend dose meant two things and the planner only said one

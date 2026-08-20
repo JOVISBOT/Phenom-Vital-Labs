@@ -29,10 +29,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css?v=33">
-    <link rel="stylesheet" href="../css/pages.css?v=33">
-    <link rel="stylesheet" href="../css/plan.css?v=33">
-    <link rel="stylesheet" href="../css/theme.css?v=33">
+    <link rel="stylesheet" href="../css/styles.css?v=34">
+    <link rel="stylesheet" href="../css/pages.css?v=34">
+    <link rel="stylesheet" href="../css/plan.css?v=34">
+    <link rel="stylesheet" href="../css/theme.css?v=34">
 
     <!-- Theme before first paint. Inlined from js/theme.js THEME_BOOT so the
          boot logic and the toggle cannot drift; a test asserts they match. -->
@@ -137,6 +137,13 @@
                         <input type="number" id="dosesTaken" min="0" step="1" placeholder="estimated from the date">
                     </div>
                     <div class="form-field">
+                        <label for="mlLeft">Millilitres left in it <span class="opt">optional</span></label>
+                        <input type="number" id="mlLeft" min="0" step="any" placeholder="read off the vial">
+                        <p class="field-hint" id="mlLeftHint">Overrides the dose count. Use it if the
+                            dose changed partway through this vial - a count is only millilitres at
+                            one dose size.</p>
+                    </div>
+                    <div class="form-field">
                         <label for="startDate">Cycle start</label>
                         <input type="date" id="startDate">
                     </div>
@@ -196,6 +203,6 @@
         <a href="../p/">All peptides</a>
     </footer>
 
-    <script type="module" src="../js/plan.js?v=33"></script>
+    <script type="module" src="../js/plan.js?v=34"></script>
 </body>
 </html>

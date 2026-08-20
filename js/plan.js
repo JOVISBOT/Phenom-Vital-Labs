@@ -89,6 +89,7 @@ function readForm() {
         diluent: $('diluent').value === 'sterile' ? 'sterile' : 'bac',
         mixDate: $('mixDate').value || '',
         dosesTaken: $('dosesTaken').value === '' ? null : num('dosesTaken'),
+        mlLeft: $('mlLeft').value === '' ? null : num('mlLeft'),
         startDate: $('startDate').value || '',
         weeksOn: num('weeksOn'),
         weeksOff: num('weeksOff') ?? 0
@@ -106,6 +107,7 @@ function writeForm(state) {
     set('diluent', state.diluent);
     set('mixDate', state.mixDate);
     if (state.dosesTaken !== null && state.dosesTaken !== undefined) set('dosesTaken', state.dosesTaken);
+    if (state.mlLeft !== null && state.mlLeft !== undefined) set('mlLeft', state.mlLeft);
     set('startDate', state.startDate);
     set('weeksOn', state.weeksOn);
     set('weeksOff', state.weeksOff);
@@ -240,14 +242,51 @@ function renderMix(form) {
         2-3 ml and the water has to fit too.</p>`);
 }
 
+/** How the vial's position was arrived at, said on the figure itself. */
+const SOURCE_TAG = {
+    estimated: ' <span class="tag">estimated</span>',
+    logged: ' <span class="tag">logged</span>',
+    measured: ' <span class="tag">from the volume</span>'
+};
+
+/**
+ * Say where the "doses used" figure came from, and what it cannot know.
+ *
+ * The measured case is the one that needs saying out loud: the millilitres are
+ * a fact, but the dose COUNT printed beside them is back-calculated at the
+ * current dose. If the run drifted across dose sizes, that count is not a
+ * count of anything - while the volume, the empty date and the discard date
+ * are all still exactly right, because none of them go through it.
+ */
+function sourceNote(v, dosesPerWeek) {
+    if (v.dosesTakenSource === 'measured') {
+        return `<p class="note">Working from the ${esc(n(v.mlLeft, 2))} ml you measured, so a
+            dose change partway through this vial does not throw it off. The dose count beside it
+            is worked back at the current draw - the millilitres and the dates are the figures to
+            trust.</p>`;
+    }
+    if (v.dosesTakenSource === 'logged') {
+        return `<p class="note">Working from the count you typed, at the current draw of
+            ${esc(n(v.unitsPerDose))} units. If some of those doses were a different size, measure
+            the millilitres left instead - a count only converts to volume at one dose size.</p>`;
+    }
+    if (v.dosesTakenSource === 'estimated') {
+        return `<p class="note">Doses used is estimated from the mix date and
+            ${esc(n(dosesPerWeek))} a week. Type the real count above to override it, or the
+            millilitres left if your dose changed partway through.</p>`;
+    }
+    // A source with no wording says nothing rather than borrowing another's.
+    return '';
+}
+
 function renderVial(form, today) {
-    const { peptide, doseAmount, vialSize, reconMl, dosesPerWeek, mixDate, dosesTaken, diluent } = form;
+    const { peptide, doseAmount, vialSize, reconMl, dosesPerWeek, mixDate, dosesTaken, mlLeft, diluent } = form;
     if (!mixDate) {
         return card('This vial', `<p class="note">Add the date you mixed it and this fills in.</p>`);
     }
     const v = vialProjection({
         vialSize, reconMl, doseAmount, doseUnit: peptide.doseUnit,
-        dosesPerWeek, mixDate, today, dosesTaken, diluent
+        dosesPerWeek, mixDate, today, dosesTaken, mlLeft, diluent
     });
     if (!v) return card('This vial', `<p class="plan-warn" role="note">
         <strong>This dose cannot be drawn from this vial.</strong> See Mixing above - one dose of
@@ -284,13 +323,12 @@ function renderVial(form, today) {
         </div>
         <dl class="facts">
             <div><dt>Mixed</dt><dd>${esc(humanDate(mixDate, today))}</dd></div>
-            <div><dt>Doses used</dt><dd>${esc(v.dosesTaken)} of ${esc(v.dosesPerVial)}${v.dosesTakenEstimated ? ' <span class="tag">estimated</span>' : ''}</dd></div>
+            <div><dt>Doses used</dt><dd>${esc(v.dosesTaken)} of ${esc(v.dosesPerVial)}${SOURCE_TAG[v.dosesTakenSource] || ''}</dd></div>
             <div><dt>Runs out</dt><dd>${esc(humanDate(v.emptyDate, today))}</dd></div>
             <div><dt>Discard by</dt><dd>${esc(humanDate(v.expiryMin, today))}</dd></div>
         </dl>
         ${limitLine}
-        ${v.dosesTakenEstimated ? `<p class="note">Doses used is estimated from the mix date and
-            ${esc(n(dosesPerWeek))} a week. Type the real count above to override it.</p>` : ''}`,
+        ${sourceNote(v, dosesPerWeek)}`,
         { tone: v.expired ? 'bad' : expiryFirst ? 'warn' : '' });
 }
 
