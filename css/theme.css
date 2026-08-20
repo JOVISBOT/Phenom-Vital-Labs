@@ -77,10 +77,14 @@
 :root[data-theme="dark"] header,
 :root[data-theme="dark"] .card { background: var(--card); box-shadow: var(--shadow-card); }
 :root[data-theme="dark"] .verified { background: var(--tint-neutral-2); }
+/* background-color, not the `background` shorthand: the base stylesheet paints
+   the dropdown chevron with background-image plus no-repeat and a right-edge
+   position. The shorthand resets both, which tiled a 14px arrow across the
+   whole control and buried the option text under it in dark mode. */
 :root[data-theme="dark"] select,
 :root[data-theme="dark"] .modal input[type=email],
-:root[data-theme="dark"] .custom-vial input { background: var(--tint-neutral); color: var(--text); }
-:root[data-theme="dark"] select:disabled { background: var(--tint-neutral-2); color: var(--muted); }
+:root[data-theme="dark"] .custom-vial input { background-color: var(--tint-neutral); color: var(--text); }
+:root[data-theme="dark"] select:disabled { background-color: var(--tint-neutral-2); color: var(--muted); }
 :root[data-theme="dark"] optgroup { background: var(--tint-info); color: var(--primary); }
 :root[data-theme="dark"] optgroup option { background: var(--card); color: var(--text); }
 :root[data-theme="dark"] select {

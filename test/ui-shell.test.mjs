@@ -279,3 +279,35 @@ test('no stylesheet hardcodes a light panel colour behind themed text', () => {
     assert.deepEqual(literals, [],
         `pages.css sets a literal background: ${literals.join(', ')}`);
 });
+
+test('a theme override never resets a control that paints its own background-image', () => {
+    // The dark theme set `background: var(--tint-neutral)` on <select>. The
+    // shorthand resets background-repeat to `repeat` and background-position to
+    // `0 0`, and styles.css draws the dropdown chevron with background-image
+    // plus no-repeat plus a right-edge position. Result: a 14px arrow tiled
+    // across the whole control and buried the option text -- invisible to every
+    // test, visible in the first dark-mode screenshot. Use background-color.
+    const strip = s => s.replace(/\/\*[\s\S]*?\*\//g, '');
+    const styles = strip(readFileSync(join(ROOT, 'css/styles.css'), 'utf8'));
+    const theme = strip(readFileSync(join(ROOT, 'css/theme.css'), 'utf8'));
+
+    // Selectors that own a background-image in the base sheet.
+    const painted = new Set();
+    for (const [, sel, body] of styles.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+        if (/background-image\s*:/.test(body)) {
+            sel.split(',').forEach(s => painted.add(s.trim().split(/[\s:]/)[0]));
+        }
+    }
+    assert.ok(painted.size > 0, 'no background-image rules found - the scan is broken');
+
+    const offenders = [];
+    for (const [, sel, body] of theme.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+        if (!/(^|;)\s*background\s*:/.test(body)) continue;
+        for (const one of sel.split(',')) {
+            const base = one.trim().split(/\s+/).pop().split(/[:[]/)[0];
+            if (painted.has(base)) offenders.push(one.trim());
+        }
+    }
+    assert.deepEqual(offenders, [],
+        `these override a painted control with the background shorthand: ${offenders.join(', ')}`);
+});
