@@ -69,8 +69,22 @@ test('the cache-busting version is the same across css, js and data', () => {
     assert.equal(dataVersion, [...versions][0],
         'DATA_VERSION does not match the ?v= on the tags in index.html');
 
-    const assetV = read('tools/build-pages.js').match(/ASSET_V\s*=\s*(\d+)/)[1];
-    assert.equal(assetV, [...versions][0], 'build-pages ASSET_V has drifted from index.html');
+    // The generator no longer keeps its own copy of the number to drift from -
+    // it imports the one dataLoader exports. Hardcode a literal here again and
+    // this fails, because a literal is the whole failure mode.
+    const gen = read('tools/build-pages.js');
+    assert.ok(/const ASSET_V = DATA_VERSION;/.test(gen),
+        'build-pages ASSET_V is a literal again; derive it from DATA_VERSION');
+    assert.ok(/import \{[^}]*DATA_VERSION[^}]*\} from '\.\.\/js\/dataLoader\.js'/.test(gen),
+        'build-pages does not import DATA_VERSION');
+    assert.ok(/export const DATA_VERSION/.test(read('js/dataLoader.js')),
+        'DATA_VERSION is no longer exported, so the generator cannot share it');
+
+    // And every generated page carries that same stamp, not just index.html.
+    for (const f of ['plan/index.html', 'p/index.html']) {
+        const v = new Set([...read(f).matchAll(/\?v=(\d+)/g)].map(m => m[1]));
+        assert.deepEqual([...v], [dataVersion], `${f} is stamped ${[...v]}, not ${dataVersion}`);
+    }
 });
 
 test('a tier set that is not a ladder is not labelled like one', () => {
@@ -312,3 +326,52 @@ test('a theme override never resets a control that paints its own background-ima
     assert.deepEqual(offenders, [],
         `these override a painted control with the background shorthand: ${offenders.join(', ')}`);
 });
+
+test('the planner labels a blend dose as combined, from one place', () => {
+    // A blend's vialSize is both peptides, so the planner's dose box means the
+    // combined figure while the person filling it thinks per peptide. The label
+    // is the only thing that closes that gap, and it has to move with the
+    // peptide -- so the unit and the meaning are set together, in one function.
+    // Two call sites set that box (fresh pick, and restoring a saved plan); a
+    // third added later that only sets the unit would silently reopen the bug.
+    const plan = read('js/plan.js');
+    const html = read('plan/index.html');
+
+    assert.ok(/id="doseHint"/.test(html), 'plan/index.html has no dose hint element');
+    assert.ok(/aria-describedby="doseHint"/.test(html), 'the dose input does not point at its hint');
+
+    const unitWrites = plan.match(/\$\('doseUnit'\)\.textContent\s*=/g) || [];
+    assert.equal(unitWrites.length, 1,
+        `doseUnit is written in ${unitWrites.length} places; it belongs only in setDoseContext`);
+    assert.ok(/function setDoseContext/.test(plan), 'setDoseContext is gone');
+    assert.equal((plan.match(/setDoseContext\(/g) || []).length, 3,
+        'setDoseContext should be declared once and called from both places that fill the dose box');
+    assert.ok(/blendSplit\(peptide, doseAmount\)/.test(plan),
+        'the mixing card no longer prints the per-component split');
+});
+
+test('no source file carries an invisible control character', () => {
+    // A scripted edit wrote a raw 0x08 into a regex in this very file. It is
+    // invisible in a terminal, in a diff, and in an editor - the regex simply
+    // stopped matching and the failure message pointed at the wrong file. Any
+    // control byte outside tab/newline/carriage-return is a writing accident,
+    // never intent.
+    const files = [
+        ...readdirSync(join(ROOT, 'js')).map(f => `js/${f}`),
+        ...readdirSync(join(ROOT, 'css')).map(f => `css/${f}`),
+        ...readdirSync(join(ROOT, 'test')).map(f => `test/${f}`),
+        ...readdirSync(join(ROOT, 'tools')).map(f => `tools/${f}`),
+        ...pageFiles
+    ].filter(f => /\.(js|mjs|css|html|json)$/.test(f));
+
+    assert.ok(files.length > 50, `only checked ${files.length} files`);
+    for (const f of files) {
+        const bad = [...read(f)].findIndex(ch => {
+            const c = ch.charCodeAt(0);
+            return c < 32 && c !== 9 && c !== 10 && c !== 13;
+        });
+        assert.equal(bad, -1,
+            `${f} holds a control character (0x${bad < 0 ? '' : read(f).charCodeAt(bad).toString(16)}) at offset ${bad}`);
+    }
+});
+

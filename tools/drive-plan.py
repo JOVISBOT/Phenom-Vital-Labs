@@ -29,6 +29,9 @@ def scrape(page):
                     + ([...r.classList].includes('is-featured') ? '   <== BEST' : '')
                     + ([...r.classList].includes('is-out') ? '   (dimmed)' : '')),
             })),
+            doseHint: (() => { const h = document.getElementById('doseHint');
+                return h && !h.hidden ? h.textContent.trim() : ''; })(),
+            blendSplit: t('.blend-split'),
             error: t('.inline-error'),
             saveNote: t('#saveNote'),
             disclaimer: document.querySelectorAll('.footer-disclaimer').length,
@@ -62,14 +65,17 @@ with sync_playwright() as pw:
     page.on("console", lambda m: errors.append(f"{m.type}: {m.text}") if m.type == "error" else None)
     page.on("requestfailed", lambda r: failed.append(f"{r.url} {r.failure}"))
 
-    # A live protocol: 10 mg CJC/ipamorelin blend, 3 ml BAC water, 0.167 mg
-    # (a 10-unit draw), nightly, 13 weeks on and 4 off. blend_gh1 is dosed in
-    # MILLIGRAMS - typing the mcg figure here is how the first run of this
-    # driver reported "167 mg is more than a 10 mg vial holds", which was the
-    # page being right and the fixture being wrong.
+    # A live protocol: 10 mg CJC/ipamorelin blend, 3 ml BAC water, nightly,
+    # 13 weeks on and 4 off.
+    #
+    # The dose box wants the COMBINED figure, because a blend's vialSize is both
+    # peptides added together. 167 mcg of each is 0.334 mg combined -> a 10-unit
+    # draw. This fixture said 0.167 and planned the whole run at half the dose,
+    # which is the trap the page now names in the hint under the box. Case 13
+    # keeps the wrong number on purpose, to prove the split says so out loud.
     jo = {
         "#peptide": "blend_gh1", "#vialSize": "10", "#reconMl": "3",
-        "#doseAmount": "0.167", "#dosesPerWeek": "7",
+        "#doseAmount": "0.334", "#dosesPerWeek": "7",
         "#mixDate": "2026-08-06", "#startDate": "2026-07-17",
         "#weeksOn": "13", "#weeksOff": "4",
     }
@@ -89,6 +95,9 @@ with sync_playwright() as pw:
     run(page, "06-small-barrel", form={**bpc, "#syringe": "30", "#doseAmount": "1000"})
     run(page, "07-impossible-dose", form={**jo, "#doseAmount": "99000"})
     run(page, "08-logged-count", form={**jo, "#dosesTaken": "12"})
+    # The per-component trap: someone types the dose they carry in their head,
+    # which for a blend is per peptide. The page has to name what it planned.
+    run(page, "13-blend-half-dose", form={**jo, "#doseAmount": "0.167"})
 
     # Save round trip: write, reload, confirm it came back.
     page.goto(BASE + "plan/", wait_until="networkidle")

@@ -1,5 +1,52 @@
 # Changelog
 
+## 2.7.1 - 2026-08-20
+
+### A blend dose meant two things and the planner only said one
+
+`vialSize` for a blend is both peptides added together -- `blend_gh1` is 10 mg
+because it holds 5 mg of CJC-1295 and 5 mg of ipamorelin. So the planner's dose
+box wants the COMBINED figure. Every dosing convention for these compounds is
+stated per peptide, which is the number a person carries in their head. Nothing
+on the page said which one it wanted.
+
+Type "167" meaning 167 mcg of each and the planner silently plans the entire
+run at half the dose: 5 units instead of 10, 29 doses per vial instead of 15,
+a vial that lasts twice as long as it will. Nothing looks wrong, because
+nothing IS wrong -- the arithmetic is exact for a question the person did not
+ask.
+
+The proof it is not a hypothetical: `tools/drive-plan.py` shipped with a
+fixture that made this exact mistake. Its comment claimed 0.167 mg was "a
+10-unit draw". It is a 5-unit draw. The fixture was written by someone who had
+just read the whole file.
+
+**The fix, in two places.** A hint under the dose box names the unit the box
+means, and moves with the peptide. The mixing card prints the per-component
+split of whatever was entered -- so the wrong number is still visible as a
+wrong number ("0.167 mg combined is CJC-1295 NO DAC 83.5 mcg + Ipamorelin
+83.5 mcg"), rather than a right-looking one. This is what the calculator has
+always done; the planner now says the same thing.
+
+Both are set by one function, `setDoseContext`. A test fails if the dose unit
+is ever written anywhere else, because a third call site that set the unit
+without the meaning would reopen the bug in silence.
+
+### Guards
+
+- **A blend vial holds exactly the sum of its components.** Both the split and
+  the draw divide by `vialSize`; they only describe the same liquid while it
+  IS the component total. And end-to-end: draw the units the calculator prints
+  and each component arrives at the mcg the split claims.
+- **`ASSET_V` is no longer a second copy of the version.** It was a literal in
+  `tools/build-pages.js` that had to be bumped alongside `DATA_VERSION`; the
+  generator now imports the one dataLoader exports. Stamps bumped to v=33 so a
+  returning visitor is not served the un-hinted planner from cache.
+- **No source file carries an invisible control character.** A scripted edit
+  wrote a raw `0x08` into a regex in the test file while making this change. It
+  is invisible in a terminal, in a diff, and in an editor -- the regex simply
+  stopped matching and the failure message named the wrong file.
+
 ## 2.7.0 - 2026-08-20
 
 ### Mix & cycle planner - `/plan/`

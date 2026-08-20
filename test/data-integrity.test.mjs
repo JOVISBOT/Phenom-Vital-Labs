@@ -18,7 +18,8 @@ import { dirname, join } from 'node:path';
 
 import {
     dosesPerCycleRange, calculateVialsRange, weeklyFreqRange, performCalculation,
-    solubilityCheck, SOLUBILITY_CEILING_MG_ML, RECON_VOLUMES
+    solubilityCheck, splitBlendDose, calculateVolumeMl,
+    SOLUBILITY_CEILING_MG_ML, RECON_VOLUMES
 } from '../js/calculator.js';
 import { formatRange } from '../js/ui.js';
 import { parseFreqRange, parseCycleWeeks } from '../tools/freq-parse.js';
@@ -191,4 +192,48 @@ test('the page flags the concentration it cannot dissolve', () => {
     // ...and must not appear on a record that dissolves fine at every volume.
     const blend = readFileSync(join(ROOT, 'p/blend_gh1/index.html'), 'utf8');
     assert.doesNotMatch(blend, FLAG, 'a 3.33 mg/ml blend must never be flagged');
+});
+
+test('a blend vial holds exactly the sum of its components', () => {
+    // Both the calculator's split and the planner's draw divide a combined dose
+    // by `vialSize`. splitBlendDose apportions that same dose by each
+    // component's share of the component total. The two only describe the same
+    // liquid while vialSize IS the component total -- let them drift and the
+    // split reports a per-peptide figure the syringe never delivers, with no
+    // symptom on screen.
+    const blends = peptides.filter(p => p.components && p.components.length);
+    assert.ok(blends.length >= 4, `expected blends in the catalogue, found ${blends.length}`);
+    for (const p of blends) {
+        const sum = p.components.reduce((t, c) => t + c.mg, 0);
+        assert.equal(p.vialUnit, 'mg', `${p.id}: a blend is only additive in mg`);
+        assert.ok(Math.abs(sum - p.vialSize) < 1e-9,
+            `${p.id}: vialSize ${p.vialSize} but components sum to ${sum}`);
+        // And every listed size, since the vial box is editable.
+        for (const size of p.vialSizes || []) {
+            assert.ok(size > 0, `${p.id}: vial size ${size}`);
+        }
+    }
+});
+
+test('a blend dose splits to the amount the syringe actually delivers', () => {
+    // The end-to-end statement: draw the units the calculator prints, and each
+    // component arrives at the mcg the split claims. Catches a change to either
+    // side of the arithmetic, not just a disagreement inside the data.
+    for (const p of peptides.filter(p => p.components && p.components.length)) {
+        const dose = p.med;
+        const recon = p.reconMl || 3;
+        const parts = splitBlendDose(p, dose);
+        const ml = calculateVolumeMl(p, dose, p.vialSize, recon);
+        parts.forEach((c, i) => {
+            // Each component sits in the whole volume at its own vial mg, so its
+            // concentration is components[i].mg / recon. (splitBlendDose's own
+            // `mg` field is that component's share of the DOSE, not of the vial.)
+            const delivered = ml * (p.components[i].mg / recon) * 1000;
+            assert.ok(Math.abs(delivered - c.mcg) < 0.5,
+                `${p.id}/${c.name}: split says ${c.mcg}mcg, ${ml}ml delivers ${delivered}mcg`);
+        });
+        assert.ok(Math.abs(parts.reduce((t, c) => t + c.mcg, 0)
+            - dose * (p.doseUnit === 'mg' ? 1000 : 1)) < 0.5,
+            `${p.id}: components do not add back to the combined dose`);
+    }
 });

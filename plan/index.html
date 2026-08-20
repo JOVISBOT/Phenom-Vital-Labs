@@ -29,10 +29,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css?v=32">
-    <link rel="stylesheet" href="../css/pages.css?v=32">
-    <link rel="stylesheet" href="../css/plan.css?v=32">
-    <link rel="stylesheet" href="../css/theme.css?v=32">
+    <link rel="stylesheet" href="../css/styles.css?v=33">
+    <link rel="stylesheet" href="../css/pages.css?v=33">
+    <link rel="stylesheet" href="../css/plan.css?v=33">
+    <link rel="stylesheet" href="../css/theme.css?v=33">
 
     <!-- Theme before first paint. Inlined from js/theme.js THEME_BOOT so the
          boot logic and the toggle cannot drift; a test asserts they match. -->
@@ -109,9 +109,10 @@
                     <div class="form-field">
                         <label for="doseAmount"><span class="label-icon" aria-hidden="true">&#127919;</span> Dose per injection</label>
                         <div class="with-unit">
-                            <input type="number" id="doseAmount" min="0" step="any" placeholder="250">
+                            <input type="number" id="doseAmount" min="0" step="any" placeholder="250" aria-describedby="doseHint">
                             <span class="unit" id="doseUnit" aria-hidden="true">mcg</span>
                         </div>
+                        <p class="field-hint" id="doseHint" hidden></p>
                     </div>
                     <div class="form-field">
                         <label for="dosesPerWeek"><span class="label-icon" aria-hidden="true">&#128197;</span> Doses per week</label>
@@ -195,6 +196,6 @@
         <a href="../p/">All peptides</a>
     </footer>
 
-    <script type="module" src="../js/plan.js?v=32"></script>
+    <script type="module" src="../js/plan.js?v=33"></script>
 </body>
 </html>

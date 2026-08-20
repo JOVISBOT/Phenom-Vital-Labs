@@ -100,3 +100,10 @@
     .plan-card .card,.plan-card{padding:22px 18px}
     .plan-card .working code{font-size:0.78rem}
 }
+
+/* The dose box on a blend means both peptides at once; the hint under it says
+   so, and the split in the result repeats it against a real number. */
+.field-hint{margin:6px 0 0;font-size:0.76rem;line-height:1.4;color:var(--muted)}
+.field-hint[hidden]{display:none}
+.blend-split{border-left:3px solid var(--tint-info-line);padding-left:10px}
+

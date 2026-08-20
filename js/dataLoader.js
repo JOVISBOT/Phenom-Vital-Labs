@@ -8,7 +8,7 @@
 // Cache-busting token. Kept in step with the ?v= on the script and stylesheet
 // tags in index.html -- they had drifted to v=27 and v=19 respectively, so a
 // data change could ship while browsers kept serving the old JSON.
-const DATA_VERSION = 32;
+export const DATA_VERSION = 33;
 
 let peptidesCache = null;
 

@@ -29,9 +29,14 @@ import {
 import { evidenceFor, vialProvenanceFor, formatDose, formatRange, ASSUMED_NOTE } from '../js/ui.js';
 import { THEME_BOOT } from '../js/theme.js';
 import { SITE, siteUrl } from '../js/config.js';
+import { DATA_VERSION } from '../js/dataLoader.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ASSET_V = 32;
+// One version, not two: the ?v= stamped onto every generated page is the same
+// constant the data fetch uses. Kept as separate literals they drift, and a
+// stale plan.js served to a returning visitor is invisible until someone reads
+// the wrong number off a cached page.
+const ASSET_V = DATA_VERSION;
 
 /* ------------------------------------------------------------------ helpers */
 

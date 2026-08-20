@@ -15,7 +15,7 @@
  */
 
 import { loadPeptideData } from './dataLoader.js';
-import { calculateDose, defaultReconMl, SYRINGE_SIZES, DEFAULT_SYRINGE } from './calculator.js';
+import { calculateDose, defaultReconMl, splitBlendDose, SYRINGE_SIZES, DEFAULT_SYRINGE } from './calculator.js';
 import {
     reconOptions, vialProjection, cyclePlan,
     toISO, addDays, daysBetween, parseDate,
@@ -112,6 +112,33 @@ function writeForm(state) {
 }
 
 /**
+ * Tell the dose box what the number in it means.
+ *
+ * A blend vial holds two peptides, and `vialSize` is their sum - so the dose
+ * the arithmetic wants is the combined figure, while the dose a person carries
+ * in their head is per peptide. 400mcg of a 5mg+5mg blend is 200mcg of each.
+ * Left unsaid, someone who takes "167mcg of each" types 167 and is quietly
+ * planned at half their own protocol. The calculator already splits a blend
+ * dose out; this page has to say the same thing at the point of entry.
+ *
+ * @param {Object} peptide - record whose dose box is being labelled
+ */
+function setDoseContext(peptide) {
+    $('doseUnit').textContent = peptide.doseUnit;
+    const hint = $('doseHint');
+    const parts = peptide.components || [];
+    if (parts.length < 2) {
+        hint.hidden = true;
+        hint.textContent = '';
+        return;
+    }
+    hint.hidden = false;
+    hint.textContent = `Combined across ${parts.length === 2 ? 'both' : `all ${parts.length}`} `
+        + `peptides in the vial (${parts.map(c => `${c.name} ${c.mg}mg`).join(' + ')}), `
+        + `not the dose of each.`;
+}
+
+/**
  * Fill the dose, vial, water and cadence boxes from the record itself.
  *
  * A blank form on a page of eleven number inputs is a page nobody finishes.
@@ -121,7 +148,7 @@ function writeForm(state) {
 function applyDefaults(peptide) {
     if (!peptide) return;
     $('doseAmount').value = calculateDose(peptide, 180, 'med');
-    $('doseUnit').textContent = peptide.doseUnit;
+    setDoseContext(peptide);
     $('vialSize').value = peptide.vialSize ?? '';
     $('vialUnit').textContent = peptide.vialUnit || 'mg';
     $('reconMl').value = defaultReconMl(peptide);
@@ -138,6 +165,20 @@ function card(title, body, opts = {}) {
         <h2>${esc(title)}</h2>
         ${body}
     </section>`;
+}
+
+/**
+ * The per-component line for a blend, so the combined dose the arithmetic used
+ * is also shown the way the conventions state it. Empty string for anything
+ * that is a single peptide.
+ */
+function blendSplit(peptide, doseAmount) {
+    const parts = splitBlendDose(peptide, doseAmount);
+    if (!parts || parts.length < 2) return '';
+    return `<p class="note blend-split"><strong>${esc(n(doseAmount, 4))} ${esc(peptide.doseUnit)} combined</strong>
+        is ${parts.map(c => `${esc(c.name)} <strong>${esc(big(c.mcg))} mcg</strong>`).join(' + ')}
+        per injection. Dosing conventions for these compounds are stated per peptide, so this is
+        the figure to compare them against.</p>`;
 }
 
 function renderMix(form) {
@@ -184,6 +225,7 @@ function renderMix(form) {
     return card('Mixing', `${lede}
         <div class="working"><code>${esc(n(vialSize))} ${esc(peptide.vialUnit || 'mg')} &divide; ${esc(n(r.best.reconMl))} ml = ${esc(n(r.best.concentration))} ${esc(r.best.concentrationUnit)}
 &rarr; ${esc(n(doseAmount, 4))} ${esc(peptide.doseUnit)} = ${esc(n(r.best.units / 100, 4))} ml = ${esc(n(r.best.drawUnits))} units</code></div>
+        ${blendSplit(peptide, doseAmount)}
         <div class="table-scroll">
         <table class="data-table">
             <caption>Every water volume, for this dose on a ${esc(syringe)}-unit barrel</caption>
@@ -418,7 +460,7 @@ async function init() {
         applyDefaults(byId.get(fromUrl));
     } else if (saved && byId.has(saved.peptideId)) {
         writeForm(saved);
-        $('doseUnit').textContent = byId.get(saved.peptideId).doseUnit;
+        setDoseContext(byId.get(saved.peptideId));
         $('vialUnit').textContent = byId.get(saved.peptideId).vialUnit || 'mg';
         $('saveNote').textContent = 'Loaded the plan saved in this browser.';
         run();
