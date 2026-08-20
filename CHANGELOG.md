@@ -1,5 +1,24 @@
 # Changelog
 
+## 2.0.1 - 2026-08-20
+
+Follow-up pass after re-verifying every finding against the running code.
+
+- **`cortagen` and `crystagen` dosed once a week while claiming to be daily.** Both
+  records carried `f: 1` against their own `freq: "Daily"` and `cycle: "20 days every
+  6 months"` - a record arguing with itself, so it was corrected rather than left as a
+  content decision. `f: 1 -> 7`. Vials needed for a cycle went 2 -> 11. The rest of the
+  44 records were swept for the same `freq`-vs-`f` contradiction; no other genuine case.
+- Golden snapshot updated (it caught the change unprompted - exactly what it is for).
+- `DATA_VERSION` bumped 28 -> 29 so the corrected data is not served from cache.
+- `data/DATA-REVIEW.md` section 3 closed; `thymalin` documented as deliberately left,
+  since it over-reports by four doses and that is the safe direction.
+
+Re-verified end to end at this commit: 15/15 tests pass, the SRI hash on jsPDF matches
+the live CDN file byte-for-byte, and `tools/drive-ui.py` drove the real page in Chromium
+with zero console errors - blend 6/12/24 units, BPC-157 500/1000/2000 mcg, HCG 250 IU at
+15 units (was 0), AICAR showing the clamped overflow state, PDF generating at 27 KB.
+
 ## 2.0.0 - 2026-08-20
 
 Fixes all 24 findings from the 2026-08-20 audit. The four P0 items were dosing

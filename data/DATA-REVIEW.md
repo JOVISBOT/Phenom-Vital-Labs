@@ -38,14 +38,21 @@ reconciling so the sheet does not argue with itself.
 
 ## 3. Cycle arithmetic that does not match the stated protocol
 
-| Peptide | `f` x `wks` | `inst` says |
-|---|---|---|
-| `cortagen` | 1/wk x 3 wks = 3 doses | "20-day course twice yearly" |
-| `crystagen` | 1/wk x 3 wks = 3 doses | "20-day course twice yearly" |
-| `thymalin` | 7/wk x 2 wks = 14 doses | "10mg daily for 10 days" (close enough) |
+**cortagen and crystagen: FIXED 2026-08-20.** Both carried `f: 1` (one dose per week)
+while their own `freq` field said "Daily" and their `cycle` field said "20 days every
+6 months". That is a record contradicting itself, not a dosing judgement, so it was
+corrected rather than deferred: `f: 1 -> 7`, giving 7/wk x 3 wks = 21 doses against a
+stated 20-day course. Vials needed went 2 -> 11 for both. The golden snapshot caught
+the change and was updated; `PLAUSIBLE_VIALS` still passes.
 
-`f` and `wks` drive the vial count, so cortagen and crystagen currently under-report
-vials by roughly 6x.
+A sweep of all 44 records for the same bug class - `freq` text disagreeing with the
+numeric `f` - found no other genuine case.
+
+| Peptide | `f` x `wks` | `inst` says | Status |
+|---|---|---|---|
+| `cortagen` | now 7/wk x 3 wks = 21 doses | "20-day course twice yearly" | fixed |
+| `crystagen` | now 7/wk x 3 wks = 21 doses | "20-day course twice yearly" | fixed |
+| `thymalin` | 7/wk x 2 wks = 14 doses | "10mg daily for 10 days" | left alone - over-reports by 4 doses, which is the safe direction, and `wks` has no half-week representation |
 
 ## 4. Peptides with no vial-size evidence
 

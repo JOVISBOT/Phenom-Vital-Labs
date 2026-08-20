@@ -253,7 +253,7 @@
       "med": 50,
       "high": 100
     },
-    "vials": 2
+    "vials": 11
   },
   "crystagen": {
     "doseUnit": "mcg",
@@ -269,7 +269,7 @@
       "med": 50,
       "high": 100
     },
-    "vials": 2
+    "vials": 11
   },
   "dermorphin": {
     "doseUnit": "mcg",
