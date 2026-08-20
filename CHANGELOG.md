@@ -86,7 +86,7 @@ record says the same thing in prose without carrying the flag.
 
 ### Guards
 
-`npm test` 59 -> 78. The data audit runs as part of it, so a record added next
+`npm test` 59 -> 79. The data audit runs as part of it, so a record added next
 month cannot ship a dose that overflows a syringe, a cadence that argues with
 its own prose, or a range quietly republished as a fact. Every new guard was
 proven by breaking it and watching it go red.
