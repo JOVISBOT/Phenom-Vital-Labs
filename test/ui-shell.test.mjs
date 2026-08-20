@@ -120,6 +120,29 @@ test('the searchable picker keeps the select as the source of truth', () => {
         'main.js does not guard the picker enhancement');
 });
 
+test('a restored protocol names its own peptide in the picker', () => {
+    // restoreFromUrl assigns select.value directly, and assignment fires no
+    // change event -- so the search box in front of the select never heard it.
+    // A shared link drew a full BPC-157 protocol under a peptide box still
+    // reading "Search 44 peptides...", and the CTA on all 44 static pages
+    // lands on exactly that path. Verified in Chromium before the fix.
+    const main = read('js/main.js');
+    const fn = main.slice(main.indexOf('function restoreFromUrl'));
+    const body = fn.slice(0, fn.indexOf(String.fromCharCode(10) + 'function '));
+
+    const assign = body.indexOf("$('peptide').value = id");
+    assert.ok(assign !== -1, 'restoreFromUrl no longer assigns the peptide select');
+    const refresh = body.indexOf('peptideCombo.refresh()');
+    assert.ok(refresh !== -1, 'restoreFromUrl does not re-sync the search box after setting the select');
+    assert.ok(refresh > assign, 'the search box is re-synced before the value it should be reading');
+
+    // The API it calls has to exist and has to read from the select.
+    const combo = read('js/combobox.js');
+    assert.match(combo, /return \{ refresh \}/, 'combobox no longer exposes refresh()');
+    assert.match(combo, /function refresh\(\)[\s\S]{0,200}options\.find\(o => o\.value === select\.value\)/,
+        'refresh() does not read the visible text back off the select');
+});
+
 test('renderResults does not move the viewport on its own', () => {
     // It used to scrollIntoView on every render, including the re-render caused
     // by nudging the water volume -- pulling the page away from someone
