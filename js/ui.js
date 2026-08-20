@@ -74,6 +74,33 @@ export function evidenceFor(peptide) {
 }
 
 /**
+ * Render a {min,max} range as text.
+ *
+ * A range collapsed to one number reads as a measurement. Thirteen records
+ * store a cadence that the prose gives as a range -- "1-3x daily" -- and the
+ * page used to print only the ceiling: "252 injections", "about 51 vials".
+ * True at three a day, three times too high at one. Where min and max differ,
+ * say both; where the figure rests on a house assumption rather than anything
+ * the record states, mark it.
+ *
+ * @param {{min:number,max:number,ranged:boolean,assumed:boolean}} range
+ * @param {Object} [opts] - {suffix, approx}
+ * @returns {string}
+ */
+export function formatRange(range, opts = {}) {
+    const { suffix = '', approx = false } = opts;
+    if (!range) return '';
+    const n = v => trim(v, 1);
+    const body = range.ranged && range.max > range.min
+        ? `${n(range.min)}-${n(range.max)}`
+        : `${approx ? '~' : ''}${n(range.min)}`;
+    return `${body}${suffix}`;
+}
+
+/** Suffix marking a figure the record does not actually state. */
+export const ASSUMED_NOTE = 'assumed - the record states no fixed course';
+
+/**
  * Where a peptide's vial-size catalogue came from.
  *
  * Letting the user type their own size took the catalogue out of the
@@ -749,19 +776,23 @@ export function renderResults(peptide, results, inputs) {
                     <div class="info-card-icon" aria-hidden="true">📅</div>
                     <h4>Frequency</h4>
                     <p class="highlight">${esc(peptide.freq || 'N/A')}</p>
-                    <small>${peptide.f}x per week</small>
+                    <small>${results.weeklyFreqRange.assumed
+                        ? `taken as ${formatRange(results.weeklyFreqRange)}x per week`
+                        : `${formatRange(results.weeklyFreqRange)}x per week`}</small>
                 </div>
                 <div class="info-card">
                     <div class="info-card-icon" aria-hidden="true">🔄</div>
                     <h4>Cycle</h4>
                     <p class="highlight">${esc(peptide.cycle || peptide.wks + ' weeks')}</p>
-                    <small>${results.dosesPerCycle} injections in full</small>
+                    <small>${formatRange(results.dosesPerCycleRange)} injections in full${
+                        results.dosesPerCycleRange.assumed ? ` (${ASSUMED_NOTE})` : ''}</small>
                 </div>
                 <div class="info-card highlight">
                     <div class="info-card-icon" aria-hidden="true">📦</div>
                     <h4>${results.noRecon ? 'Pens Needed' : 'Vials Needed'}</h4>
-                    <p class="big">${results.vialsNeeded}</p>
-                    <small>${results.vialSize}${u} ${results.noRecon ? 'single-dose pens' : ''} for the full cycle (${trim(results.totalCycle, 2)}${u} total)</small>
+                    <p class="big">${formatRange(results.vialsRange)}</p>
+                    <small>${results.vialSize}${u} ${results.noRecon ? 'single-dose pens' : ''} for the full cycle${
+                        results.vialsRange.ranged ? ', depending where in that range you dose' : ` (${trim(results.totalCycle, 2)}${u} total)`}</small>
                 </div>
             </div>
 

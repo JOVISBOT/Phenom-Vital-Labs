@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 6,
+  "schemaVersion": 7,
   "peptides": [
     {
       "id": "ace031",
@@ -58,7 +58,9 @@
         "Cycle 4-8 weeks then break",
         "Combine with resistance training"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "wksMin": 4,
+      "wksMax": 8
     },
     {
       "id": "adamax",
@@ -117,7 +119,8 @@
         "Cycle 3 months on",
         "1 month off optional"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "wksAssumed": true
     },
     {
       "id": "adipotide",
@@ -178,7 +181,9 @@
         "Cycle limited to 4-6 weeks maximum",
         "Medical supervision mandatory"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "wksMin": 4,
+      "wksMax": 6
     },
     {
       "id": "aicar",
@@ -294,7 +299,10 @@
         "Subcutaneous abdominal fat preferred",
         "Works best with caloric deficit and exercise"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "fMin": 14,
+      "fMax": 21,
+      "wksAssumed": true
     },
     {
       "id": "ara290",
@@ -350,7 +358,9 @@
         "Can combine with other nerve support",
         "Monitor pain levels and nerve function"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "fMin": 3,
+      "fMax": 7
     },
     {
       "id": "b733",
@@ -699,7 +709,8 @@
         "Often combined with semaglutide (see Cagrisema) rather than run alone",
         "Monitor for nausea - may need antiemetics during escalation"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "wksAssumed": true
     },
     {
       "id": "cagrisema",
@@ -763,7 +774,8 @@
         "Titrate every 4 weeks - both components escalate together",
         "Monitor for nausea - may need antiemetics initially"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "wksAssumed": true
     },
     {
       "id": "cjc1295",
@@ -878,7 +890,9 @@
         "Subcutaneous abdominal injection",
         "Creates pulsatile GH release - natural pattern"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 7,
+      "fMax": 21
     },
     {
       "id": "cortagen",
@@ -1048,7 +1062,9 @@
         "Legal compliance mandatory",
         "Professional research use only"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fAssumed": true,
+      "wksAssumed": true
     },
     {
       "id": "dihexa",
@@ -1105,7 +1121,9 @@
         "Cycle off 2-4 weeks before repeating",
         "Monitor cognitive clarity and memory"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "wksMin": 4,
+      "wksMax": 6
     },
     {
       "id": "dsip",
@@ -1165,7 +1183,8 @@
         "Cycle 4 weeks on",
         "then assess need for continuation"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "wksAssumed": true
     },
     {
       "id": "dulaglutide",
@@ -1235,7 +1254,8 @@
       "device": "pen",
       "deviceNote": "Trulicity is a single-dose pre-filled pen. The dose is the pen strength you are prescribed - there is nothing to reconstitute and nothing to draw. The strengths listed are the marketed pen sizes.",
       "evidence": "approved",
-      "doseAnchor": "label"
+      "doseAnchor": "label",
+      "wksAssumed": true
     },
     {
       "id": "epo",
@@ -1303,7 +1323,8 @@
         "Medical supervision required"
       ],
       "evidence": "approved",
-      "doseAnchor": "protocol"
+      "doseAnchor": "protocol",
+      "wksAssumed": true
     },
     {
       "id": "follistatin",
@@ -1361,7 +1382,9 @@
         "Often stacked with IGF-1 for synergistic growth",
         "Monitor for tendon issues as muscles grow faster"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 1,
+      "fMax": 2
     },
     {
       "id": "foxo4",
@@ -1417,7 +1440,9 @@
         "Combine with other longevity strategies",
         "Monitor for improved energy/recovery"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fAssumed": true,
+      "wksAssumed": true
     },
     {
       "id": "frag1723",
@@ -1471,7 +1496,10 @@
         "Combine with diet and exercise",
         "Morning and evening dosing"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 14,
+      "fMax": 21,
+      "wksAssumed": true
     },
     {
       "id": "ghrp2",
@@ -1529,7 +1557,11 @@
         "Cycle 8-12 weeks maximum before break",
         "Consider P5P supplement to manage prolactin"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "fMin": 14,
+      "fMax": 21,
+      "wksMin": 8,
+      "wksMax": 12
     },
     {
       "id": "ghrp6",
@@ -1588,7 +1620,11 @@
         "not cutting",
         "Consider if struggling to consume enough calories"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "fMin": 14,
+      "fMax": 21,
+      "wksMin": 8,
+      "wksMax": 12
     },
     {
       "id": "glutathione",
@@ -1644,7 +1680,10 @@
         "Combine with vitamin C for synergy",
         "Skin-lightening protocols use 1500-2000mg by IV INFUSION - out of scope here, and more than three of these vials"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 2,
+      "fMax": 3,
+      "wksAssumed": true
     },
     {
       "id": "gonadorelin",
@@ -1699,7 +1738,9 @@
         "Short courses (2 weeks max)",
         "Monitor testosterone and LH/FSH"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "fAssumed": true,
+      "wksAssumed": true
     },
     {
       "id": "hcg",
@@ -1763,7 +1804,8 @@
         "Keep refrigerated after reconstitution"
       ],
       "evidence": "approved",
-      "doseAnchor": "protocol"
+      "doseAnchor": "protocol",
+      "wksAssumed": true
     },
     {
       "id": "hexarelin",
@@ -1822,7 +1864,9 @@
         "Subcutaneous or intramuscular both effective",
         "Best stacked with GHRH for amplified GH release"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "fMin": 14,
+      "fMax": 21
     },
     {
       "id": "hgh",
@@ -1890,7 +1934,8 @@
         "Requires physician supervision"
       ],
       "evidence": "approved",
-      "doseAnchor": "protocol"
+      "doseAnchor": "protocol",
+      "wksAssumed": true
     },
     {
       "id": "hmg",
@@ -1950,7 +1995,9 @@
       "multiVial": true,
       "multiVialNote": "Menotropins are supplied as 75 IU vials. Reconstituting several vials into a single syringe is the method described on the label, so a dose above one vial is normal practice here rather than an error.",
       "evidence": "approved",
-      "doseAnchor": "protocol"
+      "doseAnchor": "protocol",
+      "wksMin": 3,
+      "wksMax": 6
     },
     {
       "id": "melanotan2",
@@ -2008,7 +2055,10 @@
         "Start LOW to assess nausea (250mcg first dose)",
         "Sun exposure accelerates tanning once started"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 2.3333,
+      "fMax": 3.5,
+      "wksAssumed": true
     },
     {
       "id": "motsc",
@@ -2067,7 +2117,9 @@
         "4 weeks off",
         "Consider with other mitochondrial support supplements"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 2,
+      "fMax": 3
     },
     {
       "id": "nadplus",
@@ -2129,7 +2181,10 @@
         "Combine with TMG or methyl donors",
         "Cycling optional but continuous OK"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 3,
+      "fMax": 7,
+      "wksAssumed": true
     },
     {
       "id": "pegmgf",
@@ -2186,7 +2241,9 @@
         "Typically 2-3 times per week per muscle group",
         "Can combine with systemic IGF-1 or GH peptides"
       ],
-      "evidence": "convention"
+      "evidence": "convention",
+      "fMin": 2,
+      "fMax": 3
     },
     {
       "id": "pt141",
@@ -2248,7 +2305,9 @@
         "Effects last 2-4 hours typically"
       ],
       "evidence": "approved",
-      "doseAnchor": "label"
+      "doseAnchor": "label",
+      "fAssumed": true,
+      "wksAssumed": true
     },
     {
       "id": "retatrutide",
@@ -2315,7 +2374,8 @@
         "Monitor resting heart rate - elevation is expected and dose-related",
         "Cardiovascular clearance recommended"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "wksAssumed": true
     },
     {
       "id": "sermorelin",
@@ -2371,7 +2431,8 @@
         "Effects cumulative - commit to 3+ months",
         "Can be combined with Ipamorelin for enhanced effect"
       ],
-      "evidence": "trial"
+      "evidence": "trial",
+      "wksAssumed": true
     },
     {
       "id": "tb500",
@@ -2631,7 +2692,8 @@
         "Monitor for GI tolerance at each escalation"
       ],
       "evidence": "approved",
-      "doseAnchor": "label"
+      "doseAnchor": "label",
+      "wksAssumed": true
     }
   ]
 }

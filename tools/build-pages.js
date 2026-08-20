@@ -23,9 +23,9 @@ import { fileURLToPath } from 'node:url';
 
 import {
     performCalculation, defaultReconMl, calculateSyringeUnits, concentration,
-    dosesPerCycle, RECON_VOLUMES, DEFAULT_SYRINGE
+    dosesPerCycle, dosesPerCycleRange, RECON_VOLUMES, DEFAULT_SYRINGE
 } from '../js/calculator.js';
-import { evidenceFor, vialProvenanceFor, formatDose } from '../js/ui.js';
+import { evidenceFor, vialProvenanceFor, formatDose, formatRange, ASSUMED_NOTE } from '../js/ui.js';
 import { SITE, siteUrl } from '../js/config.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -246,15 +246,23 @@ export function faqsFor(p, r) {
 
     out.push({
         q: `How often is ${p.name} injected?`,
-        a: `${p.freq}. A typical course runs ${p.cycle}, which is ${dosesPerCycle(p)} injections. `
+        // The count is a range wherever the cadence is. Stating the ceiling as
+        // "a typical course" put a 3x overestimate into the JSON-LD Google
+        // indexes: 252 injections is true at three a day, not at one.
+        a: `${p.freq}. A typical course runs ${p.cycle}, which is `
+            + `${formatRange(r.dosesPerCycleRange)} injection${r.dosesPerCycleRange.max === 1 ? '' : 's'}`
+            + `${r.dosesPerCycleRange.ranged ? ' depending where in that range you dose' : ''}`
+            + `${r.dosesPerCycleRange.assumed ? ` (${ASSUMED_NOTE})` : ''}. `
             + `Reported half-life is ${p.halfLife}.`
     });
 
     out.push({
         q: `How many vials does one ${p.name} cycle take?`,
-        a: `About ${r.vialsNeeded} ${r.noRecon ? (p.device || 'device') : `${num(p.vialSize, 3)} ${p.vialUnit} vial`}`
-            + `${r.vialsNeeded === 1 ? '' : 's'} for the full course - ${dosesPerCycle(p)} doses at ${dose} each, `
-            + `${num(r.totalCycle, 2)} ${p.vialUnit} in total.`
+        a: `${r.vialsRange.ranged ? '' : 'About '}${formatRange(r.vialsRange)} `
+            + `${r.noRecon ? (p.device || 'device') : `${num(p.vialSize, 3)} ${p.vialUnit} vial`}`
+            + `${r.vialsRange.max === 1 ? '' : 's'} for the full course - `
+            + `${formatRange(r.dosesPerCycleRange)} dose${r.dosesPerCycleRange.max === 1 ? '' : 's'} at ${dose} each`
+            + `${r.vialsRange.ranged ? '' : `, ${num(r.totalCycle, 2)} ${p.vialUnit} in total`}.`
     });
 
     out.push({
@@ -281,7 +289,7 @@ function peptidePage(p, all) {
 
     const description = r.noRecon
         ? `${p.name}: ${formatDose(r.doses.med, r.doseUnit)} per dose, ${p.freq.toLowerCase()}, `
-            + `${dosesPerCycle(p)} doses per ${p.cycle} course. Pre-filled ${p.device || 'device'} - nothing to reconstitute.`
+            + `${formatRange(r.dosesPerCycleRange)} doses per ${p.cycle} course. Pre-filled ${p.device || 'device'} - nothing to reconstitute.`
         : `${p.name}: ${formatDose(r.doses.med, r.doseUnit)} is ${units(r.syringeUnits.med)} units on a U-100 insulin `
             + `syringe when a ${num(p.vialSize, 3)} ${p.vialUnit} vial is mixed with ${num(defaultReconMl(p), 2)} ml `
             + `bacteriostatic water. Reconstitution table, cycle length and vial count.`;
@@ -411,9 +419,9 @@ function peptidePage(p, all) {
                     <div><dt>Category</dt><dd>${esc(p.category)}</dd></div>
                     <div><dt>Frequency</dt><dd>${esc(p.freq)}</dd></div>
                     <div><dt>Cycle</dt><dd>${esc(p.cycle)}</dd></div>
-                    <div><dt>Injections per cycle</dt><dd>${dosesPerCycle(p)}</dd></div>
+                    <div><dt>Injections per cycle</dt><dd>${formatRange(r.dosesPerCycleRange)}${r.dosesPerCycleRange.assumed ? ` <span class="assumed">(${ASSUMED_NOTE})</span>` : ''}</dd></div>
                     <div><dt>Half-life</dt><dd>${esc(p.halfLife)}</dd></div>
-                    <div><dt>Vials per cycle</dt><dd>${r.vialsNeeded}</dd></div>
+                    <div><dt>Vials per cycle</dt><dd>${formatRange(r.vialsRange)}</dd></div>
                     <div><dt>Total peptide per cycle</dt><dd>${num(r.totalCycle, 2)} ${esc(p.vialUnit)}</dd></div>
                     <div><dt>Dose range</dt><dd>${esc(formatDose(r.doses.low, r.doseUnit))} &ndash; ${esc(formatDose(r.doses.high, r.doseUnit))}</dd></div>
                 </dl>

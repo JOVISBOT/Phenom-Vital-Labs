@@ -1,8 +1,11 @@
-# Test files
-test-*.js
-test-*.html
-verify-*.js
-trace-*.js
+# Scratch files left at the repo root by ad-hoc debugging.
+# Scoped to the root on purpose: an unanchored `verify-*.js` also swallowed
+# tools/verify-data.js, so the data audit that gates `npm test` was silently
+# untracked and would not have shipped.
+/test-*.js
+/test-*.html
+/verify-*.js
+/trace-*.js
 
 # Scripts used for extraction
 scripts/
@@ -33,6 +36,7 @@ Thumbs.db
 
 # Local verification artifacts
 shots/
+shots-live/
 ui-report.json
 
 # scratch: openFDA responses and UI-driver output

@@ -126,6 +126,71 @@ export function dosesPerCycle(peptide) {
 }
 
 /**
+ * Injections in one cycle, as the RANGE the record actually states.
+ *
+ * `f` and `wks` are single numbers, and thirteen records got theirs by
+ * collapsing a range in the prose -- "1-3x daily" stored 21, "8-12 on" stored
+ * 10. Everything downstream then published the collapsed figure as fact.
+ * cjc1295_nodac's page read "a typical course runs 12 on, 4 off, which is 252
+ * injections", true only at the top of a 1-3x range; at once daily it is 84.
+ * Where `fMin`/`fMax` or `wksMin`/`wksMax` exist, the range is the honest
+ * answer and the point estimate is not.
+ *
+ * `assumed` is set where the prose names no cadence or no window at all
+ * ("Multiple daily", "Continuous OK") and the stored figure is a house
+ * assumption rather than something the record states.
+ * @param {Object} peptide
+ * @returns {{min: number, max: number, ranged: boolean, assumed: boolean}}
+ */
+export function dosesPerCycleRange(peptide) {
+    const assumed = peptide.fAssumed === true || peptide.wksAssumed === true;
+
+    if (peptide.dosesPerCycle) {
+        return { min: peptide.dosesPerCycle, max: peptide.dosesPerCycle, ranged: false, assumed };
+    }
+
+    const fLo = peptide.fMin ?? peptide.f;
+    const fHi = peptide.fMax ?? peptide.f;
+    const wLo = peptide.wksMin ?? peptide.wks;
+    const wHi = peptide.wksMax ?? peptide.wks;
+
+    const min = Math.round(fLo * wLo);
+    const max = Math.round(fHi * wHi);
+    return { min, max, ranged: max > min, assumed };
+}
+
+/**
+ * Vials for a full cycle, as a range, for the same reason.
+ * @param {Object} peptide
+ * @param {number} doseAmount - Dose in the peptide's `doseUnit`
+ * @param {number} vialSize
+ * @returns {{min: number, max: number, ranged: boolean, assumed: boolean}}
+ */
+export function calculateVialsRange(peptide, doseAmount, vialSize) {
+    const perDose = toVialUnits(doseAmount, peptide.doseUnit);
+    const size = vialSize || peptide.vialSize;
+    const doses = dosesPerCycleRange(peptide);
+
+    return {
+        min: Math.ceil((perDose * doses.min) / size),
+        max: Math.ceil((perDose * doses.max) / size),
+        ranged: doses.ranged,
+        assumed: doses.assumed
+    };
+}
+
+/**
+ * Doses per week as the record states it -- "14-21" rather than "21".
+ * @param {Object} peptide
+ * @returns {{min: number, max: number, ranged: boolean, assumed: boolean}}
+ */
+export function weeklyFreqRange(peptide) {
+    const min = peptide.fMin ?? peptide.f;
+    const max = peptide.fMax ?? peptide.f;
+    return { min, max, ranged: max > min, assumed: peptide.fAssumed === true };
+}
+
+/**
  * Vials needed for one full cycle.
  * @param {Object} peptide
  * @param {number} doseAmount - Dose in the peptide's `doseUnit`
@@ -322,6 +387,12 @@ export function performCalculation(peptide, opts = {}) {
             high: perDoseVials.high > 1 && pooled.high === 1
         },
         vialsNeeded: calculateVialsNeeded(peptide, doses.med, vialSize),
+        // The range beside every collapsed figure. Where a record states one
+        // cadence these are equal to the point estimate and `ranged` is false,
+        // so nothing changes for 31 of the 44.
+        vialsRange: calculateVialsRange(peptide, doses.med, vialSize),
+        dosesPerCycleRange: dosesPerCycleRange(peptide),
+        weeklyFreqRange: weeklyFreqRange(peptide),
         totalCycle: round(perDoseVialUnits * dosesPerCycle(peptide), 2),
         dosesPerCycle: dosesPerCycle(peptide),
         weeklyFreq: peptide.f,
@@ -379,6 +450,9 @@ function deviceCalculation(peptide, weightLbs, strength) {
         exceedsVial: { ...falses },
         // One single-dose device per injection, so the device count is the dose count.
         vialsNeeded: dosesPerCycle(peptide),
+        vialsRange: dosesPerCycleRange(peptide),
+        dosesPerCycleRange: dosesPerCycleRange(peptide),
+        weeklyFreqRange: weeklyFreqRange(peptide),
         totalCycle: round(perDose * dosesPerCycle(peptide), 2),
         dosesPerCycle: dosesPerCycle(peptide),
         weeklyFreq: peptide.f,

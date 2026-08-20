@@ -4,7 +4,7 @@
  * @module pdfGenerator
  */
 
-import { DISCLAIMER_TITLE, DISCLAIMER_BODY, formatDose, evidenceFor, vialProvenanceFor } from './ui.js';
+import { DISCLAIMER_TITLE, DISCLAIMER_BODY, formatDose, evidenceFor, vialProvenanceFor, formatRange } from './ui.js';
 
 export function generatePDF(peptide, results, inputs, previewMode) {
     try {
@@ -257,8 +257,8 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         const details = [
             ['Half-Life', peptide.halfLife || 'N/A'],
             ['Frequency', peptide.freq || 'N/A'],
-            ['Cycle', `${peptide.cycle || (peptide.wks || 0) + ' weeks'} (${results.dosesPerCycle} inj)`],
-            [results.noRecon ? 'Pens' : 'Vials', `${results.vialsNeeded} x ${results.vialSize}${vialUnit} (${sizeProv})`],
+            ['Cycle', `${peptide.cycle || (peptide.wks || 0) + ' weeks'} (${formatRange(results.dosesPerCycleRange)} inj)`],
+            [results.noRecon ? 'Pens' : 'Vials', `${formatRange(results.vialsRange)} x ${results.vialSize}${vialUnit} (${sizeProv})`],
             ['Evidence', evidenceFor(peptide).label],
             ['Timing', getTiming(peptide)],
             ['For', `${inputs.weight} lbs, ${inputs.age} yrs (reference only)`]
