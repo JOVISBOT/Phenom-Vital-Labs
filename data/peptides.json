@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "peptides": [
     {
       "id": "ace031",
@@ -395,7 +395,7 @@
       "doseUnit": "mg",
       "low": 0.2,
       "med": 0.4,
-      "high": 0.8,
+      "high": 0.6,
       "vialUnit": "mg",
       "vialSize": 10,
       "vialSizes": [
@@ -430,9 +430,10 @@
       ],
       "inst": [
         "Contains 5mg CJC-1295 NO DAC + 5mg Ipamorelin (10mg total)",
-        "Typical dose: 300mcg (0.3mg) of each peptide per injection",
+        "Convention is 100-300mcg of EACH peptide per injection; 200mcg is typical",
+        "CJC-1295 NO DAC saturates the GHRH receptor near 1mcg/kg - past that, side effects scale but GH release does not",
         "Inject once daily before bed on empty stomach",
-        "Evening dosing optimal for natural GH pulse timing",
+        "Evening dosing rides the natural overnight GH pulse",
         "Empty stomach: wait 30 min after injection before eating"
       ]
     },
@@ -447,8 +448,8 @@
       "cycle": "6 on, 4 off",
       "doseUnit": "mg",
       "low": 0.5,
-      "med": 1.5,
-      "high": 2.5,
+      "med": 1,
+      "high": 1.5,
       "vialUnit": "mg",
       "vialSize": 10,
       "vialSizes": [
@@ -483,15 +484,16 @@
       ],
       "inst": [
         "Contains 5mg BPC-157 + 5mg TB-500 (10mg total)",
-        "Typical dose: 1mg total (500mcg of each peptide) per injection",
+        "Typical dose: 1mg total = 500mcg of EACH peptide per injection",
+        "At 5 injections/week that is 2.5mg/wk TB-500 - its maintenance dose",
         "Subcutaneous injection 5 days per week",
-        "Rotate injection sites",
-        "Can dose higher initially for acute injuries"
+        "Inject near the injury site where practical - local beat systemic in tendon studies",
+        "High tier (750mcg each) reaches TB-500 loading dose - use for acute injury, not maintenance"
       ]
     },
     {
       "id": "blend_heal_20",
-      "name": "BPC 157 + TB 500 Blend (High Dose)",
+      "name": "BPC 157 + TB 500 Blend (20mg vial)",
       "category": "Healing Blend (10mg+10mg)",
       "research": "Pre-mixed blend: BPC-157 10mg + TB-500 10mg per vial. Higher dose version for severe injuries or faster recovery protocols.",
       "mechanism": "Same synergistic mechanism: BPC-157 provides local tissue repair while TB-500 mobilizes stem cells systemically. Higher concentration allows lower volume per injection.",
@@ -499,9 +501,9 @@
       "freq": "5x weekly",
       "cycle": "6 on, 4 off",
       "doseUnit": "mg",
-      "low": 1,
-      "med": 2,
-      "high": 3,
+      "low": 0.5,
+      "med": 1,
+      "high": 1.5,
       "vialUnit": "mg",
       "vialSize": 20,
       "vialSizes": [
@@ -536,10 +538,11 @@
       ],
       "inst": [
         "Contains 10mg BPC-157 + 10mg TB-500 (20mg total)",
-        "Typical dose: 1.5mg total (750mcg of each peptide) per injection",
+        "Typical dose: 1mg total = 500mcg of EACH peptide - the same dose as the 10mg blend",
+        "The 20mg vial is twice as concentrated: same dose, half the injection volume",
         "Subcutaneous injection 5 days per week",
-        "Lower volume per injection vs standard blend",
-        "Ideal for severe injuries or faster recovery"
+        "Inject near the injury site where practical",
+        "Fewer vials per cycle than the 10mg blend, so better value on long protocols"
       ]
     },
     {
@@ -552,9 +555,9 @@
       "freq": "Daily",
       "cycle": "4 on, 2 off (repeatable)",
       "doseUnit": "mcg",
-      "low": 500,
-      "med": 1000,
-      "high": 2000,
+      "low": 250,
+      "med": 500,
+      "high": 1000,
       "vialUnit": "mg",
       "vialSize": 5,
       "vialSizes": [
@@ -562,7 +565,7 @@
         5,
         10
       ],
-      "reconMl": 2,
+      "reconMl": 3,
       "f": 7,
       "wks": 4,
       "pros": [
@@ -588,11 +591,12 @@
       ],
       "inst": [
         "Reconstitute 5mg vial with 3ml bacteriostatic water",
-        "Inject subcutaneously near injury site OR abdominal fat",
-        "Morning on empty stomach",
-        "30 minutes before eating",
+        "Cited range is 250-500mcg per day; 250mcg is the usual starting dose",
+        "High tier (1000mcg) is an acute-injury protocol - split into AM and PM doses",
+        "Inject subcutaneously near the injury site OR abdominal fat",
+        "Morning on empty stomach, 30 minutes before eating",
         "Can be stacked with TB-500 for enhanced healing",
-        "Store reconstituted vial refrigerated (2-8°C)"
+        "Store reconstituted vial refrigerated (2-8C)"
       ]
     },
     {
@@ -604,20 +608,20 @@
       "halfLife": "~7 days",
       "freq": "Weekly",
       "cycle": "Continuous",
-      "doseUnit": "mcg",
-      "low": 100,
-      "med": 200,
-      "high": 400,
+      "doseUnit": "mg",
+      "low": 1.2,
+      "med": 2.4,
+      "high": 4.5,
       "vialUnit": "mg",
-      "vialSize": 5,
+      "vialSize": 10,
       "vialSizes": [
         2,
         5,
         10
       ],
-      "reconMl": 3,
+      "reconMl": 2,
       "f": 1,
-      "wks": 16,
+      "wks": 26,
       "pros": [
         "Long-acting weekly injection",
         "Potent appetite suppression",
@@ -641,11 +645,12 @@
         "Gallbladder: risk of stones"
       ],
       "inst": [
-        "Weekly subcutaneous injection",
-        "Start low and titrate every 2 weeks",
-        "Combine with semaglutide for maximum effect",
-        "Take on same day each week",
-        "Monitor for nausea - may need antiemetics initially"
+        "Weekly subcutaneous injection, same day each week",
+        "Phase 2 titration: 0.3mg -> 0.6mg -> 1.2mg -> 2.4mg -> 4.5mg",
+        "Escalate every 2 weeks as tolerated - do not start at the top tier",
+        "4.5mg weekly was the most effective arm (-10.8% body weight at 26 weeks)",
+        "Often combined with semaglutide (see Cagrisema) rather than run alone",
+        "Monitor for nausea - may need antiemetics during escalation"
       ]
     },
     {
@@ -658,7 +663,7 @@
       "freq": "Weekly",
       "cycle": "Continuous",
       "doseUnit": "mg",
-      "low": 1,
+      "low": 0.5,
       "med": 2.4,
       "high": 4.8,
       "vialUnit": "mg",
@@ -701,10 +706,10 @@
       ],
       "inst": [
         "Contains 2.5mg Cagrilintide + 2.5mg Semaglutide (5mg total)",
-        "Typical starting dose: 0.25mg total per week",
-        "Weekly subcutaneous injection",
-        "Start low and titrate every 2-4 weeks",
-        "Take on same day each week",
+        "Starting dose: 0.5mg total = 0.25mg of EACH per week",
+        "Full maintenance: 4.8mg total = 2.4mg of EACH per week",
+        "Weekly subcutaneous injection, same day each week",
+        "Titrate every 4 weeks - both components escalate together",
         "Monitor for nausea - may need antiemetics initially"
       ]
     },
@@ -864,7 +869,8 @@
         "Morning dosing (adrenal support timing)",
         "Can combine with other bioregulators",
         "Monitor stress response and energy"
-      ]
+      ],
+      "dosesPerCycle": 20
     },
     {
       "id": "crystagen",
@@ -915,7 +921,8 @@
         "Can combine with other bioregulators",
         "Take during immune challenge periods",
         "Monitor immune function markers"
-      ]
+      ],
+      "dosesPerCycle": 20
     },
     {
       "id": "dermorphin",
@@ -1093,7 +1100,7 @@
       "med": 1.5,
       "high": 4.5,
       "vialUnit": "mg",
-      "vialSize": 3,
+      "vialSize": 4.5,
       "vialSizes": [
         0.75,
         1.5,
@@ -1500,11 +1507,11 @@
         "General: very safe profile"
       ],
       "inst": [
-        "Subcutaneous or IM injection (IV preferred for high doses)",
+        "Subcutaneous or IM injection - the doses below are for that route",
         "2-3 times weekly maintenance",
         "Morning dosing may enhance detox",
         "Combine with vitamin C for synergy",
-        "For skin: higher doses (1500-2000mg)"
+        "Skin-lightening protocols use 1500-2000mg by IV INFUSION - out of scope here, and more than three of these vials"
       ]
     },
     {
@@ -2061,11 +2068,11 @@
       "freq": "Weekly",
       "cycle": "Continuous",
       "doseUnit": "mg",
-      "low": 1,
-      "med": 2,
-      "high": 4,
+      "low": 4,
+      "med": 8,
+      "high": 12,
       "vialUnit": "mg",
-      "vialSize": 10,
+      "vialSize": 30,
       "vialSizes": [
         5,
         10,
@@ -2078,7 +2085,7 @@
       ],
       "reconMl": 2,
       "f": 1,
-      "wks": 24,
+      "wks": 48,
       "pros": [
         "Most potent weight loss peptide (24% in trials)",
         "Triple mechanism with thermogenic component",
@@ -2105,12 +2112,12 @@
         "Gallbladder: pancreatitis risk"
       ],
       "inst": [
-        "Week 1-4: 2mg weekly (clinical trial starting dose)",
+        "Week 1-4: 2mg weekly (lower start halves GI side effects vs 4mg)",
         "Week 5-8: 4mg weekly",
         "Week 9-12: 8mg weekly",
-        "Week 13+: 9-12mg weekly (therapeutic)",
+        "Week 13+: 12mg weekly (highest trial arm, -24.2% at 48 weeks)",
         "Titrate every 4 weeks for GI tolerance",
-        "Monitor resting heart rate - elevation expected",
+        "Monitor resting heart rate - elevation is expected and dose-related",
         "Cardiovascular clearance recommended"
       ]
     },
@@ -2176,9 +2183,9 @@
       "freq": "2x weekly",
       "cycle": "6 on, 4 off",
       "doseUnit": "mcg",
-      "low": 750,
-      "med": 1500,
-      "high": 3000,
+      "low": 1000,
+      "med": 2000,
+      "high": 2500,
       "vialUnit": "mg",
       "vialSize": 5,
       "vialSizes": [
@@ -2211,12 +2218,11 @@
         "Pregnancy: insufficient safety data"
       ],
       "inst": [
-        "Loading phase: 7.5mg (1.5 vials) split over first week",
-        "Maintenance: 5mg twice weekly subcutaneously",
-        "Any fatty area acceptable (abdomen",
-        "thigh",
-        "glute)",
+        "Loading: 2-2.5mg twice weekly (4-5mg/wk) for the first 4-6 weeks",
+        "Maintenance: 2-2.5mg once weekly thereafter",
+        "Any fatty area acceptable (abdomen, thigh, glute)",
         "Best stacked with BPC-157 for acute injuries",
+        "Community convention extrapolated from animal work - there is no validated human dose",
         "Can continue longer cycles with 4-week breaks"
       ]
     },
@@ -2327,7 +2333,8 @@
         "Often stacked with Epitalon for longevity synergy",
         "Subcutaneous injection",
         "Best in morning on empty stomach"
-      ]
+      ],
+      "dosesPerCycle": 10
     },
     {
       "id": "tirzepatide",
@@ -2341,9 +2348,9 @@
       "doseUnit": "mg",
       "low": 2.5,
       "med": 5,
-      "high": 10,
+      "high": 15,
       "vialUnit": "mg",
-      "vialSize": 10,
+      "vialSize": 20,
       "vialSizes": [
         5,
         10,

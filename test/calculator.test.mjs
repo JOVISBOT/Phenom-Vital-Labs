@@ -21,6 +21,8 @@ import {
     calculateSyringeUnits,
     calculateVialsNeeded,
     calculateDose,
+    dosesPerCycle,
+    vialsPerDose,
     splitBlendDose,
     toVialUnits,
     validateInputs,
@@ -82,8 +84,12 @@ test('blend components sum to the vial and split cleanly', () => {
 test('a blend never reports only its combined dose', () => {
     // 0.4 mg of a 5mg+5mg blend is 200 mcg of each. Showing only "0.4 mg" reads
     // as double the real per-peptide dose against every published convention.
+    // Detection cannot key on the word "blend" alone: cagrisema is two actives in
+    // one vial and its category reads "Dual Weight Loss Combo (2.5mg+2.5mg)".
+    // Any record advertising "<n>mg + <n>mg" is a blend whatever it calls itself.
     for (const p of peptides) {
-        const isBlend = p.id.includes('blend') || p.category.toLowerCase().includes('blend');
+        const blob = `${p.id} ${p.name} ${p.category}`.toLowerCase();
+        const isBlend = blob.includes('blend') || /\d\s*mg\s*\+\s*\d/.test(blob);
         if (isBlend) assert.ok(p.components, `${p.id} is a blend but has no components`);
     }
 });
@@ -158,6 +164,58 @@ test('PLAUSIBLE_UNITS: the recommended dose fits inside one reconstituted vial',
     }
 });
 
+// The `med`-only check above is what let four records ship a `high` tier that
+// needed more peptide than the vial contained. Every tier is checked now, and
+// the exceptions are named rather than tolerated silently.
+const EXCEEDS_VIAL_AT_HIGH = new Set([
+    'aicar',    // 200mg dose, largest vial offered is 100mg
+    'dihexa',   // 32mg dose, largest vial offered is 30mg
+    'hmg'       // 300 IU dose, largest vial offered is 150 IU
+]);
+
+test('EVERY tier is either drawable from one vial, or flagged as needing more', () => {
+    for (const p of peptides) {
+        const r = performCalculation(p, { weightLbs: REF_WEIGHT });
+        for (const level of LEVELS) {
+            if (r.exceedsVial[level]) {
+                assert.ok(EXCEEDS_VIAL_AT_HIGH.has(p.id),
+                    `${p.id}/${level}: needs ${r.perDoseVials[level]} vials per dose and is not a known exception`);
+                assert.equal(level, 'high', `${p.id}: only the high tier may exceed a vial`);
+            } else {
+                assert.ok(r.syringeUnits[level] <= p.reconMl * UNITS_PER_ML,
+                    `${p.id}/${level}: ${r.syringeUnits[level]}u exceeds the ${p.reconMl * UNITS_PER_ML}u vial but was not flagged`);
+            }
+        }
+    }
+});
+
+test('a dose bigger than the vial is reported, not silently truncated', () => {
+    // Water dilutes, it does not add peptide -- so this state cannot be fixed by
+    // reconstitution volume or barrel size, and the UI has to say so.
+    for (const id of EXCEEDS_VIAL_AT_HIGH) {
+        const p = peptides.find(x => x.id === id);
+        const r = performCalculation(p, { weightLbs: REF_WEIGHT });
+        assert.equal(r.exceedsVial.high, true, `${id}: expected the high tier to be flagged`);
+        assert.ok(r.perDoseVials.high > 1, `${id}: perDoseVials should exceed 1`);
+        assert.equal(r.exceedsVial.med, false, `${id}: the recommended dose must still be drawable`);
+    }
+});
+
+test('dosesPerCycle overrides f x wks for day-stated courses', () => {
+    // "10mg daily for 10 days" is not a whole number of weeks, so f x wks
+    // over-reported thymalin by 4 doses and cortagen/crystagen by 1 each.
+    const expected = { thymalin: 10, cortagen: 20, crystagen: 20 };
+    for (const [id, doses] of Object.entries(expected)) {
+        const p = peptides.find(x => x.id === id);
+        assert.equal(dosesPerCycle(p), doses, `${id}: wrong cycle length`);
+        assert.notEqual(p.f * p.wks, doses, `${id}: override is redundant, f x wks already gives ${doses}`);
+    }
+    // Everything else still derives from frequency x weeks.
+    for (const p of peptides.filter(x => !(x.id in expected))) {
+        assert.equal(dosesPerCycle(p), p.f * p.wks, `${p.id}: unexpected dosesPerCycle override`);
+    }
+});
+
 test('PLAUSIBLE_VIALS: a full cycle never needs an absurd number of vials', () => {
     // dihexa previously computed 15,718 vials for one cycle.
     for (const p of peptides) {
@@ -171,8 +229,10 @@ test('vials needed covers the whole cycle', () => {
     for (const p of peptides) {
         const perDose = toVialUnits(p.med, p.doseUnit);
         const needed = calculateVialsNeeded(p, p.med, p.vialSize);
-        assert.ok(needed * p.vialSize >= perDose * p.f * p.wks - 1e-9,
+        assert.ok(needed * p.vialSize >= perDose * dosesPerCycle(p) - 1e-9,
             `${p.id}: ${needed} vials do not cover the cycle`);
+        assert.equal(vialsPerDose(p, p.med, p.vialSize) <= 1, true,
+            `${p.id}: the recommended dose needs more than one vial`);
     }
 });
 

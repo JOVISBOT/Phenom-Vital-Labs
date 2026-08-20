@@ -118,12 +118,12 @@
     "doses": {
       "low": 0.2,
       "med": 0.4,
-      "high": 0.8
+      "high": 0.6
     },
     "units": {
       "low": 6,
       "med": 12,
-      "high": 24
+      "high": 18
     },
     "vials": 4
   },
@@ -133,75 +133,75 @@
     "reconMl": 2,
     "doses": {
       "low": 0.5,
-      "med": 1.5,
-      "high": 2.5
+      "med": 1,
+      "high": 1.5
     },
     "units": {
       "low": 10,
-      "med": 30,
-      "high": 50
+      "med": 20,
+      "high": 30
     },
-    "vials": 5
+    "vials": 3
   },
   "blend_heal_20": {
     "doseUnit": "mg",
     "vial": "20mg",
     "reconMl": 3,
     "doses": {
-      "low": 1,
-      "med": 2,
-      "high": 3
+      "low": 0.5,
+      "med": 1,
+      "high": 1.5
     },
     "units": {
-      "low": 15,
-      "med": 30,
-      "high": 45
+      "low": 7.5,
+      "med": 15,
+      "high": 22.5
     },
-    "vials": 3
+    "vials": 2
   },
   "bpc157": {
     "doseUnit": "mcg",
     "vial": "5mg",
-    "reconMl": 2,
-    "doses": {
-      "low": 500,
-      "med": 1000,
-      "high": 2000
-    },
-    "units": {
-      "low": 20,
-      "med": 40,
-      "high": 80
-    },
-    "vials": 6
-  },
-  "cagrilintide": {
-    "doseUnit": "mcg",
-    "vial": "5mg",
     "reconMl": 3,
     "doses": {
-      "low": 100,
-      "med": 200,
-      "high": 400
+      "low": 250,
+      "med": 500,
+      "high": 1000
     },
     "units": {
-      "low": 6,
-      "med": 12,
-      "high": 24
+      "low": 15,
+      "med": 30,
+      "high": 60
     },
-    "vials": 1
+    "vials": 3
+  },
+  "cagrilintide": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 1.2,
+      "med": 2.4,
+      "high": 4.5
+    },
+    "units": {
+      "low": 24,
+      "med": 48,
+      "high": 90
+    },
+    "vials": 7
   },
   "cagrisema": {
     "doseUnit": "mg",
     "vial": "5mg",
     "reconMl": 1,
     "doses": {
-      "low": 1,
+      "low": 0.5,
       "med": 2.4,
       "high": 4.8
     },
     "units": {
-      "low": 20,
+      "low": 10,
       "med": 48,
       "high": 96
     },
@@ -253,7 +253,7 @@
       "med": 50,
       "high": 100
     },
-    "vials": 11
+    "vials": 10
   },
   "crystagen": {
     "doseUnit": "mcg",
@@ -269,7 +269,7 @@
       "med": 50,
       "high": 100
     },
-    "vials": 11
+    "vials": 10
   },
   "dermorphin": {
     "doseUnit": "mcg",
@@ -321,7 +321,7 @@
   },
   "dulaglutide": {
     "doseUnit": "mg",
-    "vial": "3mg",
+    "vial": "4.5mg",
     "reconMl": 1,
     "doses": {
       "low": 0.75,
@@ -329,11 +329,11 @@
       "high": 4.5
     },
     "units": {
-      "low": 25,
-      "med": 50,
-      "high": 150
+      "low": 16.7,
+      "med": 33.3,
+      "high": 100
     },
-    "vials": 8
+    "vials": 6
   },
   "epo": {
     "doseUnit": "IU",
@@ -609,19 +609,19 @@
   },
   "retatrutide": {
     "doseUnit": "mg",
-    "vial": "10mg",
+    "vial": "30mg",
     "reconMl": 2,
     "doses": {
-      "low": 1,
-      "med": 2,
-      "high": 4
+      "low": 4,
+      "med": 8,
+      "high": 12
     },
     "units": {
-      "low": 20,
-      "med": 40,
+      "low": 26.7,
+      "med": 53.3,
       "high": 80
     },
-    "vials": 5
+    "vials": 13
   },
   "sermorelin": {
     "doseUnit": "mg",
@@ -644,16 +644,16 @@
     "vial": "5mg",
     "reconMl": 1,
     "doses": {
-      "low": 750,
-      "med": 1500,
-      "high": 3000
+      "low": 1000,
+      "med": 2000,
+      "high": 2500
     },
     "units": {
-      "low": 15,
-      "med": 30,
-      "high": 60
+      "low": 20,
+      "med": 40,
+      "high": 50
     },
-    "vials": 4
+    "vials": 5
   },
   "tesamorelin": {
     "doseUnit": "mg",
@@ -685,22 +685,22 @@
       "med": 50,
       "high": 75
     },
-    "vials": 7
+    "vials": 5
   },
   "tirzepatide": {
     "doseUnit": "mg",
-    "vial": "10mg",
+    "vial": "20mg",
     "reconMl": 1,
     "doses": {
       "low": 2.5,
       "med": 5,
-      "high": 10
+      "high": 15
     },
     "units": {
-      "low": 25,
-      "med": 50,
-      "high": 100
+      "low": 12.5,
+      "med": 25,
+      "high": 75
     },
-    "vials": 10
+    "vials": 5
   }
 }

@@ -111,6 +111,21 @@ export function calculateSyringeUnits(peptide, doseAmount, vialSize, reconMl) {
 }
 
 /**
+ * Number of injections in one full cycle.
+ *
+ * `f` x `wks` only lands on the right number when the course is a whole number
+ * of weeks. Protocols stated in days -- thymalin's "10mg daily for 10 days",
+ * cortagen and crystagen's "20-day course" -- cannot be expressed that way and
+ * were over-reporting by 4 and 1 doses respectively. Those records carry an
+ * explicit `dosesPerCycle`, which wins when present.
+ * @param {Object} peptide
+ * @returns {number}
+ */
+export function dosesPerCycle(peptide) {
+    return peptide.dosesPerCycle || peptide.f * peptide.wks;
+}
+
+/**
  * Vials needed for one full cycle.
  * @param {Object} peptide
  * @param {number} doseAmount - Dose in the peptide's `doseUnit`
@@ -119,9 +134,27 @@ export function calculateSyringeUnits(peptide, doseAmount, vialSize, reconMl) {
  */
 export function calculateVialsNeeded(peptide, doseAmount, vialSize) {
     const perDose = toVialUnits(doseAmount, peptide.doseUnit);
-    const total = perDose * peptide.f * peptide.wks;
+    const total = perDose * dosesPerCycle(peptide);
 
     return Math.ceil(total / (vialSize || peptide.vialSize));
+}
+
+/**
+ * Vials consumed by a SINGLE injection.
+ *
+ * Normally a fraction. When it exceeds 1 the protocol asks for more peptide
+ * than one reconstituted vial holds, so the dose cannot be drawn at all -- no
+ * amount of bacteriostatic water fixes it, because water dilutes rather than
+ * adds. Four records shipped in this state (aicar, dihexa, dulaglutide, hmg);
+ * the old syringe-overflow check missed them because it only looked at `med`.
+ * @param {Object} peptide
+ * @param {number} doseAmount - Dose in the peptide's `doseUnit`
+ * @param {number} vialSize
+ * @returns {number}
+ */
+export function vialsPerDose(peptide, doseAmount, vialSize) {
+    const perDose = toVialUnits(doseAmount, peptide.doseUnit);
+    return round(perDose / (vialSize || peptide.vialSize), 3);
 }
 
 /**
@@ -207,6 +240,10 @@ export function performCalculation(peptide, opts = {}) {
     }
 
     const perDoseVialUnits = toVialUnits(doses.med, peptide.doseUnit);
+    const perDoseVials = {};
+    for (const level of ['low', 'med', 'high']) {
+        perDoseVials[level] = vialsPerDose(peptide, doses[level], vialSize);
+    }
 
     return {
         doseUnit: peptide.doseUnit,
@@ -220,13 +257,23 @@ export function performCalculation(peptide, opts = {}) {
         syringeUnits,
         components,
         // True when one dose will not fit in the selected barrel in a single draw.
+        // Fixable by the user: pick a bigger barrel, or split the injection.
         overflow: {
             low: syringeUnits.low > syringe,
             med: syringeUnits.med > syringe,
             high: syringeUnits.high > syringe
         },
+        perDoseVials,
+        // True when one dose needs more peptide than a whole vial holds. NOT
+        // fixable by barrel size or water volume -- it needs a second vial.
+        exceedsVial: {
+            low: perDoseVials.low > 1,
+            med: perDoseVials.med > 1,
+            high: perDoseVials.high > 1
+        },
         vialsNeeded: calculateVialsNeeded(peptide, doses.med, vialSize),
-        totalCycle: round(perDoseVialUnits * peptide.f * peptide.wks, 2),
+        totalCycle: round(perDoseVialUnits * dosesPerCycle(peptide), 2),
+        dosesPerCycle: dosesPerCycle(peptide),
         weeklyFreq: peptide.f,
         cycleWeeks: peptide.wks
     };

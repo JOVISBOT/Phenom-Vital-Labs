@@ -118,7 +118,10 @@ export function generatePDF(peptide, results, inputs, previewMode) {
             const c = configs[i];
             const x = margin + (i * (syrW + 4));
             const units = results.syringeUnits[c.key];
-            const overflow = results.overflow[c.key];
+            const exceedsVial = results.exceedsVial[c.key];
+            // Treat "needs more than one vial" as an overflow for colouring, so the
+            // exported card is red on screen and on paper for the same reasons.
+            const overflow = results.overflow[c.key] || exceedsVial;
 
             doc.setFillColor(...c.bg);
             doc.setDrawColor(...(overflow ? red : c.color));
@@ -198,6 +201,10 @@ export function generatePDF(peptide, results, inputs, previewMode) {
                 doc.setFontSize(4);
                 doc.text(parts.map(p => `${p.mcg} mcg ${shortName(p.name)}`).join('  +  '),
                     x + syrW / 2, barrelY + barrelH + 13.5, { align: 'center' });
+            } else if (exceedsVial) {
+                doc.setTextColor(...red);
+                doc.setFontSize(4);
+                doc.text(`needs ${results.perDoseVials[c.key]} vials per dose`, x + syrW / 2, barrelY + barrelH + 13.5, { align: 'center' });
             } else if (overflow) {
                 doc.setTextColor(...red);
                 doc.setFontSize(4);
@@ -223,7 +230,7 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         const details = [
             ['Half-Life', peptide.halfLife || 'N/A'],
             ['Frequency', peptide.freq || 'N/A'],
-            ['Cycle', `${peptide.wks || 0} weeks`],
+            ['Cycle', `${peptide.cycle || (peptide.wks || 0) + ' weeks'} (${results.dosesPerCycle} inj)`],
             ['Vials', `${results.vialsNeeded} x ${results.vialSize}${vialUnit}`],
             ['Timing', getTiming(peptide)],
             ['For', `${inputs.weight} lbs, ${inputs.age} yrs (reference only)`]

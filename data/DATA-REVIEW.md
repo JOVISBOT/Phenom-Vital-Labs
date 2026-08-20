@@ -1,77 +1,115 @@
-# Peptide data - open questions
+# Peptide data - review log
 
-Companion to the schema v2 migration (`tools/migrate-units.js`). Everything in that
-script was changed because the record's own instruction text, or a universal dosing
-convention, contradicted the stored value. **The items below were left alone** because
-correcting them would mean picking a dose rather than fixing a unit, and that is a
-content decision, not a bug fix.
+Companion to `tools/migrate-units.js` (schema v2, unit fixes) and
+`tools/apply-data-review.js` (schema v3, dose fixes).
 
-Supersedes `ENHANCEMENT_PLAN.md` and `PEPTIDE_VERIFICATION_NEEDED.md`, which stalled in
-April 2026 awaiting exactly this sign-off. The vial sizes they proposed have now been
-applied.
+The v2 pass fixed everything that was a *unit* error and deliberately stopped at
+anything that meant picking a dose. This file recorded those deferrals. **They
+were signed off and applied on 2026-08-20**; what follows is the record of what
+changed and, at the bottom, what is genuinely still open.
+
+Supersedes `ENHANCEMENT_PLAN.md` and `PEPTIDE_VERIFICATION_NEEDED.md`.
 
 ---
 
-## 1. Doses that look low against published protocols
+## RESOLVED 2026-08-20
 
-| Peptide | Stored (low/med/high) | Published reference | Gap |
+### 1. Doses that did not match published protocols
+
+| Peptide | Was | Now | Anchor |
 |---|---|---|---|
-| `cagrilintide` | 100 / 200 / 400 mcg | Phase 2 titration 0.3 -> 4.5 mg weekly | recommended dose is ~12x below maintenance |
-| `retatrutide` | 1 / 2 / 4 mg | Its own instructions say "Week 13+: 9-12mg weekly" | `high` is below the record's own therapeutic dose |
+| `cagrilintide` | 100/200/400 **mcg** | 1.2/2.4/4.5 **mg** | Phase 2 (n=706, 26wk) arms: 0.3, 0.6, 1.2, 2.4, 4.5 mg weekly |
+| `retatrutide` | 1/2/4 mg | 4/8/12 mg | Phase 2 (n=338, 48wk, NEJM 2023) arms: 1, 4, 8, 12 mg weekly |
+| `bpc157` **(NEW)** | 500/1000/2000 mcg | 250/500/1000 mcg | cited range is 250-500 mcg/day; med was 2x and high 4x that |
+| `tb500` | 750/1500/3000 mcg | 1000/2000/2500 mcg | loading 2-2.5mg 2x/wk, maintenance 2-2.5mg/wk |
 
-Both under-dose rather than over-dose, so neither is dangerous. But a calculator that
-reports a number nobody uses is still wrong. **Decision needed: raise these to the
-published ranges, or relabel the tiers as titration starting points.**
+Cagrilintide was wrong in unit *and* magnitude - a 12x under-report that the v2
+unit sweep missed because 100 mcg is a plausible number in isolation.
 
-## 2. Instruction text that contradicts the dose fields
+Vial and water defaults moved with the doses where the old default could no
+longer be drawn: cagrilintide 5mg/3ml -> 10mg/2ml (the 2.4mg dose was 144u, past
+a 100u barrel), retatrutide 10mg -> 30mg (12mg exceeded the vial outright).
 
-| Peptide | Dose field says | `inst` says |
+### 2. Instruction text that contradicted the dose fields
+
+| Peptide | Contradiction | Resolution |
 |---|---|---|
-| `blend_gh1` | med = 0.4 mg combined (200 mcg of each) | "Typical dose: 300mcg (0.3mg) of each peptide per injection" |
-| `blend_heal` | med = 1.5 mg combined (750 mcg of each) | "Typical dose: 1mg total (500mcg of each peptide)" |
-| `blend_heal_20` | med = 2 mg combined | "Typical dose: 1.5mg total (750mcg of each)" |
-| `tb500` | med = 1500 mcg, 2x weekly (3 mg/wk) | "Maintenance: 5mg twice weekly" (10 mg/wk) |
+| `blend_gh1` | high = 400mcg each; inst quoted 300mcg as "typical" | high -> 0.6mg (300 each). Convention is 100-300 mcg of each; 300 is the ceiling, not the norm. Saturation note added. |
+| `blend_heal` | med = 750mcg each = 3.75mg/wk TB-500 | tiers -> 0.5/1.0/1.5. The inst text (500mcg each = 2.5mg/wk, TB-500's maintenance dose) was right; the dose fields moved to it. |
+| `blend_heal_20` | tiers were double `blend_heal` for the same two peptides | tiers -> 0.5/1.0/1.5, identical to `blend_heal`. The 20mg vial is twice as concentrated - same dose, half the volume. Renamed from "(High Dose)" to "(20mg vial)", which is what it actually is. |
+| `tb500` | inst said 5mg twice weekly = 10mg/wk | inst rewritten to the loading/maintenance split. 10mg/wk was ~4x maintenance and 2x loading. |
+| `cagrisema` **(NEW)** | inst said "0.25mg total" | the real start is 0.25mg of *each* = 0.5mg total; low tier 1 -> 0.5 |
+| `glutathione` **(NEW)** | inst named 1500-2000mg against a 500mg high tier | qualified as IV infusion, out of scope for a subq/IM draw - and more than three of its own vials |
+| `tirzepatide` **(NEW)** | inst named 15mg as max, high was 10mg | high -> 15mg, vial 10 -> 20mg so it can be drawn |
 
-The dose fields are the conservative reading in every case and the UI now shows the
-per-component split, so the ambiguity is visible rather than hidden. Still worth
-reconciling so the sheet does not argue with itself.
+### 3. Cycles stated in days
 
-## 3. Cycle arithmetic that does not match the stated protocol
+`f` x `wks` cannot express a course that is not a whole number of weeks. Added an
+explicit `dosesPerCycle` that wins when present:
 
-**cortagen and crystagen: FIXED 2026-08-20.** Both carried `f: 1` (one dose per week)
-while their own `freq` field said "Daily" and their `cycle` field said "20 days every
-6 months". That is a record contradicting itself, not a dosing judgement, so it was
-corrected rather than deferred: `f: 1 -> 7`, giving 7/wk x 3 wks = 21 doses against a
-stated 20-day course. Vials needed went 2 -> 11 for both. The golden snapshot caught
-the change and was updated; `PLAUSIBLE_VIALS` still passes.
-
-A sweep of all 44 records for the same bug class - `freq` text disagreeing with the
-numeric `f` - found no other genuine case.
-
-| Peptide | `f` x `wks` | `inst` says | Status |
+| Peptide | Protocol | `f` x `wks` said | Now |
 |---|---|---|---|
-| `cortagen` | now 7/wk x 3 wks = 21 doses | "20-day course twice yearly" | fixed |
-| `crystagen` | now 7/wk x 3 wks = 21 doses | "20-day course twice yearly" | fixed |
-| `thymalin` | 7/wk x 2 wks = 14 doses | "10mg daily for 10 days" | left alone - over-reports by 4 doses, which is the safe direction, and `wks` has no half-week representation |
+| `thymalin` | "10mg daily for 10 days" | 14 doses / 7 vials | **10 doses / 5 vials** |
+| `cortagen` | "20-day course" | 21 doses / 11 vials | **20 doses / 10 vials** |
+| `crystagen` | "20-day course" | 21 doses / 11 vials | **20 doses / 10 vials** |
 
-## 4. Peptides with no vial-size evidence
+### 4. NEW bug class: a dose larger than the vial
 
-`ENHANCEMENT_PLAN.md` derived vial sizes from instruction text but only got as far as
-`glutathione` alphabetically. The remainder were assigned by dosing scale and
-category convention:
+The old `PLAUSIBLE_UNITS` test only checked the **recommended** tier, so four
+records shipped a `high` tier needing more peptide than one reconstituted vial
+holds. This is not the same as syringe overflow: overflow is fixable by picking a
+bigger barrel or less water, but no water volume fixes this - **water dilutes, it
+does not add peptide.**
+
+`dulaglutide` was a plain defect and is fixed: its 4.5mg high tier is a real
+Trulicity strength and 4.5mg was already in `vialSizes`, it just was not the
+default. Fixed by making it the default.
+
+The other three are now **surfaced rather than silently wrong** - the card reads
+"More than one 100mg vial holds / 2 vials" and says why. See OPEN below.
+
+### 5. Marketing copy
+
+Header now reads "Research use only". Any purity claim that goes back must point
+at actual certificates of analysis.
+
+---
+
+## STILL OPEN
+
+**1. Three `high` tiers exceed the largest vial the record offers.**
+
+| Peptide | high | largest `vialSizes` entry | vials per dose |
+|---|---|---|---|
+| `aicar` | 200 mg | 100 mg | 2.0 |
+| `dihexa` | 32 mg | 30 mg | 1.6 |
+| `hmg` | 300 IU | 150 IU | 2.0 |
+
+Flagged in the UI and pinned by `EXCEEDS_VIAL_AT_HIGH` in the test suite, so a
+fourth cannot appear unnoticed. Not silently corrected, because both readings are
+plausible and neither is sourced: either the tier is too high, or the record is
+missing a larger vial that really is sold. **Needs a real supplier catalogue to
+settle** - the same evidence gap as item 2.
+
+**2. Fourteen vial sizes are convention, not evidence.**
 
 `gonadorelin` 2mg, `hexarelin` 5mg, `hgh` 10 IU, `hmg` 150 IU, `melanotan2` 10mg,
-`motsc` 10mg, `pegmgf` 2mg, `pt141` 10mg, `retatrutide` 10mg, `sermorelin` 5mg,
-`tb500` 5mg, `tesamorelin` 5mg, `thymalin` 20mg, `tirzepatide` 10mg.
+`motsc` 10mg, `pegmgf` 2mg, `pt141` 10mg, `retatrutide` 10mg (now 30mg),
+`sermorelin` 5mg, `tb500` 5mg, `tesamorelin` 5mg, `thymalin` 20mg,
+`tirzepatide` 10mg (now 20mg).
 
-These change how far up the barrel you draw, not how much peptide you get - a wrong
-vial size is a legibility problem, not a dosing one, as long as the user picks the
-size actually printed on their vial from the dropdown. Worth checking against a real
-supplier price list.
+Vial size changes how far up the barrel you draw, not how much peptide you get -
+a legibility problem, not a dosing one, as long as the user picks the size printed
+on their own vial from the dropdown. Worth checking against a real price list.
 
-## 5. Marketing copy
+**3. `dulaglutide` does not reconstitute at all.** Its own instructions say
+"pre-filled pen device". The calculator computes a reconstitution draw for it
+anyway. Harmless but meaningless; the record arguably does not belong in a
+reconstitution calculator.
 
-The header previously read "99%+ Purity Verified" and the results block repeated it as
-a badge next to the dose figures. The site sells nothing and tests nothing, so the
-claim was unsourced. It now reads "Research use only". If a purity claim goes back,
-it needs to point at actual certificates of analysis.
+**4. No dose here is validated for human use.** BPC-157 and TB-500 have no human
+dosing study at all - every figure is community convention extrapolated from
+animal work, and the FDA compounding advisory committee voted 11-3 against adding
+either to the 503A bulks list in July 2026. The published anchors used above
+(cagrilintide, retatrutide, tirzepatide, dulaglutide) are trial arms in
+supervised settings, not self-administration guidance.

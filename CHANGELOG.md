@@ -1,5 +1,104 @@
 # Changelog
 
+## 2.1.0 - 2026-08-20
+
+Closes every open item in `data/DATA-REVIEW.md`. Those were parked by the v2 pass
+because correcting them meant *picking a dose* rather than fixing a unit. Each dose
+below is anchored to a published trial arm or a stated clinical convention, and the
+citation lives on the change in `tools/apply-data-review.js`.
+
+Sweeping all 44 records for the same bug classes turned up five more defects the
+review had not caught, marked NEW.
+
+### Doses that did not match published protocols
+
+- **`cagrilintide` was ~12x under-dosed and in the wrong unit.** Stored 100/200/400
+  **mcg**; the Phase 2 trial (n=706, 26 wks) randomised 0.3, 0.6, 1.2, 2.4 and 4.5
+  **mg** weekly. Now 1.2/2.4/4.5 mg. The v2 unit sweep missed it because 100 mcg is
+  a plausible number in isolation - it only reads as wrong against the trial.
+- **`retatrutide` `high` was below its own instruction text.** Stored 1/2/4 mg while
+  the record already said "Week 13+: 9-12mg weekly". Now 4/8/12 mg, the Phase 2 arms
+  (NEJM 2023, n=338, 48 wks).
+- **`bpc157` med/high were 2x and 4x the cited range (NEW).** 250-500 mcg/day is the
+  commonly cited range; stored 500/1000/2000 mcg. Now 250/500/1000, with the top tier
+  labelled as an acute protocol split AM/PM. Its `reconMl` also contradicted its own
+  "reconstitute with 3ml" instruction, and now matches.
+- **`tb500` instructions claimed 10mg/week.** "Maintenance: 5mg twice weekly" is
+  roughly 4x the cited maintenance dose and double the loading dose. Rewritten to the
+  real loading/maintenance split; tiers now 1000/2000/2500 mcg.
+
+Vial and water defaults moved where the old default could no longer be drawn:
+cagrilintide 5mg/3ml -> 10mg/2ml (2.4mg was 144 units, past a 100u barrel),
+retatrutide 10mg -> 30mg (12mg exceeded the vial outright).
+
+### Records that argued with themselves
+
+- **`blend_heal_20` was double-dosing.** Its tiers were exactly twice `blend_heal`
+  for the same two peptides. Dose is a property of the patient, not the vial - the
+  20mg vial is twice as concentrated, so it buys a smaller injection volume, not a
+  bigger dose. Tiers now match `blend_heal` (0.5/1.0/1.5 mg). Renamed "(High Dose)"
+  -> "(20mg vial)", which is what it actually is.
+- **`blend_heal` med delivered 3.75mg/wk of TB-500** - loading-phase dosing held for
+  six straight weeks. Its inst text (500mcg of each, 2.5mg/wk, the maintenance dose)
+  was the correct reading, so the dose fields moved to meet it.
+- **`blend_gh1` high was 400mcg of each**, above the 100-300mcg convention, while the
+  inst quoted the 300mcg ceiling as "typical". High now 300mcg of each, and the note
+  that CJC-1295 no-DAC saturates the GHRH receptor near 1mcg/kg is stated on the record.
+- **`cagrisema` named half the real starting dose (NEW)** - "0.25mg total" where the
+  start is 0.25mg of *each*. Low tier 1 -> 0.5 mg.
+- **`tirzepatide` capped below its own stated max (NEW).** Inst said "Week 13+:
+  10-15mg weekly (max)" against a 10mg high tier. Now 15mg, with the vial 10 -> 20mg
+  so the dose can actually be drawn.
+- **`glutathione` pointed at an IV dose (NEW).** "For skin: higher doses
+  (1500-2000mg)" against a 500mg high tier and a 600mg vial. Qualified as IV infusion,
+  out of scope for a subcutaneous draw.
+
+### New bug class: a dose larger than the vial
+
+`PLAUSIBLE_UNITS` only checked the **recommended** tier, so four records shipped a
+`high` tier needing more peptide than one reconstituted vial holds. This is not
+syringe overflow - overflow is fixable with a bigger barrel or less water, but
+**water dilutes, it does not add peptide.**
+
+- `dulaglutide` was a plain defect and is fixed **(NEW)**: its 4.5mg high tier is a
+  real Trulicity strength and 4.5 was already in `vialSizes`, just not the default.
+- `aicar`, `dihexa` and `hmg` are now **surfaced instead of silently wrong**. The card
+  reads "More than one 100mg vial holds / 2 vials" and explains why no water volume
+  fixes it. Left uncorrected on purpose: either the tier is too high or the record is
+  missing a larger vial that really is sold, and neither reading is sourced.
+- New `exceedsVial` / `perDoseVials` on the result object, rendered on the card and in
+  the exported PDF, and pinned by `EXCEEDS_VIAL_AT_HIGH` so a fourth cannot appear
+  unnoticed.
+
+### Cycles stated in days
+
+`f` x `wks` cannot express a course that is not a whole number of weeks. Added
+`dosesPerCycle`, which wins when present: `thymalin` 14 -> **10** doses (7 -> 5 vials),
+`cortagen` and `crystagen` 21 -> **20** doses (11 -> 10 vials). The `thymalin` case was
+explicitly deferred in 2.0.1 as "over-reports by four, which is the safe direction" -
+it is now simply correct. Injection count is shown on the Cycle card and the PDF.
+
+### Tests
+
+15 -> 18. The three new ones close the gaps that let the above ship:
+
+- every tier must be drawable from one vial, or be a *named* exception
+- a dose bigger than the vial must be flagged, and the recommended tier never may be
+- `dosesPerCycle` overrides only where a day-stated course needs it, nowhere else
+
+Blend detection no longer keys on the word "blend" - `cagrisema` is two actives in one
+vial and its category reads "Dual Weight Loss Combo (2.5mg+2.5mg)". Any record
+advertising "<n>mg + <n>mg" is now required to carry a component split.
+
+`DATA_VERSION` 29 -> 30 so corrected data is not served from cache.
+
+Verified at this commit: 18/18 tests pass, and `tools/drive-ui.py` drove the real page
+in Chromium across 16 scenarios with zero console errors - cagrilintide 24/48/90 units,
+retatrutide 26.7/53.3/80, tirzepatide 12.5/25/75, blend_heal_20 split showing 500mcg of
+each at the recommended tier, thymalin reporting 5 vials and "10 injections in full",
+HMG and AICAR showing the new exceeds-vial card, PDF generating at 27 KB, no mobile
+overflow, shared URLs round-tripping.
+
 ## 2.0.1 - 2026-08-20
 
 Follow-up pass after re-verifying every finding against the running code.

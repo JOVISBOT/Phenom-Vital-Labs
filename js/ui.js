@@ -389,6 +389,7 @@ function doseCard(level, cfg, results) {
     const dose = results.doses[level];
     const units = results.syringeUnits[level];
     const overflow = results.overflow[level];
+    const exceedsVial = results.exceedsVial[level];
     const parts = results.components[level];
 
     const componentHtml = parts ? `
@@ -396,7 +397,15 @@ function doseCard(level, cfg, results) {
             ${parts.map(c => `<div><span>${esc(c.name)}</span><strong>${c.mcg.toLocaleString()} mcg</strong></div>`).join('')}
         </div>` : '';
 
-    const drawHtml = overflow ? `
+    // Order matters. "Exceeds the vial" is the harder failure and has to win:
+    // the syringe advice below tells you to use less water, which raises
+    // concentration and lowers the unit count -- useless when the vial simply
+    // does not contain this much peptide.
+    const drawHtml = exceedsVial ? `
+        <div class="draw-label overflow">⚠️ More than one ${results.vialSize}${results.vialUnit} vial holds</div>
+        <div class="draw-value overflow">${results.perDoseVials[level]} vials</div>
+        <div class="draw-hint">This dose needs ${results.perDoseVials[level]} vials per injection. No reconstitution volume fixes it &mdash; water dilutes, it does not add peptide. Pick a larger vial size, or treat this tier as unverified.</div>
+    ` : overflow ? `
         <div class="draw-label overflow">⚠️ Does not fit a ${results.syringe}U syringe</div>
         <div class="draw-value overflow">${formatUnits(units)} units</div>
         <div class="draw-hint">${results.volumeMl[level]} ml total &middot; ${Math.ceil(units / results.syringe)} draws, or pick a smaller reconstitution volume</div>
@@ -415,7 +424,7 @@ function doseCard(level, cfg, results) {
                 <div class="mcg-value">${esc(formatDose(dose, results.doseUnit))}</div>
                 ${componentHtml}
             </div>
-            <div class="draw-box${overflow ? ' overflow' : ''}">${drawHtml}</div>
+            <div class="draw-box${overflow || exceedsVial ? ' overflow' : ''}">${drawHtml}</div>
             ${cfg.hint ? `<div class="dose-hint">${cfg.hint}</div>` : ''}
         </div>
     `;
@@ -526,7 +535,7 @@ export function renderResults(peptide, results, inputs) {
                     <div class="info-card-icon" aria-hidden="true">🔄</div>
                     <h4>Cycle</h4>
                     <p class="highlight">${esc(peptide.cycle || peptide.wks + ' weeks')}</p>
-                    <small>Duration</small>
+                    <small>${results.dosesPerCycle} injections in full</small>
                 </div>
                 <div class="info-card highlight">
                     <div class="info-card-icon" aria-hidden="true">📦</div>

@@ -33,6 +33,7 @@ def run(page, name, peptide, *, recon=None, syringe=None, vial=None, shot=True):
             draw: e.querySelector('.draw-value').textContent.trim(),
             hint: e.querySelector('.draw-hint').textContent.trim(),
             overflow: !!e.querySelector('.draw-box.overflow'),
+            exceedsVial: (e.querySelector('.draw-label')||{}).textContent?.includes('vial holds') || false,
             components: [...e.querySelectorAll('.component-split div')].map(d => d.textContent.trim())
         }))""",
     )
@@ -76,6 +77,14 @@ with sync_playwright() as pw:
     run(page, "04-aicar-overflow", "aicar", syringe=30)   # overflow state
     run(page, "05-nadplus", "nadplus")             # was mcg, now mg
     run(page, "06-dihexa", "dihexa")               # was 15,718 vials
+    # Records rewritten in the 2026-08-20 data-review pass
+    run(page, "09-cagrilintide", "cagrilintide")   # was 100/200/400 mcg, now 1.2/2.4/4.5 mg
+    run(page, "10-retatrutide", "retatrutide")     # was 1/2/4 mg, now the 4/8/12 trial arms
+    run(page, "11-tirzepatide", "tirzepatide")     # high 10 -> 15 mg, vial 10 -> 20 mg
+    run(page, "12-blend-heal-20", "blend_heal_20") # tiers halved to match blend_heal
+    run(page, "13-tb500", "tb500")                 # inst claimed 10mg/wk
+    run(page, "14-thymalin", "thymalin")           # 10-day course, not 14
+    run(page, "15-hmg-exceeds", "hmg")             # high tier needs 2 vials per dose
 
     # URL round-trip
     shared = report["01-blend-gh1"]["url"]
