@@ -81,6 +81,48 @@ export function concentration(vialSize, reconMl = DEFAULT_RECON_ML) {
 }
 
 /**
+ * The concentration above which lyophilised peptide powder generally stops
+ * going into solution. This is a general handling ceiling, not a per-compound
+ * measurement, so it is surfaced as "confirm against the vendor's own
+ * reconstitution note" and never as a refusal to compute.
+ */
+export const SOLUBILITY_CEILING_MG_ML = 400;
+
+/**
+ * Whether the chosen vial and water ask the powder to dissolve past that
+ * ceiling, and the water volume that would clear it.
+ *
+ * Only mg-scale vials can reach it -- mcg and IU products sit orders of
+ * magnitude below, so they report `applies: false` rather than a passing grade
+ * they were never in the running for. Same shape as the `overflow` check above
+ * it: a number the visitor cannot actually execute, named as such, with the
+ * one control that fixes it.
+ *
+ * @param {Object} peptide
+ * @param {number} vialSize
+ * @param {number} reconMl
+ */
+export function solubilityCheck(peptide, vialSize, reconMl) {
+    const size = vialSize || peptide.vialSize;
+    const ml = reconMl || defaultReconMl(peptide);
+    if (peptide.vialUnit !== 'mg' || !size || !ml) {
+        return { applies: false, overCeiling: false, concentration: null,
+                 ceiling: SOLUBILITY_CEILING_MG_ML, mlToClear: null };
+    }
+    const conc = concentration(size, ml);
+    const over = conc > SOLUBILITY_CEILING_MG_ML;
+    return {
+        applies: true,
+        overCeiling: over,
+        concentration: round(conc, 1),
+        ceiling: SOLUBILITY_CEILING_MG_ML,
+        // Water that brings it under the ceiling, rounded up to the next half
+        // ml so the answer is a volume someone can actually measure.
+        mlToClear: over ? Math.ceil((size / SOLUBILITY_CEILING_MG_ML) * 2) / 2 : null
+    };
+}
+
+/**
  * Volume to draw, in millilitres.
  * @param {Object} peptide
  * @param {number} doseAmount - Dose in the peptide's `doseUnit`
@@ -375,6 +417,9 @@ export function performCalculation(peptide, opts = {}) {
             med: syringeUnits.med > syringe,
             high: syringeUnits.high > syringe
         },
+        // True when the powder is being asked to dissolve past the practical
+        // ceiling. Fixable by the user, and by exactly one control: more water.
+        solubility: solubilityCheck(peptide, vialSize, reconMl),
         perDoseVials,
         // Vials dissolved into one dose. >1 only where the label says to.
         vialsPooled: pooled,
@@ -445,6 +490,9 @@ function deviceCalculation(peptide, weightLbs, strength) {
         syringeUnits: { ...nulls },
         components,
         overflow: { ...falses },
+        // A pre-filled pen is never reconstituted, so there is nothing to dissolve.
+        solubility: { applies: false, overCeiling: false, concentration: null,
+                      ceiling: SOLUBILITY_CEILING_MG_ML, mlToClear: null },
         perDoseVials: { ...nulls },
         vialsPooled: { low: 1, med: 1, high: 1 },
         exceedsVial: { ...falses },

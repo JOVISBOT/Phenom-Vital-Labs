@@ -58,6 +58,7 @@ optgroup option{color:var(--text);font-weight:400;font-size:0.9rem;background:#f
 .dose-arrow{color:var(--muted);font-weight:700}
 .scaling-note,.blend-note{margin-top:18px;padding:12px 14px;background:#f8fafc;border-left:3px solid var(--primary-light);border-radius:6px;font-size:0.82rem;color:var(--muted);line-height:1.6}
 .blend-note{border-left-color:#a78bfa}
+.solubility-note{background:var(--tint-warn,#fffbeb);border-left-color:var(--tint-warn-line,#fcd34d);color:var(--tint-warn-ink,#92400e)}
 
 /* ---- dose cards ---- */
 .dose-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}

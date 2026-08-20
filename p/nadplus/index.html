@@ -24,9 +24,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/styles.css?v=31">
-    <link rel="stylesheet" href="../../css/pages.css?v=31">
-    <link rel="stylesheet" href="../../css/theme.css?v=31">
+    <link rel="stylesheet" href="../../css/styles.css?v=32">
+    <link rel="stylesheet" href="../../css/pages.css?v=32">
+    <link rel="stylesheet" href="../../css/theme.css?v=32">
 
     <!-- Theme before first paint. Inlined from js/theme.js THEME_BOOT so the
          boot logic and the toggle cannot drift; a test asserts they match. -->
@@ -120,7 +120,7 @@
                     <tbody>
                     <tr class="is-featured">
                         <th scope="row">1 ml</th>
-                        <td>500 mg/ml</td>
+                        <td>500 mg/ml <span class="flag">may not dissolve</span></td>
                         <td>50 units</td>
                     </tr>
                     <tr>
@@ -142,7 +142,11 @@
                 </table>
                 <p class="note">More water means a bigger, easier-to-read draw for the same dose. A dose that lands near
                    the 2-unit mark is one half-mark misread away from a 25% dosing error. Past 100 units the dose no
-                   longer fits a U-100 barrel at all &mdash; that is two injections, not a bigger syringe.</p>
+                   longer fits a U-100 barrel at all &mdash; that is two injections, not a bigger syringe.
+                   A concentration flagged <em>may not dissolve</em> is the opposite failure: the draw is small and
+                   readable, but the powder is being asked to go into solution above roughly
+                   400 mg/ml, where lyophilised material generally stops doing so. Add more
+                   water, or confirm the figure against the vendor's own reconstitution note.</p>
             </section>
 
             <section class="card">
@@ -221,9 +225,9 @@
         <strong>Phenom Vital Labs</strong> &middot; Reference calculator, no products sold &middot;
         <a href="../../p/">All peptides</a>
     </footer>
-    <script type="module" src="../../js/analytics.js?v=31"></script>
+    <script type="module" src="../../js/analytics.js?v=32"></script>
     <script type="module">
-        import { initThemeToggle } from '../../js/theme.js?v=31';
+        import { initThemeToggle } from '../../js/theme.js?v=32';
         initThemeToggle();
     </script>
 </body>

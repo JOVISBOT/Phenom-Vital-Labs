@@ -17,7 +17,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 import {
-    dosesPerCycleRange, calculateVialsRange, weeklyFreqRange, performCalculation
+    dosesPerCycleRange, calculateVialsRange, weeklyFreqRange, performCalculation,
+    solubilityCheck, SOLUBILITY_CEILING_MG_ML, RECON_VOLUMES
 } from '../js/calculator.js';
 import { formatRange } from '../js/ui.js';
 import { parseFreqRange, parseCycleWeeks } from '../tools/freq-parse.js';
@@ -124,4 +125,68 @@ test('a single stated cadence still renders as one number', () => {
     assert.equal(formatRange(r.dosesPerCycleRange), '84');
     assert.equal(formatRange(r.vialsRange), '4');
     assert.equal(r.dosesPerCycleRange.ranged, false);
+});
+
+test('a concentration the powder cannot reach is flagged, not silently drawn', () => {
+    // The syringe-overflow class, inverted. NAD+ at 500 mg in 1 ml computes a
+    // tidy 50-unit draw -- the arithmetic is right and the solution does not
+    // exist, because 500 mg/ml is well past where lyophilised powder dissolves.
+    // Only mg-scale vials can reach the ceiling; mcg and IU products must
+    // report `applies: false` rather than a pass they were never eligible for.
+    const nad = byId('nadplus');
+    const tight = solubilityCheck(nad, 500, 1);
+    assert.equal(tight.overCeiling, true, 'NAD+ 500mg in 1ml is above the ceiling and must say so');
+    assert.equal(tight.mlToClear, 1.5, 'the fix is a water volume, and it has to be named');
+    assert.ok(tight.mlToClear * SOLUBILITY_CEILING_MG_ML >= 500,
+        'the suggested volume must actually clear the ceiling it was derived from');
+
+    assert.equal(solubilityCheck(nad, 500, 3).overCeiling, false, '500mg in 3ml dissolves fine');
+
+    // Jo's own blend, and every peptide dosed in mcg or IU, sit orders of
+    // magnitude below this and must never be flagged.
+    assert.equal(solubilityCheck(byId('blend_gh1'), 10, 3).overCeiling, false);
+    assert.equal(solubilityCheck(byId('hcg'), 5000, 3).applies, false,
+        'an IU product has no mg/ml ceiling to breach');
+
+    // A pre-filled pen is never reconstituted, so the field must exist and be inert.
+    const pen = performCalculation(byId('dulaglutide'), { weightLbs: 180, syringe: 100 });
+    assert.equal(pen.solubility.applies, false);
+    assert.equal(pen.solubility.overCeiling, false);
+
+    // Sweep: every mg-scale vial x water combination the UI can reach either
+    // clears the ceiling or is flagged. No combination may pass unexamined.
+    let flagged = 0;
+    for (const p of peptides) {
+        if (p.vialUnit !== 'mg' || p.noRecon) continue;
+        for (const v of (p.vialSizes || [p.vialSize])) {
+            for (const ml of RECON_VOLUMES) {
+                const s = solubilityCheck(p, v, ml);
+                assert.equal(s.applies, true, `${p.id}: mg vial must be in scope`);
+                assert.equal(s.overCeiling, s.concentration > SOLUBILITY_CEILING_MG_ML,
+                    `${p.id} ${v}mg/${ml}ml: flag disagrees with its own concentration`);
+                if (s.overCeiling) flagged++;
+            }
+        }
+    }
+    assert.equal(flagged, 9,
+        `expected the 9 known over-ceiling combinations (glutathione x3, nadplus x6), got ${flagged}`);
+});
+
+test('the page flags the concentration it cannot dissolve', () => {
+    // The flag has to survive the trip through build-pages.js, or the 44 static
+    // pages keep publishing a number the app now warns about.
+    const nad = readFileSync(join(ROOT, 'p/nadplus/index.html'), 'utf8');
+    // Match the flag element, not the phrase: the explanatory note under the
+    // table says "may not dissolve" on all 43 pages, so the bare phrase cannot
+    // tell a flagged row from an unflagged page. This assertion caught itself.
+    const FLAG = /<span class="flag">may not dissolve<\/span>/;
+    assert.match(nad, FLAG, 'nadplus 1ml row must carry the flag');
+    // The template wraps that sentence across source lines, so match on the
+    // collapsed text rather than one exact run of spaces.
+    const nadFlat = nad.replace(/\s+/g, ' ');
+    assert.match(nadFlat, /above roughly 400 mg\/ml/, 'and the table must explain what the flag means');
+
+    // ...and must not appear on a record that dissolves fine at every volume.
+    const blend = readFileSync(join(ROOT, 'p/blend_gh1/index.html'), 'utf8');
+    assert.doesNotMatch(blend, FLAG, 'a 3.33 mg/ml blend must never be flagged');
 });

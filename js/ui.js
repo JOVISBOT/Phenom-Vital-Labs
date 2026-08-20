@@ -706,6 +706,21 @@ export function renderResults(peptide, results, inputs) {
             the per-peptide amount is shown under each.
         </p>` : '';
 
+    // Water volume is the one control that fixes this, and it is a control the
+    // visitor has right above the result -- so name the volume rather than just
+    // flagging the number. Same class as the syringe-overflow warning: a figure
+    // that computes cleanly and cannot actually be carried out.
+    const sol = results.solubility;
+    const solubilityNote = sol && sol.applies && sol.overCeiling ? `
+        <p class="blend-note solubility-note">
+            <strong>&#9888; ${trim(sol.concentration, 1)} ${u}/ml may not dissolve.</strong>
+            ${results.vialSize} ${u} in ${results.reconMl} ml puts this above the
+            ~${sol.ceiling} ${u}/ml where lyophilised powder generally stops going into
+            solution. Use <strong>at least ${sol.mlToClear} ml</strong> of bacteriostatic water,
+            or confirm the concentration against the vendor's own reconstitution note.
+            The units below are arithmetically correct for a solution that fully dissolves.
+        </p>` : '';
+
     // The number a visitor came for, first and at a size you can read holding a
     // vial. It used to sit ~1,400px down a 4,100px page on desktop and past
     // 3,000px on a phone, under the form, the protocol summary and three tier
@@ -782,6 +797,7 @@ export function renderResults(peptide, results, inputs) {
                 ${deviceNote}
                 ${multiVialNote}
                 ${componentNote}
+                ${solubilityNote}
                 ${tierNote}
             </div>
 

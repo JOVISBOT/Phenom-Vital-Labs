@@ -23,14 +23,15 @@ import { fileURLToPath } from 'node:url';
 
 import {
     performCalculation, defaultReconMl, calculateSyringeUnits, concentration,
-    dosesPerCycle, dosesPerCycleRange, RECON_VOLUMES, DEFAULT_SYRINGE
+    dosesPerCycle, dosesPerCycleRange, RECON_VOLUMES, DEFAULT_SYRINGE,
+    solubilityCheck, SOLUBILITY_CEILING_MG_ML
 } from '../js/calculator.js';
 import { evidenceFor, vialProvenanceFor, formatDose, formatRange, ASSUMED_NOTE } from '../js/ui.js';
 import { THEME_BOOT } from '../js/theme.js';
 import { SITE, siteUrl } from '../js/config.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ASSET_V = 31;
+const ASSET_V = 32;
 
 /* ------------------------------------------------------------------ helpers */
 
@@ -142,7 +143,10 @@ function reconTable(p) {
             ml,
             conc: concentration(p.vialSize, ml),
             units: u,
-            overflow: u > DEFAULT_SYRINGE
+            overflow: u > DEFAULT_SYRINGE,
+            // A row can compute a perfectly good draw out of a concentration the
+            // powder will not actually reach. Flagged in the column that states it.
+            solubility: solubilityCheck(p, p.vialSize, ml)
         };
     });
 }
@@ -358,10 +362,16 @@ function peptidePage(p, all) {
     const componentRows = (r.components.med || []).map(c => `
                         <li><strong>${esc(c.name)}</strong><span>${num(c.mcg, 1)} mcg</span></li>`).join('');
 
-    const reconRows = reconTable(p).map(row => `
+    const reconRowData = reconTable(p);
+    // Only explain the flag on pages that actually show one -- an explanation
+    // of a warning the reader cannot see is noise, and it made the phrase
+    // appear on all 44 pages.
+    const anyUndissolvable = reconRowData.some(row => row.solubility.overCeiling);
+    const reconRows = reconRowData.map(row => `
                     <tr${row.ml === defaultReconMl(p) ? ' class="is-featured"' : ''}>
                         <th scope="row">${num(row.ml, 2)} ml</th>
-                        <td>${num(row.conc, 2)} ${esc(p.vialUnit)}/ml</td>
+                        <td>${num(row.conc, 2)} ${esc(p.vialUnit)}/ml${row.solubility.overCeiling
+                            ? ' <span class="flag">may not dissolve</span>' : ''}</td>
                         <td>${units(row.units)} units${row.overflow ? ' <span class="flag">does not fit one draw</span>' : ''}</td>
                     </tr>`).join('');
 
@@ -431,7 +441,11 @@ function peptidePage(p, all) {
                 </table>
                 <p class="note">More water means a bigger, easier-to-read draw for the same dose. A dose that lands near
                    the 2-unit mark is one half-mark misread away from a 25% dosing error. Past 100 units the dose no
-                   longer fits a U-100 barrel at all &mdash; that is two injections, not a bigger syringe.</p>
+                   longer fits a U-100 barrel at all &mdash; that is two injections, not a bigger syringe.${anyUndissolvable ? `
+                   A concentration flagged <em>may not dissolve</em> is the opposite failure: the draw is small and
+                   readable, but the powder is being asked to go into solution above roughly
+                   ${SOLUBILITY_CEILING_MG_ML} mg/ml, where lyophilised material generally stops doing so. Add more
+                   water, or confirm the figure against the vendor's own reconstitution note.` : ''}</p>
             </section>` : ''}
 
             <section class="card">

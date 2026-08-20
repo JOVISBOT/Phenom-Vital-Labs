@@ -311,6 +311,29 @@ genuinely dosed in hundreds of milligrams, so the doses are right; whether the
 water volume is achievable is a question for the vendor's own reconstitution
 note, and not something to change on a guess. Reported as a NOTE, not an error.
 
+**Now surfaced rather than only logged (2026-08-20).** It was an audit note a
+visitor never saw: the calculator printed `500 mg/ml` and a tidy 50-unit draw
+with nothing saying the solution may not exist. `solubilityCheck` in
+`calculator.js` flags any mg-scale vial x water combination above the ceiling,
+in the app and in the reconstitution table on all 43 reconstituted pages, and
+names the water volume that clears it. Nine combinations across these two
+records are affected; nothing else in the catalogue comes near.
+
+**The open decision, sharpened.** The flagged row is not an edge case a visitor
+has to go looking for - it is each record's *default*. `defaultReconMl` is 1 ml
+for both, so the answer card, the `<meta name="description">` and the FAQ
+JSON-LD served to search engines are all built on the concentration the page now
+flags. For `nadplus` that headline reads *"250 mg is 50 units, when a 500 mg
+vial is mixed with 1 ml"*.
+
+Moving the defaults to 2 ml would change no dose, no vial size and no evidence
+claim - only the water, and therefore the printed draw (`nadplus` 50 -> 100
+units, `glutathione` 33.3 -> 66.7). It is left alone deliberately: the 400 mg/ml
+figure is a general handling ceiling, not a measurement of these two compounds,
+and a default is a number someone will follow. Changing it on a heuristic is the
+same mistake as publishing one. **Jo's call**, and the one question that settles
+it is what AminoUSA's own reconstitution note says for these two.
+
 The vial-count warnings that remain (`aod9604` 26, `ara290` 34, `hgh` 34,
 `nadplus` 42, `cjc1295_nodac` 17-51) are consequences of a long cycle at a high
 cadence rather than arithmetic faults. Worth a second look if a larger vial size
