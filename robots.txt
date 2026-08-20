@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jovisbot.github.io/Phenom-Vital-Labs/sitemap.xml

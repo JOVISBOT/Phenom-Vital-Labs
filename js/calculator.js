@@ -1,134 +1,127 @@
 /**
  * Peptide Calculator Module
  * Pure calculation functions - no DOM manipulation
- * 
+ *
  * @module calculator
  */
 
+/** Insulin syringes are U-100: 100 units per millilitre, whatever the barrel holds. */
+export const UNITS_PER_ML = 100;
+
+/** Reconstitution volumes (ml of bacteriostatic water) offered in the UI. */
+export const RECON_VOLUMES = [1, 2, 3, 5];
+export const DEFAULT_RECON_ML = 3;
+
+/** Insulin syringe barrel sizes, in units. Barrel size caps volume, not concentration. */
+export const SYRINGE_SIZES = [30, 50, 100];
+export const DEFAULT_SYRINGE = 100;
+
 /**
- * Calculate metabolic adjustment factor based on age
- * Research: GH/IGF-1 declines ~14% per decade after age 30
- * Returns factor where older = higher values (100% → 150%)
- * @param {number} age
- * @returns {number} Age factor (1.0 - 1.5)
+ * A peptide's own reconstitution volume, falling back to the site default.
+ * Dosing scale varies 1000-fold across the database, so one global constant
+ * cannot serve every peptide -- NAD+ needs 1 ml where an ipamorelin blend needs 3.
+ * @param {Object} peptide
+ * @returns {number} ml
  */
-function getAgeFactor(age) {
-    // Simple age-based scaling: older = higher dose needed
-    if (age < 30) return 1.0;      // 18-29: baseline
-    if (age < 40) return 1.1;      // 30-39: +10%
-    if (age < 50) return 1.2;      // 40-49: +20%
-    if (age < 60) return 1.35;     // 50-59: +35%
-    return 1.5;                     // 60+: +50%
+export function defaultReconMl(peptide) {
+    return peptide.reconMl || DEFAULT_RECON_ML;
 }
 
 /**
- * Calculate lean mass adjustment factor based on weight
+ * Convert a dose into the same unit the vial is measured in.
+ * mcg -> mg; mg and IU pass straight through.
+ * @param {number} dose
+ * @param {string} doseUnit - 'mcg' | 'mg' | 'IU'
+ * @returns {number} Dose expressed in the vial's unit
+ */
+export function toVialUnits(dose, doseUnit) {
+    return doseUnit === 'mcg' ? dose / 1000 : dose;
+}
+
+/**
+ * Body weight in kilograms. Only used by peptides flagged `perKg`.
  * @param {number} weightLbs
- * @returns {number} Lean mass factor (0.92 - 1.08)
+ * @returns {number} kg
  */
-function getLeanMassFactor(weightLbs) {
-    if (weightLbs < 120) return 0.92;
-    if (weightLbs < 160) return 0.97;
-    if (weightLbs < 200) return 1.0;
-    if (weightLbs < 250) return 1.05;
-    return 1.08;
+export function toKg(weightLbs) {
+    return weightLbs / 2.205;
 }
 
 /**
- * Calculate adjusted body weight in kg
- * @param {number} weightLbs
- * @param {number} age
- * @returns {number} Adjusted weight in kg
- */
-export function calculateAdjustedWeight(weightLbs, age) {
-    const kg = weightLbs / 2.205;
-    const leanMassFactor = getLeanMassFactor(weightLbs);
-    const ageFactor = getAgeFactor(age);
-    
-    return kg * ageFactor * leanMassFactor;
-}
-
-/**
- * Calculate dose in mg or mcg based on peptide type
+ * Dose for a given level.
+ *
+ * `low`/`med`/`high` are flat protocol totals in `doseUnit`. They are NOT
+ * per-kilogram values, and they are not scaled by age -- doing either produced
+ * doses up to 280x conventional. A peptide whose figures genuinely are
+ * per-kilogram must opt in with `perKg: true`.
+ *
  * @param {Object} peptide
  * @param {number} weightLbs
- * @param {number} age
  * @param {string} level - 'low', 'med', or 'high'
- * @returns {number} Dose in mg (for blends) or mcg (for regular)
+ * @returns {number} Dose in the peptide's `doseUnit`
  */
-export function calculateDose(peptide, weightLbs, age, level = 'med') {
-    const isFixed = peptide.fixed === true;
-    
-    if (isFixed) {
-        // Fixed doses: use exact values (no age adjustment)
-        return peptide[level];
+export function calculateDose(peptide, weightLbs, level = 'med') {
+    const base = peptide[level];
+
+    if (peptide.perKg === true) {
+        return round(base * toKg(weightLbs), 1);
     }
-    
-    // Non-fixed doses are weight-based with age factor
-    const adjustedKg = calculateAdjustedWeight(weightLbs, age);
-    const baseDose = peptide[level] * adjustedKg;
-    
-    // Return appropriate unit
-    return Math.round(baseDose * 10) / 10;
+
+    return base;
 }
 
 /**
- * Calculate total vials needed
+ * Reconstituted concentration.
+ * @param {number} vialSize - Vial content, in the peptide's `vialUnit`
+ * @param {number} reconMl - Bacteriostatic water added, in ml
+ * @returns {number} Vial units per ml
+ */
+export function concentration(vialSize, reconMl = DEFAULT_RECON_ML) {
+    return vialSize / reconMl;
+}
+
+/**
+ * Volume to draw, in millilitres.
  * @param {Object} peptide
- * @param {number} doseAmount - Dose in mg OR mcg
- * @param {number} vialSizeMg - Vial size in mg
- * @returns {number} Number of vials needed
+ * @param {number} doseAmount - Dose in the peptide's `doseUnit`
+ * @param {number} vialSize
+ * @param {number} reconMl
+ * @returns {number} ml
  */
-export function calculateVialsNeeded(peptide, doseAmount, vialSizeMg = 5) {
-    const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
-    
-    // For blends: dose is already in mg
-    // For regular: dose is in mcg, convert to mg
-    const doseMg = peptide.fixed ? doseAmount : doseAmount / 1000;
-    const totalMg = doseMg * peptide.f * peptide.wks;
-    
-    // Vial total mg
-    const vialTotalMg = vialSizeMg || 5;
-    
-    return Math.ceil(totalMg / vialTotalMg);
+export function calculateVolumeMl(peptide, doseAmount, vialSize, reconMl) {
+    const dose = toVialUnits(doseAmount, peptide.doseUnit);
+    return dose / concentration(vialSize || peptide.vialSize, reconMl || defaultReconMl(peptide));
 }
 
 /**
- * Calculate syringe units to draw
+ * Syringe units to draw. A U-100 syringe reads 100 units per ml regardless of
+ * whether the barrel holds 30, 50 or 100 units.
  * @param {Object} peptide
- * @param {number} doseAmount - Dose in mg OR mcg
- * @param {number} vialSizeMg - Vial size in mg
- * @param {number} syringeUnits - Syringe capacity (30, 50, or 100)
- * @returns {number} Units to draw
+ * @param {number} doseAmount - Dose in the peptide's `doseUnit`
+ * @param {number} vialSize
+ * @param {number} reconMl
+ * @returns {number} Units to draw, to one decimal place
  */
-export function calculateSyringeUnits(peptide, doseAmount, vialSizeMg = 5, syringeUnits = 100) {
-    const isFixed = peptide.fixed === true;
-    
-    // Convert dose to mg
-    // Fixed peptides (mg): use directly
-    // Non-fixed peptides (mcg): divide by 1000 to get mg
-    const doseMg = isFixed ? doseAmount : doseAmount / 1000;
-    
-    // Vial reconstituted with 3ml BAC water
-    const vialTotalMg = vialSizeMg || 5;
-    const mgPerMl = vialTotalMg / 3;
-    const mlNeeded = doseMg / mgPerMl;
-    
-    const unitsPerMl = parseInt(syringeUnits) === 30 ? 30 : parseInt(syringeUnits) === 50 ? 50 : 100;
-    
-    let units = Math.round(mlNeeded * unitsPerMl);
-    
-    return units;
+export function calculateSyringeUnits(peptide, doseAmount, vialSize, reconMl) {
+    const units = calculateVolumeMl(peptide, doseAmount, vialSize, reconMl) * UNITS_PER_ML;
+
+    // Sub-unit draws are real at high concentrations, so keep one decimal
+    // rather than rounding a 0.4-unit draw down to "0 units".
+    return round(units, 1);
 }
 
 /**
- * Calculate total cycle cost estimate
- * @param {number} vialsNeeded
- * @param {number} pricePerVial
- * @returns {number} Total cost
+ * Vials needed for one full cycle.
+ * @param {Object} peptide
+ * @param {number} doseAmount - Dose in the peptide's `doseUnit`
+ * @param {number} vialSize
+ * @returns {number}
  */
-export function calculateTotalCost(vialsNeeded, pricePerVial = 45) {
-    return vialsNeeded * pricePerVial;
+export function calculateVialsNeeded(peptide, doseAmount, vialSize) {
+    const perDose = toVialUnits(doseAmount, peptide.doseUnit);
+    const total = perDose * peptide.f * peptide.wks;
+
+    return Math.ceil(total / (vialSize || peptide.vialSize));
 }
 
 /**
@@ -138,19 +131,31 @@ export function calculateTotalCost(vialsNeeded, pricePerVial = 45) {
  */
 export function validateInputs(inputs) {
     const errors = [];
-    
-    if (!inputs.weight || inputs.weight < 50 || inputs.weight > 500) {
-        errors.push('Please enter a valid weight (50-500 lbs)');
-    }
-    
-    if (!inputs.age || inputs.age < 18 || inputs.age > 100) {
-        errors.push('Please enter a valid age (18-100)');
-    }
-    
+
     if (!inputs.peptide) {
         errors.push('Please select a peptide');
     }
-    
+
+    if (!inputs.weight || inputs.weight < 50 || inputs.weight > 500) {
+        errors.push('Please enter a valid weight (50-500 lbs)');
+    }
+
+    if (!inputs.age || inputs.age < 18 || inputs.age > 100) {
+        errors.push('Please enter a valid age (18-100)');
+    }
+
+    if (!inputs.vialSize || inputs.vialSize <= 0) {
+        errors.push('Please select a vial size');
+    }
+
+    if (!RECON_VOLUMES.includes(Number(inputs.reconMl))) {
+        errors.push('Please select a reconstitution volume');
+    }
+
+    if (!SYRINGE_SIZES.includes(Number(inputs.syringe))) {
+        errors.push('Please select a syringe size');
+    }
+
     return {
         valid: errors.length === 0,
         errors
@@ -158,47 +163,76 @@ export function validateInputs(inputs) {
 }
 
 /**
+ * Per-component breakdown of a blend, so a 0.4mg combined dose is also shown as
+ * 200mcg of each peptide. Every dosing convention for these compounds is stated
+ * per component, so the combined figure alone reads as double.
+ * @param {Object} peptide
+ * @param {number} doseAmount - Combined dose in the peptide's `doseUnit`
+ * @returns {Array<{name: string, mg: number, mcg: number}>|null}
+ */
+export function splitBlendDose(peptide, doseAmount) {
+    if (!peptide.components || !peptide.components.length) return null;
+
+    const totalMg = peptide.components.reduce((sum, c) => sum + c.mg, 0);
+    const doseMg = toVialUnits(doseAmount, peptide.doseUnit);
+
+    return peptide.components.map(c => {
+        const mg = doseMg * (c.mg / totalMg);
+        return { name: c.name, mg: round(mg, 4), mcg: round(mg * 1000, 1) };
+    });
+}
+
+/**
  * Perform full calculation
  * @param {Object} peptide
- * @param {number} weightLbs
- * @param {number} age
- * @param {number} vialSize
- * @param {number} syringeUnits
+ * @param {Object} opts - { weightLbs, vialSize, reconMl, syringe }
  * @returns {Object} Complete calculation results
  */
-export function performCalculation(peptide, weightLbs, age, vialSize, syringeUnits) {
-    const isBlend = peptide.id?.includes('blend') || peptide.category?.toLowerCase().includes('blend');
-    
-    const lowDose = calculateDose(peptide, weightLbs, age, 'low');
-    const medDose = calculateDose(peptide, weightLbs, age, 'med');
-    const highDose = calculateDose(peptide, weightLbs, age, 'high');
-    
-    // Calculate vials needed (based on medium dose)
-    const medVials = calculateVialsNeeded(peptide, medDose, vialSize);
-    
-    // Calculate syringe units for ALL dose levels
-    const lowSyringeUnits = calculateSyringeUnits(peptide, lowDose, vialSize, syringeUnits);
-    const medSyringeUnits = calculateSyringeUnits(peptide, medDose, vialSize, syringeUnits);
-    const highSyringeUnits = calculateSyringeUnits(peptide, highDose, vialSize, syringeUnits);
-    
-    // Calculate total mg for the cycle (based on medium dose)
-    const doseMg = peptide.fixed === true ? medDose : medDose / 1000;
-    const totalMg = doseMg * peptide.f * peptide.wks;
-    
+export function performCalculation(peptide, opts = {}) {
+    const vialSize = opts.vialSize || peptide.vialSize;
+    const reconMl = opts.reconMl || defaultReconMl(peptide);
+    const syringe = opts.syringe || DEFAULT_SYRINGE;
+    const weightLbs = opts.weightLbs;
+
+    const doses = {};
+    const syringeUnits = {};
+    const volumeMl = {};
+    const components = {};
+
+    for (const level of ['low', 'med', 'high']) {
+        doses[level] = calculateDose(peptide, weightLbs, level);
+        volumeMl[level] = round(calculateVolumeMl(peptide, doses[level], vialSize, reconMl), 4);
+        syringeUnits[level] = calculateSyringeUnits(peptide, doses[level], vialSize, reconMl);
+        components[level] = splitBlendDose(peptide, doses[level]);
+    }
+
+    const perDoseVialUnits = toVialUnits(doses.med, peptide.doseUnit);
+
     return {
-        doses: {
-            low: lowDose,
-            med: medDose,
-            high: highDose
+        doseUnit: peptide.doseUnit,
+        vialUnit: peptide.vialUnit,
+        vialSize,
+        reconMl,
+        syringe,
+        concentration: round(concentration(vialSize, reconMl), 4),
+        doses,
+        volumeMl,
+        syringeUnits,
+        components,
+        // True when one dose will not fit in the selected barrel in a single draw.
+        overflow: {
+            low: syringeUnits.low > syringe,
+            med: syringeUnits.med > syringe,
+            high: syringeUnits.high > syringe
         },
-        vialsNeeded: medVials,
-        syringeUnits: {
-            low: lowSyringeUnits,
-            med: medSyringeUnits,
-            high: highSyringeUnits
-        },
-        totalMg: Math.round(totalMg * 10) / 10,
+        vialsNeeded: calculateVialsNeeded(peptide, doses.med, vialSize),
+        totalCycle: round(perDoseVialUnits * peptide.f * peptide.wks, 2),
         weeklyFreq: peptide.f,
         cycleWeeks: peptide.wks
     };
+}
+
+function round(n, dp) {
+    const f = Math.pow(10, dp);
+    return Math.round(n * f) / f;
 }

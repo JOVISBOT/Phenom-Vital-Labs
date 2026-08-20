@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 2,
   "peptides": [
     {
       "id": "ace031",
@@ -9,12 +10,23 @@
       "halfLife": "~15 days",
       "freq": "Weekly",
       "cycle": "4-8 weeks",
+      "doseUnit": "mcg",
       "low": 500,
       "med": 1000,
       "high": 1500,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10,
+        15,
+        20,
+        30
+      ],
+      "reconMl": 2,
       "f": 1,
       "wks": 6,
-      "fixed": false,
       "pros": [
         "Rapid muscle mass increase (3+ lbs/month)",
         "Binds myostatin systemically",
@@ -53,12 +65,23 @@
       "halfLife": "Unknown (longer than Semax)",
       "freq": "Daily",
       "cycle": "Continuous OK",
+      "doseUnit": "mcg",
       "low": 200,
       "med": 300,
       "high": 500,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10,
+        15,
+        20,
+        30
+      ],
+      "reconMl": 3,
       "f": 7,
       "wks": 12,
-      "fixed": false,
       "pros": [
         "Enhanced BBB penetration vs Semax",
         "Cognitive enhancement",
@@ -97,12 +120,23 @@
       "halfLife": "Unknown",
       "freq": "Daily",
       "cycle": "4-6 weeks",
+      "doseUnit": "mcg",
       "low": 200,
       "med": 300,
       "high": 500,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10,
+        15,
+        20,
+        30
+      ],
+      "reconMl": 3,
       "f": 7,
       "wks": 5,
-      "fixed": false,
       "pros": [
         "Targets fat cells directly",
         "Rapid fat loss in animal studies",
@@ -143,12 +177,20 @@
       "halfLife": "Unknown",
       "freq": "Daily",
       "cycle": "8 on, 4 off",
+      "doseUnit": "mg",
       "low": 50,
       "med": 100,
       "high": 200,
+      "vialUnit": "mg",
+      "vialSize": 100,
+      "vialSizes": [
+        25,
+        50,
+        100
+      ],
+      "reconMl": 1,
       "f": 7,
       "wks": 8,
-      "fixed": false,
       "pros": [
         "Activates AMPK (metabolic master switch)",
         "Enhances fat oxidation",
@@ -189,12 +231,20 @@
       "halfLife": "Unknown (short)",
       "freq": "2-3x daily",
       "cycle": "Continuous OK",
+      "doseUnit": "mg",
       "low": 0.3,
       "med": 0.5,
       "high": 1,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 3,
       "f": 21,
       "wks": 12,
-      "fixed": true,
       "pros": [
         "Burns fat without affecting blood glucose",
         "Does NOT raise IGF-1 (safer than GH)",
@@ -235,12 +285,20 @@
       "halfLife": "Unknown",
       "freq": "Daily or 3x weekly",
       "cycle": "12 weeks",
+      "doseUnit": "mcg",
       "low": 2000,
       "med": 4000,
       "high": 6000,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        5,
+        10,
+        20
+      ],
+      "reconMl": 1,
       "f": 7,
       "wks": 12,
-      "fixed": false,
       "pros": [
         "Tissue protective effects without RBC increase",
         "Neuropathic pain relief",
@@ -279,12 +337,23 @@
       "halfLife": "Unknown",
       "freq": "Daily",
       "cycle": "12 weeks",
+      "doseUnit": "mcg",
       "low": 500,
       "med": 1000,
       "high": 2000,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10,
+        15,
+        20,
+        30
+      ],
+      "reconMl": 2,
       "f": 7,
       "wks": 12,
-      "fixed": false,
       "pros": [
         "Potent anti-fibrotic effects",
         "Inhibits TGF-beta pathway",
@@ -323,12 +392,28 @@
       "halfLife": "Mixed (30min + 2hrs)",
       "freq": "Daily (before bed)",
       "cycle": "12 on, 4 off",
+      "doseUnit": "mg",
       "low": 0.2,
       "med": 0.4,
       "high": 0.8,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        10
+      ],
+      "reconMl": 3,
+      "components": [
+        {
+          "name": "CJC-1295 NO DAC",
+          "mg": 5
+        },
+        {
+          "name": "Ipamorelin",
+          "mg": 5
+        }
+      ],
       "f": 7,
       "wks": 12,
-      "fixed": true,
       "pros": [
         "Synergistic GH effect",
         "Pre-mixed convenience",
@@ -360,12 +445,28 @@
       "halfLife": "Mixed (4hrs + days)",
       "freq": "5x weekly",
       "cycle": "6 on, 4 off",
+      "doseUnit": "mg",
       "low": 0.5,
       "med": 1.5,
       "high": 2.5,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        10
+      ],
+      "reconMl": 2,
+      "components": [
+        {
+          "name": "BPC-157",
+          "mg": 5
+        },
+        {
+          "name": "TB-500",
+          "mg": 5
+        }
+      ],
       "f": 5,
       "wks": 6,
-      "fixed": true,
       "pros": [
         "Pre-mixed convenience",
         "Combines local and systemic healing",
@@ -386,8 +487,7 @@
         "Subcutaneous injection 5 days per week",
         "Rotate injection sites",
         "Can dose higher initially for acute injuries"
-      ],
-      "vialSize": 10
+      ]
     },
     {
       "id": "blend_heal_20",
@@ -398,12 +498,28 @@
       "halfLife": "Mixed (4hrs + days)",
       "freq": "5x weekly",
       "cycle": "6 on, 4 off",
+      "doseUnit": "mg",
       "low": 1,
       "med": 2,
       "high": 3,
+      "vialUnit": "mg",
+      "vialSize": 20,
+      "vialSizes": [
+        20
+      ],
+      "reconMl": 3,
+      "components": [
+        {
+          "name": "BPC-157",
+          "mg": 10
+        },
+        {
+          "name": "TB-500",
+          "mg": 10
+        }
+      ],
       "f": 5,
       "wks": 6,
-      "fixed": true,
       "pros": [
         "Higher concentration (20mg total)",
         "Lower injection volume per dose",
@@ -424,8 +540,7 @@
         "Subcutaneous injection 5 days per week",
         "Lower volume per injection vs standard blend",
         "Ideal for severe injuries or faster recovery"
-      ],
-      "vialSize": 20
+      ]
     },
     {
       "id": "bpc157",
@@ -436,12 +551,20 @@
       "halfLife": "4-6 hours",
       "freq": "Daily",
       "cycle": "4 on, 2 off (repeatable)",
+      "doseUnit": "mcg",
       "low": 500,
       "med": 1000,
       "high": 2000,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 2,
       "f": 7,
       "wks": 4,
-      "fixed": false,
       "pros": [
         "Accelerates tendon and ligament healing by 30-40%",
         "Repairs damaged intestinal lining (IBD/IBS support)",
@@ -481,12 +604,20 @@
       "halfLife": "~7 days",
       "freq": "Weekly",
       "cycle": "Continuous",
+      "doseUnit": "mcg",
       "low": 100,
       "med": 200,
       "high": 400,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 3,
       "f": 1,
       "wks": 16,
-      "fixed": false,
       "pros": [
         "Long-acting weekly injection",
         "Potent appetite suppression",
@@ -526,12 +657,28 @@
       "halfLife": "~7 days (Cagrilintide) + 7 days (Semaglutide)",
       "freq": "Weekly",
       "cycle": "Continuous",
+      "doseUnit": "mg",
       "low": 1,
       "med": 2.4,
       "high": 4.8,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        5
+      ],
+      "reconMl": 1,
+      "components": [
+        {
+          "name": "Cagrilintide",
+          "mg": 2.5
+        },
+        {
+          "name": "Semaglutide",
+          "mg": 2.5
+        }
+      ],
       "f": 1,
       "wks": 16,
-      "fixed": true,
       "pros": [
         "Combines two weight loss mechanisms",
         "Pre-mixed convenience",
@@ -570,12 +717,20 @@
       "halfLife": "8 days",
       "freq": "2x weekly",
       "cycle": "12 on, 4 off",
+      "doseUnit": "mg",
       "low": 1,
       "med": 2,
       "high": 3,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 1,
       "f": 2,
       "wks": 12,
-      "fixed": true,
       "pros": [
         "Only 2 injections per week needed",
         "Elevates baseline GH for sustained effect",
@@ -615,12 +770,20 @@
       "halfLife": "30 minutes",
       "freq": "1-3x daily",
       "cycle": "12 on, 4 off",
+      "doseUnit": "mcg",
       "low": 200,
       "med": 400,
       "high": 800,
+      "vialUnit": "mg",
+      "vialSize": 2,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 2,
       "f": 21,
       "wks": 12,
-      "fixed": false,
       "pros": [
         "More natural GH pulse pattern",
         "Less water retention than DAC version",
@@ -661,12 +824,19 @@
       "halfLife": "Unknown",
       "freq": "Daily",
       "cycle": "20 days every 6 months",
+      "doseUnit": "mcg",
       "low": 2000,
       "med": 5000,
       "high": 10000,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        10,
+        20
+      ],
+      "reconMl": 1,
       "f": 1,
       "wks": 3,
-      "fixed": false,
       "pros": [
         "Adrenal cortex regulation",
         "Stress response normalization",
@@ -705,12 +875,19 @@
       "halfLife": "Unknown",
       "freq": "Daily",
       "cycle": "20 days every 6 months",
+      "doseUnit": "mcg",
       "low": 2000,
       "med": 5000,
       "high": 10000,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        10,
+        20
+      ],
+      "reconMl": 1,
       "f": 1,
       "wks": 3,
-      "fixed": false,
       "pros": [
         "Immune system regulation",
         "T-cell function support",
@@ -749,12 +926,23 @@
       "halfLife": "Unknown (short)",
       "freq": "Research only",
       "cycle": "Not applicable",
+      "doseUnit": "mcg",
       "low": 1000,
       "med": 2000,
       "high": 4000,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10,
+        15,
+        20,
+        30
+      ],
+      "reconMl": 1,
       "f": 1,
       "wks": 1,
-      "fixed": false,
       "pros": [
         "Extremely potent analgesia (40x morphine)",
         "Novel amphibian origin",
@@ -792,12 +980,20 @@
       "halfLife": "Unknown",
       "freq": "Daily",
       "cycle": "8-12 weeks",
+      "doseUnit": "mcg",
       "low": 8000,
       "med": 16000,
       "high": 32000,
+      "vialUnit": "mg",
+      "vialSize": 20,
+      "vialSizes": [
+        10,
+        20,
+        30
+      ],
+      "reconMl": 1,
       "f": 7,
       "wks": 10,
-      "fixed": false,
       "pros": [
         "7x more potent than BDNF for synaptogenesis",
         "Crosses blood-brain barrier",
@@ -836,12 +1032,20 @@
       "halfLife": "Unknown (short)",
       "freq": "Daily at bedtime",
       "cycle": "As needed",
+      "doseUnit": "mcg",
       "low": 100,
       "med": 200,
       "high": 300,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 3,
       "f": 7,
       "wks": 4,
-      "fixed": false,
       "pros": [
         "Promotes deep sleep without sedation",
         "No morning grogginess or hangover",
@@ -884,12 +1088,21 @@
       "halfLife": "~5 days",
       "freq": "Weekly",
       "cycle": "Continuous",
+      "doseUnit": "mg",
       "low": 0.75,
       "med": 1.5,
       "high": 4.5,
+      "vialUnit": "mg",
+      "vialSize": 3,
+      "vialSizes": [
+        0.75,
+        1.5,
+        3,
+        4.5
+      ],
+      "reconMl": 1,
       "f": 1,
       "wks": 16,
-      "fixed": true,
       "pros": [
         "FDA approved with CV benefits",
         "Proven to reduce stroke/MI/death",
@@ -932,12 +1145,22 @@
       "halfLife": "4-13 hours (IV)",
       "freq": "3x weekly",
       "cycle": "As prescribed",
+      "doseUnit": "IU",
       "low": 1000,
       "med": 3000,
       "high": 5000,
+      "vialUnit": "IU",
+      "vialSize": 10000,
+      "vialSizes": [
+        1000,
+        2000,
+        3000,
+        4000,
+        10000
+      ],
+      "reconMl": 1,
       "f": 3,
       "wks": 4,
-      "fixed": false,
       "pros": [
         "FDA approved for anemia",
         "Well-established safety profile",
@@ -976,12 +1199,20 @@
       "halfLife": "Unknown (hours)",
       "freq": "1-2x weekly",
       "cycle": "10 on, 6 off",
+      "doseUnit": "mcg",
       "low": 50,
       "med": 100,
       "high": 150,
+      "vialUnit": "mg",
+      "vialSize": 1,
+      "vialSizes": [
+        1,
+        2,
+        5
+      ],
+      "reconMl": 3,
       "f": 2,
       "wks": 10,
-      "fixed": false,
       "pros": [
         "Blocks myostatin (muscle growth limiter)",
         "Potential for muscle mass beyond genetic limits",
@@ -1022,12 +1253,19 @@
       "halfLife": "Unknown",
       "freq": "Intermittent (biweekly)",
       "cycle": "Intermittent pulses",
+      "doseUnit": "mg",
       "low": 1,
       "med": 2,
       "high": 5,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        5,
+        10
+      ],
+      "reconMl": 1,
       "f": 1,
       "wks": 1,
-      "fixed": true,
       "pros": [
         "Clears senescent \"zombie\" cells",
         "Restores tissue function in aging",
@@ -1067,12 +1305,20 @@
       "halfLife": "Unknown",
       "freq": "2-3x daily",
       "cycle": "Continuous OK",
+      "doseUnit": "mcg",
       "low": 200,
       "med": 400,
       "high": 600,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 3,
       "f": 21,
       "wks": 12,
-      "fixed": false,
       "pros": [
         "Enhanced stability vs 176-191",
         "Fat oxidation without GH effects",
@@ -1109,12 +1355,20 @@
       "halfLife": "15-30 minutes",
       "freq": "2-3x daily",
       "cycle": "8-12 on, 4 off",
+      "doseUnit": "mcg",
       "low": 100,
       "med": 200,
       "high": 300,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        5,
+        10,
+        15
+      ],
+      "reconMl": 3,
       "f": 21,
       "wks": 10,
-      "fixed": false,
       "pros": [
         "Most potent GHRP (stronger than GHRP-6)",
         "Dramatic GH elevation (3-5x baseline)",
@@ -1155,12 +1409,20 @@
       "halfLife": "15-30 minutes",
       "freq": "2-3x daily",
       "cycle": "8-12 on, 4 off",
+      "doseUnit": "mcg",
       "low": 100,
       "med": 200,
       "high": 300,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        5,
+        10,
+        15
+      ],
+      "reconMl": 3,
       "f": 21,
       "wks": 10,
-      "fixed": false,
       "pros": [
         "Intense appetite stimulation (best for hardgainers)",
         "Strong GH release comparable to GHRP-2",
@@ -1202,12 +1464,20 @@
       "halfLife": "Unknown (minutes)",
       "freq": "2-3x weekly",
       "cycle": "Continuous OK",
+      "doseUnit": "mg",
       "low": 100,
       "med": 200,
       "high": 500,
+      "vialUnit": "mg",
+      "vialSize": 600,
+      "vialSizes": [
+        200,
+        600,
+        1200
+      ],
+      "reconMl": 1,
       "f": 3,
       "wks": 12,
-      "fixed": false,
       "pros": [
         "Master antioxidant - neutralizes free radicals",
         "Supports liver detoxification pathways",
@@ -1234,7 +1504,7 @@
         "2-3 times weekly maintenance",
         "Morning dosing may enhance detox",
         "Combine with vitamin C for synergy",
-        "For skin: higher doses (1500-2000mcg)"
+        "For skin: higher doses (1500-2000mg)"
       ]
     },
     {
@@ -1246,12 +1516,20 @@
       "halfLife": "~4 minutes",
       "freq": "Multiple daily",
       "cycle": "As directed",
+      "doseUnit": "mcg",
       "low": 100,
       "med": 200,
       "high": 400,
+      "vialUnit": "mg",
+      "vialSize": 2,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 3,
       "f": 21,
       "wks": 2,
-      "fixed": false,
       "pros": [
         "Stimulates natural LH/FSH",
         "Diagnostic and therapeutic",
@@ -1289,12 +1567,21 @@
       "halfLife": "24-36 hours",
       "freq": "3x weekly",
       "cycle": "As needed",
-      "low": 0.25,
-      "med": 0.5,
-      "high": 1,
+      "doseUnit": "IU",
+      "low": 250,
+      "med": 500,
+      "high": 1000,
+      "vialUnit": "IU",
+      "vialSize": 5000,
+      "vialSizes": [
+        1000,
+        2000,
+        5000,
+        10000
+      ],
+      "reconMl": 3,
       "f": 3,
       "wks": 4,
-      "fixed": true,
       "pros": [
         "Preserves fertility on TRT",
         "Maintains testicular size",
@@ -1336,12 +1623,20 @@
       "halfLife": "45-60 minutes",
       "freq": "2-3x daily",
       "cycle": "8 on, 4 off",
+      "doseUnit": "mcg",
       "low": 100,
       "med": 200,
       "high": 300,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 3,
       "f": 21,
       "wks": 8,
-      "fixed": false,
       "pros": [
         "Most potent GHRP available",
         "Cardioprotective effects (unique to Hexarelin)",
@@ -1383,12 +1678,22 @@
       "halfLife": "2-4 hours (IV)",
       "freq": "Daily",
       "cycle": "6 months minimum",
+      "doseUnit": "IU",
       "low": 1,
       "med": 2,
       "high": 4,
+      "vialUnit": "IU",
+      "vialSize": 10,
+      "vialSizes": [
+        10,
+        12,
+        15,
+        24,
+        36
+      ],
+      "reconMl": 2,
       "f": 7,
       "wks": 24,
-      "fixed": true,
       "pros": [
         "FDA approved for deficiency",
         "Decades of clinical data",
@@ -1429,12 +1734,19 @@
       "halfLife": "Unknown",
       "freq": "3x weekly",
       "cycle": "3-6 weeks",
-      "low": 0.075,
-      "med": 0.15,
-      "high": 0.3,
+      "doseUnit": "IU",
+      "low": 75,
+      "med": 150,
+      "high": 300,
+      "vialUnit": "IU",
+      "vialSize": 150,
+      "vialSizes": [
+        75,
+        150
+      ],
+      "reconMl": 1,
       "f": 3,
       "wks": 4,
-      "fixed": true,
       "pros": [
         "Contains both FSH and LH",
         "Superior to HCG for fertility",
@@ -1472,12 +1784,18 @@
       "halfLife": "Unknown (hours)",
       "freq": "Every 2-3 days",
       "cycle": "Until desired tan achieved",
+      "doseUnit": "mg",
       "low": 0.25,
       "med": 0.3,
       "high": 0.5,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        10
+      ],
+      "reconMl": 3,
       "f": 3,
       "wks": 4,
-      "fixed": true,
       "pros": [
         "Produces natural-looking tan without sun exposure",
         "May reduce skin cancer risk (increased melanin)",
@@ -1520,12 +1838,20 @@
       "halfLife": "Unknown",
       "freq": "2-3x weekly",
       "cycle": "4 on, 4 off",
+      "doseUnit": "mg",
       "low": 2.5,
       "med": 5,
       "high": 7.5,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        5,
+        10,
+        20
+      ],
+      "reconMl": 1,
       "f": 3,
       "wks": 4,
-      "fixed": true,
       "pros": [
         "Improves insulin sensitivity",
         "Enhances cellular energy metabolism",
@@ -1567,12 +1893,22 @@
       "halfLife": "Unknown",
       "freq": "Daily or 3x weekly",
       "cycle": "Continuous OK",
+      "doseUnit": "mg",
       "low": 100,
       "med": 250,
       "high": 500,
+      "vialUnit": "mg",
+      "vialSize": 500,
+      "vialSizes": [
+        100,
+        250,
+        500,
+        1000,
+        2000
+      ],
+      "reconMl": 1,
       "f": 7,
       "wks": 12,
-      "fixed": false,
       "pros": [
         "Essential coenzyme for cellular energy (ATP production)",
         "Activates sirtuins (longevity genes)",
@@ -1615,12 +1951,19 @@
       "halfLife": "Several days",
       "freq": "2-3x weekly",
       "cycle": "4 on, 2 off",
+      "doseUnit": "mcg",
       "low": 100,
       "med": 200,
       "high": 300,
+      "vialUnit": "mg",
+      "vialSize": 2,
+      "vialSizes": [
+        2,
+        5
+      ],
+      "reconMl": 3,
       "f": 3,
       "wks": 4,
-      "fixed": false,
       "pros": [
         "Activates muscle satellite cells for repair/growth",
         "Extended half-life vs regular MGF (PEGylation)",
@@ -1661,12 +2004,19 @@
       "halfLife": "2-3 hours",
       "freq": "As needed (before sexual activity)",
       "cycle": "As needed",
+      "doseUnit": "mg",
       "low": 0.5,
       "med": 1.5,
       "high": 2.5,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        5,
+        10
+      ],
+      "reconMl": 2,
       "f": 1,
       "wks": 1,
-      "fixed": true,
       "pros": [
         "FDA approved for HSDD in women (2019)",
         "Works via CNS (brain) not vascular system",
@@ -1710,9 +2060,23 @@
       "halfLife": "~1 week",
       "freq": "Weekly",
       "cycle": "Continuous",
+      "doseUnit": "mg",
       "low": 1,
       "med": 2,
       "high": 4,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        5,
+        10,
+        15,
+        20,
+        30,
+        40,
+        50,
+        60
+      ],
+      "reconMl": 2,
       "f": 1,
       "wks": 24,
       "pros": [
@@ -1748,8 +2112,7 @@
         "Titrate every 4 weeks for GI tolerance",
         "Monitor resting heart rate - elevation expected",
         "Cardiovascular clearance recommended"
-      ],
-      "fixed": true
+      ]
     },
     {
       "id": "sermorelin",
@@ -1760,12 +2123,20 @@
       "halfLife": "12 minutes",
       "freq": "Daily bedtime",
       "cycle": "Continuous OK",
+      "doseUnit": "mg",
       "low": 0.2,
       "med": 0.5,
       "high": 1,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 3,
       "f": 7,
       "wks": 12,
-      "fixed": true,
       "pros": [
         "FDA approved for GH deficiency (1997)",
         "Safest GH secretagogue option available",
@@ -1804,12 +2175,20 @@
       "halfLife": "Long (days)",
       "freq": "2x weekly",
       "cycle": "6 on, 4 off",
+      "doseUnit": "mcg",
       "low": 750,
       "med": 1500,
       "high": 3000,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10
+      ],
+      "reconMl": 1,
       "f": 2,
       "wks": 6,
-      "fixed": false,
       "pros": [
         "Systemic healing effects throughout body",
         "Only 2 injections per week required",
@@ -1850,12 +2229,21 @@
       "halfLife": "30-60 minutes",
       "freq": "Daily",
       "cycle": "12 on, 4 off",
+      "doseUnit": "mg",
       "low": 1,
       "med": 2,
       "high": 2.5,
+      "vialUnit": "mg",
+      "vialSize": 5,
+      "vialSizes": [
+        2,
+        5,
+        10,
+        20
+      ],
+      "reconMl": 1,
       "f": 7,
       "wks": 12,
-      "fixed": true,
       "pros": [
         "FDA approved for visceral fat reduction",
         "Targets stubborn belly fat specifically",
@@ -1896,12 +2284,19 @@
       "halfLife": "Unknown",
       "freq": "Daily",
       "cycle": "10 days every 6 months",
+      "doseUnit": "mcg",
       "low": 5000,
       "med": 10000,
       "high": 15000,
+      "vialUnit": "mg",
+      "vialSize": 20,
+      "vialSizes": [
+        10,
+        20
+      ],
+      "reconMl": 1,
       "f": 7,
       "wks": 2,
-      "fixed": false,
       "pros": [
         "Restores thymic function in aging",
         "Supports T-cell maturation",
@@ -1943,9 +2338,24 @@
       "halfLife": "5 days (weekly dosing)",
       "freq": "Weekly",
       "cycle": "Continuous",
+      "doseUnit": "mg",
       "low": 2.5,
       "med": 5,
       "high": 10,
+      "vialUnit": "mg",
+      "vialSize": 10,
+      "vialSizes": [
+        5,
+        10,
+        15,
+        20,
+        30,
+        40,
+        50,
+        60,
+        80
+      ],
+      "reconMl": 1,
       "f": 1,
       "wks": 20,
       "pros": [
@@ -1981,8 +2391,7 @@
         "Week 13+: 10-15mg weekly (max)",
         "Subcutaneous injection weekly",
         "Monitor for GI tolerance at each escalation"
-      ],
-      "fixed": true
+      ]
     }
   ]
 }

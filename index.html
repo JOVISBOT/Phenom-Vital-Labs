@@ -3,74 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phenom Vital Labs | Peptide Calculator (Refactored)</title>
+    <title>Peptide Dosage Calculator | Phenom Vital Labs</title>
+    <meta name="description" content="Work out reconstitution concentration and the exact insulin-syringe units to draw for 44 research peptides. Shows the arithmetic, not just the answer.">
+    <link rel="canonical" href="https://jovisbot.github.io/Phenom-Vital-Labs/">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#1e40af">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Phenom Vital Labs">
+    <meta property="og:title" content="Peptide Dosage Calculator">
+    <meta property="og:description" content="Reconstitution concentration and exact syringe units for 44 research peptides. Shows the arithmetic, not just the answer.">
+    <meta property="og:url" content="https://jovisbot.github.io/Phenom-Vital-Labs/">
+    <meta property="og:image" content="https://jovisbot.github.io/Phenom-Vital-Labs/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Phenom Vital Labs peptide dosage calculator">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Peptide Dosage Calculator">
+    <meta name="twitter:description" content="Reconstitution concentration and exact syringe units for 44 research peptides.">
+    <meta name="twitter:image" content="https://jovisbot.github.io/Phenom-Vital-Labs/og-image.png">
+
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css?v=28">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+            integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
 </head>
 <body>
     <header>
         <div class="header-inner">
             <div class="brand-text"><span>Phenom</span> Vital Labs</div>
-            <div class="verified"><span class="verified-dot"></span>99%+ Purity</div>
+            <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
         </div>
     </header>
 
-    <div class="container">
+    <main class="container">
         <div class="intro">
-            <h1>Peptide Calculator</h1>
-            <p>Generate personalized dosing protocols based on clinical research</p>
+            <h1>Peptide Dosage Calculator</h1>
+            <p>Reconstitution concentration and the exact syringe units to draw, with the arithmetic shown</p>
         </div>
 
         <div class="card">
             <div class="form-title">Configuration</div>
             <div class="form-grid">
                 <div class="form-field">
-                    <label><span class="label-icon">🔬</span> Peptide</label>
+                    <label for="peptide"><span class="label-icon" aria-hidden="true">🔬</span> Peptide</label>
                     <select id="peptide">
-                        <option value="">Search or select...</option>
+                        <option value="">Select peptide...</option>
                     </select>
                 </div>
                 <div class="form-field">
-                    <label><span class="label-icon">⚖️</span> Body Weight</label>
+                    <label for="vialSize"><span class="label-icon" aria-hidden="true">💊</span> Vial Size</label>
+                    <select id="vialSize" disabled>
+                        <option value="">Select a peptide first</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="reconMl"><span class="label-icon" aria-hidden="true">💧</span> BAC Water</label>
+                    <select id="reconMl"></select>
+                </div>
+                <div class="form-field">
+                    <label for="syringe"><span class="label-icon" aria-hidden="true">💉</span> Syringe</label>
+                    <select id="syringe"></select>
+                </div>
+                <div class="form-field">
+                    <label for="weight"><span class="label-icon" aria-hidden="true">⚖️</span> Body Weight</label>
                     <select id="weight">
                         <option value="">Select weight...</option>
                     </select>
                 </div>
                 <div class="form-field">
-                    <label><span class="label-icon">🎂</span> Age</label>
+                    <label for="age"><span class="label-icon" aria-hidden="true">🎂</span> Age</label>
                     <select id="age">
                         <option value="">Select age...</option>
                     </select>
                 </div>
-                <div class="form-field">
-                    <label><span class="label-icon">💉</span> Vial Size</label>
-                    <select id="vialSize">
-                        <option value="2">2mg</option>
-                        <option value="5" selected>5mg</option>
-                        <option value="10">10mg</option>
-                        <option value="15">15mg</option>
-                        <option value="20">20mg</option>
-                        <option value="30">30mg</option>
-                        <option value="40">40mg</option>
-                        <option value="50">50mg</option>
-                        <option value="60">60mg</option>
-                        <option value="80">80mg</option>
-                    </select>
-                </div>
             </div>
-            <button class="btn" id="calculateBtn">
-                <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+            <p class="form-note">
+                Weight and age are recorded on the protocol sheet for reference. They do not change the dose &mdash;
+                peptides in this class are dosed as flat protocol amounts, not per kilogram.
+            </p>
+            <button class="btn" id="calculateBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                 Generate Protocol
             </button>
         </div>
 
         <div class="results" id="results">
-            <!-- Results will be populated by JavaScript -->
+            <!-- Populated by js/ui.js -->
         </div>
-    </div>
 
-    <script type="module" src="js/main.js?v=27"></script>
-    <script src="js/debug.js"></script>
+        <div class="footer-disclaimer" role="note">
+            <strong>Research information only - not medical advice</strong>
+            <p>
+                Phenom Vital Labs publishes reference calculations for research peptides. Nothing here is a
+                prescription, a diagnosis, or a recommendation to inject anything. Most of these compounds are not
+                approved for human use, dosing conventions are drawn from community practice rather than controlled
+                trials, and product identity, purity and sterility vary by supplier. Talk to a licensed physician
+                before starting, changing or stopping any protocol, and ask your supplier for a lot-specific
+                third-party certificate of analysis.
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <strong>Phenom Vital Labs</strong> &middot; Reference calculator, no products sold
+    </footer>
+
+    <script type="module" src="js/main.js?v=28"></script>
 </body>
 </html>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Phenom Vital Labs">
+  <rect width="64" height="64" rx="14" fill="#1e40af"/>
+  <g stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none">
+    <line x1="18" y1="46" x2="46" y2="18"/>
+    <line x1="40" y1="12" x2="52" y2="24"/>
+    <line x1="14" y1="50" x2="20" y2="56"/>
+  </g>
+  <rect x="20" y="30" width="16" height="10" transform="rotate(-45 28 35)" fill="#93c5fd"/>
+</svg>

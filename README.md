@@ -1,181 +1,105 @@
-# Peptide Calculator - Refactored
+# Phenom Vital Labs - Peptide Dosage Calculator
 
-A modular, maintainable peptide dosing calculator built with vanilla JavaScript and ES6 modules.
+Static, dependency-free calculator that turns a peptide, a vial size and a volume of
+bacteriostatic water into the exact number of units to draw on an insulin syringe -
+and shows the arithmetic that got there.
 
-## File Structure
+**Live:** https://jovisbot.github.io/Phenom-Vital-Labs/
 
-```
-phenom-vital-labs/
-├── index-refactored.html    # Main HTML file
-├── css/
-│   └── styles.css          # All styling
-├── js/
-│   ├── main.js             # Entry point & event handling
-│   ├── calculator.js       # Pure calculation functions
-│   ├── ui.js               # DOM manipulation
-│   ├── dataLoader.js       # JSON data fetching
-│   └── pdfGenerator.js     # PDF generation
-└── data/
-    └── peptides.json       # Peptide database
+## Running it
+
+No build step, no package installs. It is plain ES modules, so it needs to be served
+over HTTP rather than opened as a `file://` URL:
+
+```bash
+python -m http.server 8765
+# http://127.0.0.1:8765/
 ```
 
-## Key Improvements
+## Tests
 
-### 1. Modular Architecture
-- **Separation of concerns**: Each module has one responsibility
-- **ES6 modules**: Import/export for clean dependencies
-- **No global variables**: All state managed properly
-
-### 2. Type Safety (JSDoc)
-```javascript
-/**
- * Calculate dose in mcg
- * @param {Object} peptide - Peptide object
- * @param {number} weightLbs - Weight in pounds
- * @param {number} age - Age in years
- * @param {string} level - 'low', 'med', or 'high'
- * @returns {number} Dose in mcg
- */
-export function calculateDose(peptide, weightLbs, age, level = 'med') { ... }
+```bash
+node --test test/          # 15 tests, no dependencies
 ```
 
-### 3. Professional PDF Generation
-- Uses jsPDF library (CDN loaded)
-- Manual table drawing (no external plugins required)
-- Error handling for library load failures
+`test/calculator.test.mjs` holds the schema invariants, the dose-model rules and a
+golden snapshot of all 44 peptides x 3 tiers. After an intentional change to the
+maths or the data, refresh the snapshot and read the diff before committing it:
 
-### 4. Bug Fixes Applied
-
-#### Fixed: Missing `vialSize` parameter in `calculateVialsNeeded()`
-**Before:**
-```javascript
-export function calculateVialsNeeded(peptide, doseMcg) {
-    // Used peptide.vialSize which doesn't exist
-}
-```
-**After:**
-```javascript
-export function calculateVialsNeeded(peptide, doseMcg, vialSizeMg = 5) {
-    // Uses passed vialSizeMg parameter
-}
+```bash
+node test/calculator.test.mjs --update
+git diff test/golden.json
 ```
 
-#### Fixed: PDF generation dependency on autoTable
-**Before:**
-```javascript
-// Required jspdf-autotable plugin
-doc.autoTable({ ... });
-```
-**After:**
-```javascript
-// Manual table drawing - no dependencies
-// Check if library loaded
-if (typeof window.jspdf === 'undefined') { ... }
-// Draw tables manually with doc.text() and doc.rect()
+To check the rendered page rather than the numbers:
+
+```bash
+python tools/drive-ui.py            # screenshots to shots/, report to stdout
 ```
 
-#### Fixed: Missing error handling in PDF generator
-**Before:**
-```javascript
-// Would crash if jsPDF failed to load
-const { jsPDF } = window.jspdf;
+## How a dose is calculated
+
 ```
-**After:**
-```javascript
-// Validates library availability
-if (typeof window.jspdf === 'undefined') {
-    console.error('jsPDF library not loaded');
-    alert('PDF generation failed: library not loaded');
-    return;
-}
+concentration = vialSize / reconMl                  e.g. 10 mg / 3 ml = 3.33 mg/ml
+volume        = dose / concentration                     0.4 mg / 3.33 = 0.12 ml
+units         = volume x 100                             0.12 ml x 100 = 12 units
 ```
 
-#### Fixed: Text overflow in PDF warnings
-**Before:**
-```javascript
-// Could overflow page
-peptide.warnings.forEach((warning) => {
-    doc.text(`• ${warning}`, 20, y);
-});
+Two rules do most of the work:
+
+- **An insulin syringe is U-100 - 100 units per millilitre.** Barrel size (30U, 50U,
+  100U) caps how much you can draw in one pull; it does not change the reading.
+- **Doses are flat protocol totals, not per kilogram.** Almost nothing in this class is
+  dosed per kg. A peptide whose figures genuinely are per-kilogram opts in with
+  `perKg: true` and is then multiplied by body weight.
+
+## Data model
+
+`data/peptides.json` (`schemaVersion: 2`). Per peptide:
+
+| Field | Meaning |
+|---|---|
+| `doseUnit` | `mcg` \| `mg` \| `IU` - unit of `low`/`med`/`high` |
+| `low`/`med`/`high` | Conservative / recommended / advanced dose |
+| `perKg` | Optional. When true, the figures above are per kilogram |
+| `vialUnit` | `mg` \| `IU` - unit of `vialSize` and `vialSizes` |
+| `vialSize` | Default vial |
+| `vialSizes` | Vials offered in the dropdown |
+| `reconMl` | Default bacteriostatic water, chosen to land the recommended dose near 30 units |
+| `components` | Blends only: per-component content, so per-peptide doses can be shown |
+| `f` / `wks` | Doses per week / cycle length, used for the vial count |
+
+`doseUnit: 'IU'` requires `vialUnit: 'IU'` and vice versa - the test enforces it.
+
+## Layout
+
 ```
-**After:**
-```javascript
-// Uses splitTextToSize for wrapping
-const lines = doc.splitTextToSize(`• ${warning}`, 160);
-lines.forEach((line) => {
-    doc.text(line, 20, y);
-    y += 5;
-});
+index.html            single page
+404.html              self-contained (styles inlined; GitHub Pages serves it at any depth)
+css/styles.css
+js/
+  main.js             entry point, URL state, event wiring
+  calculator.js       pure maths, no DOM
+  ui.js               rendering
+  dataLoader.js       fetch + cache peptides.json
+  pdfGenerator.js     one-page protocol sheet via jsPDF
+data/peptides.json    44 peptides
+test/                 node --test suite + golden snapshot
+tools/                one-shot data migrations and the browser driver
 ```
 
-## Usage
+`tools/migrate-units.js` and `tools/set-recon-defaults.js` are the provenance for the
+schema v2 data: each carries the evidence for every value it changed. They are
+idempotent only against the pre-migration file - restore `data/peptides.json` from git
+before re-running them.
 
-1. Open `index-refactored.html` in a browser
-2. Select a peptide from the dropdown
-3. Enter weight and age
-4. Click "Generate Protocol"
-5. View results and download PDF
+## Cache busting
 
-## Browser Requirements
+`index.html` and `dataLoader.js` carry matching `?v=` tokens. Bump all three together
+(`css/styles.css?v=`, `js/main.js?v=`, `DATA_VERSION` in `dataLoader.js`) when shipping
+a change, or browsers will serve a new script against old data.
 
-- Modern browser with ES6 module support (Chrome 61+, Firefox 60+, Safari 10.1+, Edge 16+)
-- Local file access (for `fetch()` to work with local JSON)
+## Not medical advice
 
-## Testing Checklist
-
-### Calculation Tests
-- [ ] BPC-157, 180 lbs, age 35 → Medium dose: 500 mcg
-- [ ] Semaglutide, 200 lbs, age 45 → Medium dose: 500 mcg
-- [ ] Vials calculation: Verify formula accuracy
-- [ ] Syringe units: Check unit conversion
-
-### UI Tests
-- [ ] Peptide dropdown populates correctly
-- [ ] Weight dropdown shows 100-350 lbs
-- [ ] Age dropdown shows 18-80 years
-- [ ] Results display with proper formatting
-- [ ] Mobile responsive layout
-
-### PDF Tests
-- [ ] PDF generates without errors
-- [ ] Tables display correctly
-- [ ] Text doesn't overflow
-- [ ] File saves with correct name
-- [ ] All sections present (Patient, Peptide, Dosing, Warnings)
-
-### Error Handling
-- [ ] Graceful failure if JSON doesn't load
-- [ ] Alert if peptide not selected
-- [ ] PDF fallback if jsPDF fails
-
-## Known Limitations
-
-1. **Requires local server**: ES6 modules don't work with `file://` protocol. Use:
-   - VS Code Live Server extension
-   - Python: `python -m http.server 8000`
-   - Node: `npx serve`
-
-2. **peptides.json**: Currently uses sample data. Full extraction from original HTML needed for production.
-
-3. **Browser compatibility**: IE11 not supported (uses ES6 modules)
-
-## Future Enhancements
-
-- [ ] Add unit tests (Jest)
-- [ ] Implement service worker for offline support
-- [ ] Add history/save functionality
-- [ ] User preferences (default weight, age, etc.)
-- [ ] Compare multiple peptides side-by-side
-
-## Migration from Original
-
-To migrate from `index.html`:
-
-1. Extract all peptides from `index.html` into `data/peptides.json`
-2. Copy `index-refactored.html` to `index.html`
-3. Test all functionality
-4. Deploy
-
-## License
-
-Same as original project.
+Reference calculations for research compounds. Most are not approved for human use and
+the dosing conventions come from community practice, not controlled trials.

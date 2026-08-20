@@ -1,0 +1,706 @@
+{
+  "ace031": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 500,
+      "med": 1000,
+      "high": 1500
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 60
+    },
+    "vials": 2
+  },
+  "adamax": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 200,
+      "med": 300,
+      "high": 500
+    },
+    "units": {
+      "low": 12,
+      "med": 18,
+      "high": 30
+    },
+    "vials": 6
+  },
+  "adipotide": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 200,
+      "med": 300,
+      "high": 500
+    },
+    "units": {
+      "low": 12,
+      "med": 18,
+      "high": 30
+    },
+    "vials": 3
+  },
+  "aicar": {
+    "doseUnit": "mg",
+    "vial": "100mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 50,
+      "med": 100,
+      "high": 200
+    },
+    "units": {
+      "low": 50,
+      "med": 100,
+      "high": 200
+    },
+    "vials": 56
+  },
+  "aod9604": {
+    "doseUnit": "mg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 0.3,
+      "med": 0.5,
+      "high": 1
+    },
+    "units": {
+      "low": 18,
+      "med": 30,
+      "high": 60
+    },
+    "vials": 26
+  },
+  "ara290": {
+    "doseUnit": "mcg",
+    "vial": "10mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 2000,
+      "med": 4000,
+      "high": 6000
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 60
+    },
+    "vials": 34
+  },
+  "b733": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 500,
+      "med": 1000,
+      "high": 2000
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 80
+    },
+    "vials": 17
+  },
+  "blend_gh1": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 0.2,
+      "med": 0.4,
+      "high": 0.8
+    },
+    "units": {
+      "low": 6,
+      "med": 12,
+      "high": 24
+    },
+    "vials": 4
+  },
+  "blend_heal": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 0.5,
+      "med": 1.5,
+      "high": 2.5
+    },
+    "units": {
+      "low": 10,
+      "med": 30,
+      "high": 50
+    },
+    "vials": 5
+  },
+  "blend_heal_20": {
+    "doseUnit": "mg",
+    "vial": "20mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 1,
+      "med": 2,
+      "high": 3
+    },
+    "units": {
+      "low": 15,
+      "med": 30,
+      "high": 45
+    },
+    "vials": 3
+  },
+  "bpc157": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 500,
+      "med": 1000,
+      "high": 2000
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 80
+    },
+    "vials": 6
+  },
+  "cagrilintide": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 400
+    },
+    "units": {
+      "low": 6,
+      "med": 12,
+      "high": 24
+    },
+    "vials": 1
+  },
+  "cagrisema": {
+    "doseUnit": "mg",
+    "vial": "5mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 1,
+      "med": 2.4,
+      "high": 4.8
+    },
+    "units": {
+      "low": 20,
+      "med": 48,
+      "high": 96
+    },
+    "vials": 8
+  },
+  "cjc1295": {
+    "doseUnit": "mg",
+    "vial": "5mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 1,
+      "med": 2,
+      "high": 3
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 60
+    },
+    "vials": 10
+  },
+  "cjc1295_nodac": {
+    "doseUnit": "mcg",
+    "vial": "2mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 200,
+      "med": 400,
+      "high": 800
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 80
+    },
+    "vials": 51
+  },
+  "cortagen": {
+    "doseUnit": "mcg",
+    "vial": "10mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 2000,
+      "med": 5000,
+      "high": 10000
+    },
+    "units": {
+      "low": 20,
+      "med": 50,
+      "high": 100
+    },
+    "vials": 2
+  },
+  "crystagen": {
+    "doseUnit": "mcg",
+    "vial": "10mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 2000,
+      "med": 5000,
+      "high": 10000
+    },
+    "units": {
+      "low": 20,
+      "med": 50,
+      "high": 100
+    },
+    "vials": 2
+  },
+  "dermorphin": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 1000,
+      "med": 2000,
+      "high": 4000
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 80
+    },
+    "vials": 1
+  },
+  "dihexa": {
+    "doseUnit": "mcg",
+    "vial": "20mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 8000,
+      "med": 16000,
+      "high": 32000
+    },
+    "units": {
+      "low": 40,
+      "med": 80,
+      "high": 160
+    },
+    "vials": 56
+  },
+  "dsip": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 300
+    },
+    "units": {
+      "low": 6,
+      "med": 12,
+      "high": 18
+    },
+    "vials": 2
+  },
+  "dulaglutide": {
+    "doseUnit": "mg",
+    "vial": "3mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 0.75,
+      "med": 1.5,
+      "high": 4.5
+    },
+    "units": {
+      "low": 25,
+      "med": 50,
+      "high": 150
+    },
+    "vials": 8
+  },
+  "epo": {
+    "doseUnit": "IU",
+    "vial": "10000IU",
+    "reconMl": 1,
+    "doses": {
+      "low": 1000,
+      "med": 3000,
+      "high": 5000
+    },
+    "units": {
+      "low": 10,
+      "med": 30,
+      "high": 50
+    },
+    "vials": 4
+  },
+  "follistatin": {
+    "doseUnit": "mcg",
+    "vial": "1mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 50,
+      "med": 100,
+      "high": 150
+    },
+    "units": {
+      "low": 15,
+      "med": 30,
+      "high": 45
+    },
+    "vials": 2
+  },
+  "foxo4": {
+    "doseUnit": "mg",
+    "vial": "5mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 1,
+      "med": 2,
+      "high": 5
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 100
+    },
+    "vials": 1
+  },
+  "frag1723": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 200,
+      "med": 400,
+      "high": 600
+    },
+    "units": {
+      "low": 12,
+      "med": 24,
+      "high": 36
+    },
+    "vials": 21
+  },
+  "ghrp2": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 300
+    },
+    "units": {
+      "low": 6,
+      "med": 12,
+      "high": 18
+    },
+    "vials": 9
+  },
+  "ghrp6": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 300
+    },
+    "units": {
+      "low": 6,
+      "med": 12,
+      "high": 18
+    },
+    "vials": 9
+  },
+  "glutathione": {
+    "doseUnit": "mg",
+    "vial": "600mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 500
+    },
+    "units": {
+      "low": 16.7,
+      "med": 33.3,
+      "high": 83.3
+    },
+    "vials": 12
+  },
+  "gonadorelin": {
+    "doseUnit": "mcg",
+    "vial": "2mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 400
+    },
+    "units": {
+      "low": 15,
+      "med": 30,
+      "high": 60
+    },
+    "vials": 5
+  },
+  "hcg": {
+    "doseUnit": "IU",
+    "vial": "5000IU",
+    "reconMl": 3,
+    "doses": {
+      "low": 250,
+      "med": 500,
+      "high": 1000
+    },
+    "units": {
+      "low": 15,
+      "med": 30,
+      "high": 60
+    },
+    "vials": 2
+  },
+  "hexarelin": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 300
+    },
+    "units": {
+      "low": 6,
+      "med": 12,
+      "high": 18
+    },
+    "vials": 7
+  },
+  "hgh": {
+    "doseUnit": "IU",
+    "vial": "10IU",
+    "reconMl": 2,
+    "doses": {
+      "low": 1,
+      "med": 2,
+      "high": 4
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 80
+    },
+    "vials": 34
+  },
+  "hmg": {
+    "doseUnit": "IU",
+    "vial": "150IU",
+    "reconMl": 1,
+    "doses": {
+      "low": 75,
+      "med": 150,
+      "high": 300
+    },
+    "units": {
+      "low": 50,
+      "med": 100,
+      "high": 200
+    },
+    "vials": 12
+  },
+  "melanotan2": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 0.25,
+      "med": 0.3,
+      "high": 0.5
+    },
+    "units": {
+      "low": 7.5,
+      "med": 9,
+      "high": 15
+    },
+    "vials": 1
+  },
+  "motsc": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 2.5,
+      "med": 5,
+      "high": 7.5
+    },
+    "units": {
+      "low": 25,
+      "med": 50,
+      "high": 75
+    },
+    "vials": 6
+  },
+  "nadplus": {
+    "doseUnit": "mg",
+    "vial": "500mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 100,
+      "med": 250,
+      "high": 500
+    },
+    "units": {
+      "low": 20,
+      "med": 50,
+      "high": 100
+    },
+    "vials": 42
+  },
+  "pegmgf": {
+    "doseUnit": "mcg",
+    "vial": "2mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 100,
+      "med": 200,
+      "high": 300
+    },
+    "units": {
+      "low": 15,
+      "med": 30,
+      "high": 45
+    },
+    "vials": 2
+  },
+  "pt141": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 0.5,
+      "med": 1.5,
+      "high": 2.5
+    },
+    "units": {
+      "low": 10,
+      "med": 30,
+      "high": 50
+    },
+    "vials": 1
+  },
+  "retatrutide": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 2,
+    "doses": {
+      "low": 1,
+      "med": 2,
+      "high": 4
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 80
+    },
+    "vials": 5
+  },
+  "sermorelin": {
+    "doseUnit": "mg",
+    "vial": "5mg",
+    "reconMl": 3,
+    "doses": {
+      "low": 0.2,
+      "med": 0.5,
+      "high": 1
+    },
+    "units": {
+      "low": 12,
+      "med": 30,
+      "high": 60
+    },
+    "vials": 9
+  },
+  "tb500": {
+    "doseUnit": "mcg",
+    "vial": "5mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 750,
+      "med": 1500,
+      "high": 3000
+    },
+    "units": {
+      "low": 15,
+      "med": 30,
+      "high": 60
+    },
+    "vials": 4
+  },
+  "tesamorelin": {
+    "doseUnit": "mg",
+    "vial": "5mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 1,
+      "med": 2,
+      "high": 2.5
+    },
+    "units": {
+      "low": 20,
+      "med": 40,
+      "high": 50
+    },
+    "vials": 34
+  },
+  "thymalin": {
+    "doseUnit": "mcg",
+    "vial": "20mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 5000,
+      "med": 10000,
+      "high": 15000
+    },
+    "units": {
+      "low": 25,
+      "med": 50,
+      "high": 75
+    },
+    "vials": 7
+  },
+  "tirzepatide": {
+    "doseUnit": "mg",
+    "vial": "10mg",
+    "reconMl": 1,
+    "doses": {
+      "low": 2.5,
+      "med": 5,
+      "high": 10
+    },
+    "units": {
+      "low": 25,
+      "med": 50,
+      "high": 100
+    },
+    "vials": 10
+  }
+}

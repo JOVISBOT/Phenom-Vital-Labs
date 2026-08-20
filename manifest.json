@@ -1,0 +1,13 @@
+{
+  "name": "Phenom Vital Labs - Peptide Dosage Calculator",
+  "short_name": "Peptide Calc",
+  "description": "Reconstitution concentration and exact insulin-syringe units for 44 research peptides.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fefcf3",
+  "theme_color": "#1e40af",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

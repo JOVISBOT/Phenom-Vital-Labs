@@ -5,6 +5,11 @@
  * @module dataLoader
  */
 
+// Cache-busting token. Kept in step with the ?v= on the script and stylesheet
+// tags in index.html -- they had drifted to v=27 and v=19 respectively, so a
+// data change could ship while browsers kept serving the old JSON.
+const DATA_VERSION = 28;
+
 let peptidesCache = null;
 
 /**
@@ -17,7 +22,7 @@ export async function loadPeptideData() {
     }
     
     try {
-        const response = await fetch('./data/peptides.json?v=19');
+        const response = await fetch(`./data/peptides.json?v=${DATA_VERSION}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -4,32 +4,41 @@
  */
 
 import { loadPeptideData, getPeptide } from './dataLoader.js';
-import { validateInputs, performCalculation } from './calculator.js';
-import { renderResults, populateWeightOptions, populateAgeOptions, populatePeptideOptions, showLoading, hideLoading, showInlineError, updateVialSizeForPeptide } from './ui.js';
+import { validateInputs, performCalculation, DEFAULT_SYRINGE } from './calculator.js';
+import {
+    renderResults, populateWeightOptions, populateAgeOptions, populatePeptideOptions,
+    populateSyringeOptions, updateReconOptions, showLoading, hideLoading,
+    showInlineError, updateVialSizeForPeptide
+} from './ui.js';
 import { generatePDF } from './pdfGenerator.js';
 
-// Global state
 let currentPeptide = null;
-let peptidesData = null;
+let lastResults = null;
+let lastInputs = null;
+
+const $ = id => document.getElementById(id);
 
 /**
  * Initialize the application
  */
 async function init() {
     try {
-        // Load peptide data
-        peptidesData = await loadPeptideData();
-        
-        // Populate dropdowns
+        const peptidesData = await loadPeptideData();
+
         populatePeptideOptions(peptidesData);
         populateWeightOptions();
         populateAgeOptions();
-        
-        // Setup event listeners
-        document.getElementById('calculateBtn').addEventListener('click', handleCalculate);
-        document.getElementById('peptide').addEventListener('change', handlePeptideChange);
-        
-        console.log('Peptide Calculator initialized successfully');
+
+        $('calculateBtn').addEventListener('click', handleCalculate);
+        $('peptide').addEventListener('change', () => handlePeptideChange());
+
+        // Changing the vial or the water changes the answer, so re-run rather
+        // than leaving a stale result on screen next to the new inputs.
+        for (const id of ['vialSize', 'reconMl', 'syringe']) {
+            $(id).addEventListener('change', () => { if (lastResults) handleCalculate(); });
+        }
+
+        restoreFromUrl();
     } catch (error) {
         console.error('Failed to initialize:', error);
         showInlineError('Failed to load peptide data. Please refresh the page.');
@@ -38,13 +47,30 @@ async function init() {
 
 /**
  * Handle peptide selection change
+ * @param {Object} [prefs] - Previously selected vial size / recon volume to keep
  */
-function handlePeptideChange(e) {
-    const peptideId = e.target.value;
+function handlePeptideChange(prefs = {}) {
+    const peptideId = $('peptide').value;
     currentPeptide = peptideId ? getPeptide(peptideId) : null;
-    
-    // Update vial size based on peptide type
-    updateVialSizeForPeptide(currentPeptide);
+
+    updateVialSizeForPeptide(currentPeptide, prefs.vialSize);
+    updateReconOptions(currentPeptide, prefs.reconMl);
+    populateSyringeOptions(prefs.syringe);
+}
+
+/**
+ * Read the current form state.
+ * @returns {Object}
+ */
+function readInputs() {
+    return {
+        peptide: currentPeptide,
+        weight: parseInt($('weight').value, 10),
+        age: parseInt($('age').value, 10),
+        vialSize: parseFloat($('vialSize').value),
+        reconMl: parseFloat($('reconMl').value),
+        syringe: parseInt($('syringe').value, 10)
+    };
 }
 
 /**
@@ -55,87 +81,105 @@ async function handleCalculate() {
         showInlineError('Please select a peptide first');
         return;
     }
-    
-    const weight = parseInt(document.getElementById('weight').value);
-    const age = parseInt(document.getElementById('age').value);
-    
-    if (!weight || !age) {
-        showInlineError('Please select both weight and age');
-        return;
-    }
-    
-    showLoading();
-    
-    // Small delay for UX
-    await new Promise(r => setTimeout(r, 300));
-    
-    const inputs = {
-        weight,
-        age,
-        peptide: currentPeptide,
-        vialSize: parseInt(document.getElementById('vialSize').value),
-        syringe: 50 // Default to 50U for all calculations
-    };
-    
-    // Validate
+
+    const inputs = readInputs();
     const validation = validateInputs(inputs);
     if (!validation.valid) {
-        hideLoading();
         showInlineError(validation.errors.join(', '));
         return;
     }
-    
-    // Perform calculation
-    const results = performCalculation(
-        inputs.peptide,
-        inputs.weight,
-        inputs.age,
-        inputs.vialSize,
-        inputs.syringe
-    );
-    
-    hideLoading();
-    
-    // Render results
-    renderResults(currentPeptide, results, {
-        weight: inputs.weight,
-        age: inputs.age,
+
+    showLoading();
+    await new Promise(r => setTimeout(r, 200));
+
+    lastResults = performCalculation(currentPeptide, {
+        weightLbs: inputs.weight,
         vialSize: inputs.vialSize,
+        reconMl: inputs.reconMl,
         syringe: inputs.syringe
     });
-    
-    // Setup PDF buttons (both top and bottom)
-    const downloadBtn = document.getElementById('downloadPDF');
-    const previewBtn = document.getElementById('previewPDF');
-    const downloadBtnTop = document.getElementById('downloadPDFTop');
-    const previewBtnTop = document.getElementById('previewPDFTop');
-    
-    const generatePDFHandler = () => {
-        generatePDF(currentPeptide, results, {
-            weight: inputs.weight,
-            age: inputs.age,
-            vialSize: inputs.vialSize,
-            syringe: inputs.syringe
-        });
-    };
-    
-    const previewPDFHandler = () => {
-        generatePDF(currentPeptide, results, {
-            weight: inputs.weight,
-            age: inputs.age,
-            vialSize: inputs.vialSize,
-            syringe: inputs.syringe
-        }, true); // true = preview mode
-    };
-    
-    if (downloadBtn) downloadBtn.onclick = generatePDFHandler;
-    if (downloadBtnTop) downloadBtnTop.onclick = generatePDFHandler;
-    
-    if (previewBtn) previewBtn.onclick = previewPDFHandler;
-    if (previewBtnTop) previewBtnTop.onclick = previewPDFHandler;
+    lastInputs = inputs;
+
+    hideLoading();
+    renderResults(currentPeptide, lastResults, inputs);
+    writeUrl(inputs);
+    wireResultButtons();
 }
 
+/**
+ * Attach handlers to the buttons that only exist once results are rendered.
+ */
+function wireResultButtons() {
+    const pdf = preview => () => generatePDF(currentPeptide, lastResults, lastInputs, preview);
 
+    for (const id of ['downloadPDF', 'downloadPDFTop']) {
+        const btn = $(id);
+        if (btn) btn.onclick = pdf(false);
+    }
+    for (const id of ['previewPDF', 'previewPDFTop']) {
+        const btn = $(id);
+        if (btn) btn.onclick = pdf(true);
+    }
 
-// Initialize when DOM is ready
+    const copy = $('copyLink');
+    if (copy) {
+        copy.onclick = async () => {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                copy.textContent = 'Link copied';
+                setTimeout(() => { copy.textContent = 'Copy link'; }, 2000);
+            } catch {
+                showInlineError('Could not copy - select the address bar instead.');
+            }
+        };
+    }
+}
+
+/**
+ * Mirror the current selection into the URL so a protocol can be bookmarked or
+ * shared. Uses replaceState so the back button still leaves the page.
+ * @param {Object} inputs
+ */
+function writeUrl(inputs) {
+    const params = new URLSearchParams({
+        p: inputs.peptide.id,
+        w: inputs.weight,
+        a: inputs.age,
+        v: inputs.vialSize,
+        r: inputs.reconMl,
+        s: inputs.syringe
+    });
+    history.replaceState(null, '', `${window.location.pathname}?${params}`);
+}
+
+/**
+ * Restore a shared protocol from the URL, then recalculate it.
+ */
+function restoreFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('p');
+    if (!id || !getPeptide(id)) {
+        handlePeptideChange();
+        return;
+    }
+
+    $('peptide').value = id;
+    setIfPresent('weight', params.get('w'));
+    setIfPresent('age', params.get('a'));
+
+    handlePeptideChange({
+        vialSize: params.get('v'),
+        reconMl: params.get('r'),
+        syringe: params.get('s') || DEFAULT_SYRINGE
+    });
+
+    handleCalculate();
+}
+
+function setIfPresent(id, value) {
+    if (value === null) return;
+    const select = $(id);
+    if ([...select.options].some(o => o.value === value)) select.value = value;
+}
+
 document.addEventListener('DOMContentLoaded', init);

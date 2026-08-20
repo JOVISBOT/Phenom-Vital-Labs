@@ -1,68 +1,55 @@
-# Phenom Vital Labs - Peptide Calculator
+# Project structure
 
-## Project Structure
+Static site. No build step, no runtime dependencies. jsPDF is the only third-party
+script and it is loaded from a CDN with an SRI hash.
 
 ```
-phenom-vital-labs/
-├── index.html              # Main app entry
-├── README.md                # Project documentation
-├── .env.example             # Environment template
-├── .gitignore               # Git ignore rules
-│
-├── css/                     # Stylesheets
-│   └── styles.css            # Main application styles
-│
-├── js/                      # JavaScript modules
-│   ├── main.js              # App entry point
-│   ├── calculator.js        # Core calculation logic
-│   ├── dataLoader.js         # JSON data loading
-│   ├── debug.js             # Debug utilities
-│   ├── pdfGenerator.js       # PDF generation
-│   └── ui.js                # UI rendering & interactions
-│
-├── data/                    # Data files
-│   └── peptides.json         # 44 peptides dataset
-│
-└── scripts/                 # Utility scripts
-    ├── check-supplier.js   # Supplier data checker
-    ├── show-dosing.js       # Dosing display utility
-    ├── update-dosing.js     # Data updater
-    ├── update-missing.js   # Missing data handler
-    ├── update-all-dosing.js # Batch dosing updater
-    ├── dosing-table.txt     # Reference dosing table
-    ├── dosing-report.txt    # Dosing report
-    ├── missing-peptides.json # Missing peptides data
-    └── git_commands.ps1    # Git automation commands
+index.html              Single page. Meta/OG tags, the config form, the disclaimer.
+404.html                Styles inlined - GitHub Pages serves this at arbitrary depth,
+                        where a relative stylesheet href would resolve wrongly.
+manifest.json           PWA manifest (installable, no service worker).
+favicon.svg             Icon.
+og-image.png            1200x630 social card, rendered from og-image.svg.
+og-image.svg            Source for the card above.
+robots.txt              Allow-all + sitemap pointer.
+sitemap.xml             One URL.
+
+css/
+  styles.css            All styles, including print rules (.animate-in starts at
+                        opacity 0, so print needs an override or the page comes out blank).
+
+js/
+  main.js               Entry point. Event wiring, URL query-string state, PDF buttons.
+  calculator.js         Pure functions. No DOM access, so it is directly testable in Node.
+  ui.js                 All rendering and dropdown population. Owns the disclaimer text.
+  dataLoader.js         Fetches and caches peptides.json. Holds DATA_VERSION.
+  pdfGenerator.js       One-page A4 protocol sheet via jsPDF.
+
+data/
+  peptides.json         44 peptides, schemaVersion 2.
+  DATA-REVIEW.md        Open data questions deliberately left unchanged, and why.
+  ENHANCEMENT_PLAN.md   Historical - the April vial-size pass. Now applied.
+  PEPTIDE_VERIFICATION_NEEDED.md  Historical.
+
+test/
+  calculator.test.mjs   node --test. Schema invariants + dose model + golden snapshot.
+  golden.json           All 44 peptides x 3 tiers. Regenerate with npm run test:update.
+
+tools/
+  migrate-units.js      One-shot: `fixed` boolean -> explicit doseUnit/vialUnit model,
+                        plus the seven unit corrections. Carries its own evidence.
+  set-recon-defaults.js One-shot: picks default vial size and reconstitution volume.
+  drive-ui.py           Playwright driver. Screenshots + a DOM report of real output.
 ```
 
-## Files Included
+## Module dependency direction
 
-### Production Files (Deployed)
-- `index.html` - Main application
-- `css/styles.css` - Application styles
-- `js/*.js` - Core application modules
-- `data/peptides.json` - 44 peptide database
+```
+main.js  ->  dataLoader.js
+         ->  calculator.js     (pure)
+         ->  ui.js             -> calculator.js
+         ->  pdfGenerator.js   -> ui.js (disclaimer text + formatDose)
+```
 
-### Configuration
-- `.env.example` - Environment variables template
-- `.gitignore` - Git ignore rules
-
-### Development Scripts (scripts/)
-- Various utilities for data management and debugging
-
-## Features
-- ✅ 44 peptides with clinical dosing
-- ✅ 3 dosing levels (Conservative/Standard/Advanced)
-- ✅ PDF generation with visual syringe guides
-- ✅ Benefits & considerations display
-- ✅ PDF preview & download
-- ✅ Mobile responsive design
-
-## Live URL
-https://jovisbot.github.io/Phenom-Vital-Labs/
-
-## Version
-v27 (Latest)
-
-## Status
-✅ Complete & Deployed
+`calculator.js` imports nothing. That is what lets the test suite run it under Node
+with no DOM shim.

@@ -6,6 +6,7 @@ trace-*.js
 
 # Scripts used for extraction
 scripts/
+!tools/
 extract_*.js
 
 # Original files (keep for reference but don't commit)
@@ -29,3 +30,7 @@ Thumbs.db
 
 # Environment variables - keep secrets local
 .env
+
+# Local verification artifacts
+shots/
+ui-report.json
