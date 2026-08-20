@@ -75,41 +75,84 @@ at actual certificates of analysis.
 
 ---
 
+## RESOLVED 2026-08-20 (v4) - the four items this file left open
+
+Applied by `tools/apply-open-items.js`. The v3 pass stopped wherever it lacked
+evidence; this pass went and got it. Sources sit on each change in that script.
+
+### OPEN 1 - three `high` tiers exceeded the largest vial offered
+
+Two were wrong doses. One was right, and the *vial* was wrong.
+
+| Peptide | Was | Now | Why |
+|---|---|---|---|
+| `aicar` | 50/100/200 mg, 8 wks | **10/25/50 mg, 2 wks** | 50/100/200 matched no published protocol. Sources converge on ~25 mg/day standard (1-3 mg at the low end) and cap the run at ~14 days with a 1-2 month washout. 200 mg/day x 56 days is 11.2 g - which is exactly why the high tier needed two vials. |
+| `dihexa` | 8/16/32 mg | **2/3/5 mg** | 8-45 mg is the **oral** range. Subcutaneous community protocols run 2-5 mg daily. This is a syringe calculator, so it needs the subq figure - the same defect already fixed on `glutathione`, where an IV dose was being drawn into an insulin syringe. |
+| `hmg` | 150 IU default vial | **75 IU default, `multiVial: true`** | Not a defect. MENOPUR is supplied in the US only as 75 IU vials, and its instructions for use say to mix the first vial with 1 ml, draw it back up, and dissolve up to five more in that same liquid. 300 IU genuinely is four vials. |
+
+**The pooling model matters.** Reconstituting N vials does **not** multiply the
+volume - it multiplies the concentration. Modelling hmg's 300 IU as "4 vials,
+therefore 4 ml" would have told a user to pull **400 units** on a 100u barrel.
+`vialsPooled()` handles it, and `multiVial` is now the only licence to exceed one
+vial per dose: a record cannot re-enter that state by being added to a list.
+
+**Found by reading the rendered page, not the test output:** with pooling in, the
+calculation box printed `75 IU/ml` and `1 ml` for a 150 IU dose - two individually
+correct numbers that together said 150 / 75 = 1. `concentrationAt` now carries the
+per-tier figure, and a test asserts the concentration shown is the one the volume
+was divided by.
+
+### OPEN 2 - fourteen vial sizes were convention, not evidence
+
+Not fixed by guessing better. **The vial-size control now accepts a typed value**,
+so the number in force is the one printed on the user's own vial. Vial size sets
+how far up the barrel a dose lands, not how much peptide is in it, so a wrong
+catalogue was a legibility bug - and a typed value removes the catalogue from the
+answer entirely. Custom sizes survive a shared link.
+
+Fallout, caught on screen: selecting a 7.5 mg vial left BPC-157's own protocol
+sheet reading "Reconstitute 5mg vial with 3ml bacteriostatic water" directly under
+a 7.5 mg header. One record did this; the line is rewritten and a test now rejects
+any instruction that hardcodes a figure the form owns.
+
+### OPEN 3 - `dulaglutide` does not reconstitute
+
+Trulicity is a single-dose pre-filled pen: no powder, no bacteriostatic water, no
+draw. Records can now declare `noRecon`, and every draw field comes back **null**
+so nothing downstream can render one by accident. The page swaps the syringe
+guide for a "No Draw To Calculate" panel, relabels the control "Pen Strength",
+disables water and syringe, and counts **pens** rather than vials (one single-dose
+device per injection). The PDF does the same.
+
+### OPEN 4 - no dose was labelled by how well it is evidenced
+
+One blanket disclaimer covered all 44 records equally, flattening a Mounjaro label
+strength and a forum figure for a compound that has never been in a human into the
+same claim. Every record now carries an `evidence` class, shown on the card and
+printed in the PDF disclaimer:
+
+| Class | Meaning | Count |
+|---|---|---|
+| `approved` | An FDA-approved product with this active is marketed; tiers anchored to its labelled strengths | 8 |
+| `trial` | Published human trial data at comparable doses; not approved for this use | 12 |
+| `convention` | No human dosing study at all - vendor and forum figures from animal work | 24 |
+
+A test requires all three classes to stay populated (a dropped field would
+silently make everything `convention` and the label would stop discriminating),
+and pins the thinnest-evidence compounds to `convention` so they cannot be
+over-claimed.
+
+---
+
 ## STILL OPEN
 
-**1. Three `high` tiers exceed the largest vial the record offers.**
+**1. Vial-size catalogues remain unsourced.** They are now defaults rather than
+constraints - the user can type any size - but the pre-filled list is still
+convention for most research compounds. Worth a pass against a real price list.
 
-| Peptide | high | largest `vialSizes` entry | vials per dose |
-|---|---|---|---|
-| `aicar` | 200 mg | 100 mg | 2.0 |
-| `dihexa` | 32 mg | 30 mg | 1.6 |
-| `hmg` | 300 IU | 150 IU | 2.0 |
-
-Flagged in the UI and pinned by `EXCEEDS_VIAL_AT_HIGH` in the test suite, so a
-fourth cannot appear unnoticed. Not silently corrected, because both readings are
-plausible and neither is sourced: either the tier is too high, or the record is
-missing a larger vial that really is sold. **Needs a real supplier catalogue to
-settle** - the same evidence gap as item 2.
-
-**2. Fourteen vial sizes are convention, not evidence.**
-
-`gonadorelin` 2mg, `hexarelin` 5mg, `hgh` 10 IU, `hmg` 150 IU, `melanotan2` 10mg,
-`motsc` 10mg, `pegmgf` 2mg, `pt141` 10mg, `retatrutide` 10mg (now 30mg),
-`sermorelin` 5mg, `tb500` 5mg, `tesamorelin` 5mg, `thymalin` 20mg,
-`tirzepatide` 10mg (now 20mg).
-
-Vial size changes how far up the barrel you draw, not how much peptide you get -
-a legibility problem, not a dosing one, as long as the user picks the size printed
-on their own vial from the dropdown. Worth checking against a real price list.
-
-**3. `dulaglutide` does not reconstitute at all.** Its own instructions say
-"pre-filled pen device". The calculator computes a reconstitution draw for it
-anyway. Harmless but meaningless; the record arguably does not belong in a
-reconstitution calculator.
-
-**4. No dose here is validated for human use.** BPC-157 and TB-500 have no human
-dosing study at all - every figure is community convention extrapolated from
-animal work, and the FDA compounding advisory committee voted 11-3 against adding
-either to the 503A bulks list in July 2026. The published anchors used above
-(cagrilintide, retatrutide, tirzepatide, dulaglutide) are trial arms in
-supervised settings, not self-administration guidance.
+**2. No dose here is validated for human use.** Unchanged, and now stated per
+record rather than once at the bottom of the page. The `trial` anchors
+(cagrilintide, retatrutide, tirzepatide, dulaglutide) are trial arms and label
+strengths from supervised settings, not self-administration guidance. BPC-157 and
+TB-500 have no human dosing study at all, and the FDA compounding advisory
+committee voted 11-3 against adding either to the 503A bulks list in July 2026.

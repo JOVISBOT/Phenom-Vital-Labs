@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "peptides": [
     {
       "id": "ace031",
@@ -54,7 +54,8 @@
         "Monitor for nosebleeds",
         "Cycle 4-8 weeks then break",
         "Combine with resistance training"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "adamax",
@@ -109,7 +110,8 @@
         "Morning dosing preferred",
         "Cycle 3 months on",
         "1 month off optional"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "adipotide",
@@ -166,7 +168,8 @@
         "Hydration critical",
         "Cycle limited to 4-6 weeks maximum",
         "Medical supervision mandatory"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "aicar",
@@ -176,13 +179,13 @@
       "mechanism": "AICAR is taken up by cells and converted to ZMP, which mimics AMP and activates AMPK - the cellular energy sensor. AMPK activation promotes fat oxidation, glucose uptake, mitochondrial biogenesis, and autophagy. Called \"exercise in a pill\" in research.",
       "halfLife": "Unknown",
       "freq": "Daily",
-      "cycle": "8 on, 4 off",
+      "cycle": "2 weeks max, 4-8 off",
       "doseUnit": "mg",
-      "low": 50,
-      "med": 100,
-      "high": 200,
+      "low": 10,
+      "med": 25,
+      "high": 50,
       "vialUnit": "mg",
-      "vialSize": 100,
+      "vialSize": 50,
       "vialSizes": [
         25,
         50,
@@ -190,7 +193,7 @@
       ],
       "reconMl": 1,
       "f": 7,
-      "wks": 8,
+      "wks": 2,
       "pros": [
         "Activates AMPK (metabolic master switch)",
         "Enhances fat oxidation",
@@ -215,12 +218,13 @@
       ],
       "inst": [
         "Subcutaneous injection daily",
-        "Higher doses (100-200mg) for metabolic effects",
+        "Standard research protocol is 25mg daily; conservative protocols start at 10mg",
         "Morning dosing may enhance fat oxidation",
         "Combine with exercise for synergistic effects",
-        "Cycle 8 weeks on",
-        "4 weeks off"
-      ]
+        "Run no longer than 14 days, then wash out 4-8 weeks",
+        "No more than about three courses a year"
+      ],
+      "evidence": "convention"
     },
     {
       "id": "aod9604",
@@ -274,7 +278,8 @@
         "Before bed (optional third dose)",
         "Subcutaneous abdominal fat preferred",
         "Works best with caloric deficit and exercise"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "ara290",
@@ -326,7 +331,8 @@
         "Commit to 12 weeks for full effects",
         "Can combine with other nerve support",
         "Monitor pain levels and nerve function"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "b733",
@@ -381,7 +387,8 @@
         "Commit to 12-week minimum protocol",
         "Monitor for tissue changes",
         "Combine with other anti-fibrotics if indicated"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "blend_gh1",
@@ -435,7 +442,8 @@
         "Inject once daily before bed on empty stomach",
         "Evening dosing rides the natural overnight GH pulse",
         "Empty stomach: wait 30 min after injection before eating"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "blend_heal",
@@ -489,7 +497,8 @@
         "Subcutaneous injection 5 days per week",
         "Inject near the injury site where practical - local beat systemic in tendon studies",
         "High tier (750mcg each) reaches TB-500 loading dose - use for acute injury, not maintenance"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "blend_heal_20",
@@ -543,7 +552,8 @@
         "Subcutaneous injection 5 days per week",
         "Inject near the injury site where practical",
         "Fewer vials per cycle than the 10mg blend, so better value on long protocols"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "bpc157",
@@ -590,14 +600,15 @@
         "Blood clotting disorders: may affect fibrinolysis"
       ],
       "inst": [
-        "Reconstitute 5mg vial with 3ml bacteriostatic water",
+        "Reconstitute with bacteriostatic water - use the vial size and volume set above",
         "Cited range is 250-500mcg per day; 250mcg is the usual starting dose",
         "High tier (1000mcg) is an acute-injury protocol - split into AM and PM doses",
         "Inject subcutaneously near the injury site OR abdominal fat",
         "Morning on empty stomach, 30 minutes before eating",
         "Can be stacked with TB-500 for enhanced healing",
         "Store reconstituted vial refrigerated (2-8C)"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "cagrilintide",
@@ -651,7 +662,8 @@
         "4.5mg weekly was the most effective arm (-10.8% body weight at 26 weeks)",
         "Often combined with semaglutide (see Cagrisema) rather than run alone",
         "Monitor for nausea - may need antiemetics during escalation"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "cagrisema",
@@ -711,7 +723,8 @@
         "Weekly subcutaneous injection, same day each week",
         "Titrate every 4 weeks - both components escalate together",
         "Monitor for nausea - may need antiemetics initially"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "cjc1295",
@@ -764,7 +777,8 @@
         "Best stacked with GHRP for enhanced GH release",
         "Evening injection may improve sleep",
         "Rotate injection sites weekly"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "cjc1295_nodac",
@@ -818,7 +832,8 @@
         "Empty stomach 30min before eating",
         "Subcutaneous abdominal injection",
         "Creates pulsatile GH release - natural pattern"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "cortagen",
@@ -870,7 +885,8 @@
         "Can combine with other bioregulators",
         "Monitor stress response and energy"
       ],
-      "dosesPerCycle": 20
+      "dosesPerCycle": 20,
+      "evidence": "convention"
     },
     {
       "id": "crystagen",
@@ -922,7 +938,8 @@
         "Take during immune challenge periods",
         "Monitor immune function markers"
       ],
-      "dosesPerCycle": 20
+      "dosesPerCycle": 20,
+      "evidence": "convention"
     },
     {
       "id": "dermorphin",
@@ -976,7 +993,8 @@
         "Extreme potency requires caution",
         "Legal compliance mandatory",
         "Professional research use only"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "dihexa",
@@ -986,11 +1004,11 @@
       "mechanism": "Dihexa crosses the blood-brain barrier and activates the HGF/c-MET pathway, promoting synaptogenesis (formation of new synapses) and neurogenesis. It enhances dendritic arborization and has shown 7x the synapse-forming activity of brain-derived neurotrophic factor (BDNF).",
       "halfLife": "Unknown",
       "freq": "Daily",
-      "cycle": "8-12 weeks",
+      "cycle": "4-6 weeks",
       "doseUnit": "mcg",
-      "low": 8000,
-      "med": 16000,
-      "high": 32000,
+      "low": 2000,
+      "med": 3000,
+      "high": 5000,
       "vialUnit": "mg",
       "vialSize": 20,
       "vialSizes": [
@@ -1000,7 +1018,7 @@
       ],
       "reconMl": 1,
       "f": 7,
-      "wks": 10,
+      "wks": 6,
       "pros": [
         "7x more potent than BDNF for synaptogenesis",
         "Crosses blood-brain barrier",
@@ -1024,11 +1042,13 @@
       ],
       "inst": [
         "Subcutaneous injection daily",
-        "Some use intranasal (less bioavailable)",
-        "Consistent daily use for 8-12 weeks",
-        "Cycle off 4 weeks before repeating",
+        "Subcutaneous protocols run 2-5mg daily - roughly half the oral amount",
+        "The 8-45mg figures in circulation are ORAL doses and do not apply to a syringe draw",
+        "Consistent daily use for 4-6 weeks",
+        "Cycle off 2-4 weeks before repeating",
         "Monitor cognitive clarity and memory"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "dsip",
@@ -1084,7 +1104,8 @@
         "Can combine with other sleep hygiene practices",
         "Cycle 4 weeks on",
         "then assess need for continuation"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "dulaglutide",
@@ -1134,14 +1155,18 @@
         "Gallbladder: stone risk"
       ],
       "inst": [
-        "Weekly subcutaneous injection",
-        "Pre-filled pen device",
-        "Any time of day",
-        "same day each week",
-        "Titrate from 0.75mg to 1.5mg to 3mg",
+        "Weekly subcutaneous injection from a single-dose pre-filled pen",
+        "No reconstitution - the pen is supplied ready to inject",
+        "Dose is fixed by the pen strength: 0.75, 1.5, 3 or 4.5 mg",
+        "Any time of day, same day each week",
+        "Titrate 0.75mg -> 1.5mg -> 3mg -> 4.5mg at 4-week intervals as tolerated",
         "Take with food if nausea occurs",
         "Monitor blood glucose and weight"
-      ]
+      ],
+      "noRecon": true,
+      "device": "pen",
+      "deviceNote": "Trulicity is a single-dose pre-filled pen. The dose is the pen strength you are prescribed - there is nothing to reconstitute and nothing to draw. The strengths listed are the marketed pen sizes.",
+      "evidence": "approved"
     },
     {
       "id": "epo",
@@ -1195,7 +1220,8 @@
         "Monitor hemoglobin/hematocrit",
         "Target Hgb 10-12 g/dL",
         "Medical supervision required"
-      ]
+      ],
+      "evidence": "approved"
     },
     {
       "id": "follistatin",
@@ -1249,7 +1275,8 @@
         "Cycle length typically 10-12 weeks",
         "Often stacked with IGF-1 for synergistic growth",
         "Monitor for tendon issues as muscles grow faster"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "foxo4",
@@ -1301,7 +1328,8 @@
         "Higher doses less frequently may be optimal",
         "Combine with other longevity strategies",
         "Monitor for improved energy/recovery"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "frag1723",
@@ -1351,7 +1379,8 @@
         "Pre-workout for fat oxidation",
         "Combine with diet and exercise",
         "Morning and evening dosing"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "ghrp2",
@@ -1405,7 +1434,8 @@
         "Prepare for significant hunger after dosing",
         "Cycle 8-12 weeks maximum before break",
         "Consider P5P supplement to manage prolactin"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "ghrp6",
@@ -1460,7 +1490,8 @@
         "Best for bulking phases",
         "not cutting",
         "Consider if struggling to consume enough calories"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "glutathione",
@@ -1512,7 +1543,8 @@
         "Morning dosing may enhance detox",
         "Combine with vitamin C for synergy",
         "Skin-lightening protocols use 1500-2000mg by IV INFUSION - out of scope here, and more than three of these vials"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "gonadorelin",
@@ -1563,7 +1595,8 @@
         "Or continuous pump for fertility",
         "Short courses (2 weeks max)",
         "Monitor testosterone and LH/FSH"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "hcg",
@@ -1619,7 +1652,8 @@
         "Higher doses (1000 IU) for PCT",
         "Monitor testosterone and estradiol",
         "Keep refrigerated after reconstitution"
-      ]
+      ],
+      "evidence": "approved"
     },
     {
       "id": "hexarelin",
@@ -1674,7 +1708,8 @@
         "Cardioprotective benefits require consistent use",
         "Subcutaneous or intramuscular both effective",
         "Best stacked with GHRH for amplified GH release"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "hgh",
@@ -1730,7 +1765,8 @@
         "Monitor IGF-1 levels quarterly",
         "Minimum 6-month commitment for benefits",
         "Requires physician supervision"
-      ]
+      ],
+      "evidence": "approved"
     },
     {
       "id": "hmg",
@@ -1746,7 +1782,7 @@
       "med": 150,
       "high": 300,
       "vialUnit": "IU",
-      "vialSize": 150,
+      "vialSize": 75,
       "vialSizes": [
         75,
         150
@@ -1777,10 +1813,14 @@
       "inst": [
         "Subcutaneous or IM injection",
         "3 times per week (every other day)",
+        "Supplied as 75 IU vials - higher doses are several vials pooled into one syringe",
         "Use during PCT or fertility treatment",
         "Monitor testosterone and estrogen",
         "Cycle 3-6 weeks maximum"
-      ]
+      ],
+      "multiVial": true,
+      "multiVialNote": "Menotropins are supplied as 75 IU vials. Reconstituting several vials into a single syringe is the method described on the label, so a dose above one vial is normal practice here rather than an error.",
+      "evidence": "approved"
     },
     {
       "id": "melanotan2",
@@ -1834,7 +1874,8 @@
         "Subcutaneous injection",
         "Start LOW to assess nausea (250mcg first dose)",
         "Sun exposure accelerates tanning once started"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "motsc",
@@ -1889,7 +1930,8 @@
         "Cycle 4 weeks on",
         "4 weeks off",
         "Consider with other mitochondrial support supplements"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "nadplus",
@@ -1947,7 +1989,8 @@
         "Large injection volume - split doses if needed",
         "Combine with TMG or methyl donors",
         "Cycling optional but continuous OK"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "pegmgf",
@@ -2000,7 +2043,8 @@
         "Intramuscular injection (not subcutaneous)",
         "Typically 2-3 times per week per muscle group",
         "Can combine with systemic IGF-1 or GH peptides"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "pt141",
@@ -2056,7 +2100,8 @@
         "Can increase to 1000-1500mcg if tolerated",
         "Take with anti-nausea medication if needed",
         "Effects last 2-4 hours typically"
-      ]
+      ],
+      "evidence": "approved"
     },
     {
       "id": "retatrutide",
@@ -2119,7 +2164,8 @@
         "Titrate every 4 weeks for GI tolerance",
         "Monitor resting heart rate - elevation is expected and dose-related",
         "Cardiovascular clearance recommended"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "sermorelin",
@@ -2171,7 +2217,8 @@
         "Rotate injection sites to prevent lipodystrophy",
         "Effects cumulative - commit to 3+ months",
         "Can be combined with Ipamorelin for enhanced effect"
-      ]
+      ],
+      "evidence": "trial"
     },
     {
       "id": "tb500",
@@ -2224,7 +2271,8 @@
         "Best stacked with BPC-157 for acute injuries",
         "Community convention extrapolated from animal work - there is no validated human dose",
         "Can continue longer cycles with 4-week breaks"
-      ]
+      ],
+      "evidence": "convention"
     },
     {
       "id": "tesamorelin",
@@ -2279,7 +2327,8 @@
         "Monitor injection sites for reactions",
         "Combine with diet/exercise for optimal VAT reduction",
         "Regular monitoring of IGF-1 and glucose recommended"
-      ]
+      ],
+      "evidence": "approved"
     },
     {
       "id": "thymalin",
@@ -2334,7 +2383,8 @@
         "Subcutaneous injection",
         "Best in morning on empty stomach"
       ],
-      "dosesPerCycle": 10
+      "dosesPerCycle": 10,
+      "evidence": "convention"
     },
     {
       "id": "tirzepatide",
@@ -2398,7 +2448,8 @@
         "Week 13+: 10-15mg weekly (max)",
         "Subcutaneous injection weekly",
         "Monitor for GI tolerance at each escalation"
-      ]
+      ],
+      "evidence": "approved"
     }
   ]
 }

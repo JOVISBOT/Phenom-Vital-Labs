@@ -49,19 +49,19 @@
   },
   "aicar": {
     "doseUnit": "mg",
-    "vial": "100mg",
+    "vial": "50mg",
     "reconMl": 1,
     "doses": {
-      "low": 50,
-      "med": 100,
-      "high": 200
+      "low": 10,
+      "med": 25,
+      "high": 50
     },
     "units": {
-      "low": 50,
-      "med": 100,
-      "high": 200
+      "low": 20,
+      "med": 50,
+      "high": 100
     },
-    "vials": 56
+    "vials": 7
   },
   "aod9604": {
     "doseUnit": "mg",
@@ -292,16 +292,16 @@
     "vial": "20mg",
     "reconMl": 1,
     "doses": {
-      "low": 8000,
-      "med": 16000,
-      "high": 32000
+      "low": 2000,
+      "med": 3000,
+      "high": 5000
     },
     "units": {
-      "low": 40,
-      "med": 80,
-      "high": 160
+      "low": 10,
+      "med": 15,
+      "high": 25
     },
-    "vials": 56
+    "vials": 7
   },
   "dsip": {
     "doseUnit": "mcg",
@@ -322,18 +322,18 @@
   "dulaglutide": {
     "doseUnit": "mg",
     "vial": "4.5mg",
-    "reconMl": 1,
+    "reconMl": null,
     "doses": {
       "low": 0.75,
       "med": 1.5,
       "high": 4.5
     },
     "units": {
-      "low": 16.7,
-      "med": 33.3,
-      "high": 100
+      "low": null,
+      "med": null,
+      "high": null
     },
-    "vials": 6
+    "vials": 16
   },
   "epo": {
     "doseUnit": "IU",
@@ -513,7 +513,7 @@
   },
   "hmg": {
     "doseUnit": "IU",
-    "vial": "150IU",
+    "vial": "75IU",
     "reconMl": 1,
     "doses": {
       "low": 75,
@@ -521,11 +521,11 @@
       "high": 300
     },
     "units": {
-      "low": 50,
+      "low": 100,
       "med": 100,
-      "high": 200
+      "high": 100
     },
-    "vials": 12
+    "vials": 24
   },
   "melanotan2": {
     "doseUnit": "mg",

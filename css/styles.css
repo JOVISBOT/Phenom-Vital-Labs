@@ -160,6 +160,26 @@ footer strong{color:var(--primary)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}.animate-in{opacity:1}}
 
 /* ---- responsive ---- */
+/* ---- typed vial size (OPEN 2: the size printed on the user's own vial wins) ---- */
+.custom-vial{display:flex;align-items:center;gap:8px;margin-top:8px}
+.custom-vial input[hidden]{display:none}
+.custom-vial input{flex:1;width:100%;padding:12px 14px;border:2px solid var(--primary-light);border-radius:12px;font-size:0.95rem;font-family:inherit;min-width:0}
+.custom-vial input:focus-visible{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
+.custom-vial-unit{font-size:0.85rem;font-weight:600;color:var(--muted)}
+.custom-vial-unit[hidden]{display:none}
+
+/* ---- evidence class (OPEN 4: one blanket disclaimer flattened all 44 records) ---- */
+.evidence-badge{display:flex;flex-direction:column;gap:2px;margin-top:14px;padding:10px 14px;border-radius:8px;border-left:4px solid var(--muted);background:rgba(255,255,255,0.72)}
+.evidence-badge strong{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.6px}
+.evidence-badge span{font-size:0.8rem;color:var(--muted);line-height:1.5}
+.evidence-approved{border-left-color:var(--success)}
+.evidence-approved strong{color:var(--success)}
+.evidence-trial{border-left-color:var(--warning)}
+.evidence-trial strong{color:var(--warning)}
+.evidence-convention{border-left-color:var(--danger)}
+.evidence-convention strong{color:var(--danger)}
+.device-note{border-left-color:var(--success)!important}
+
 @media(max-width:900px){.form-grid{grid-template-columns:repeat(2,1fr)}.info-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){.container{padding:24px 16px}.card{padding:24px 20px}.dose-grid,.pros-cons-grid{grid-template-columns:1fr}.intro h1{font-size:1.6rem}.dose-card.featured{transform:none}}
 @media(max-width:500px){.form-grid,.info-grid{grid-template-columns:1fr}.pdf-buttons .btn{min-width:100%}}

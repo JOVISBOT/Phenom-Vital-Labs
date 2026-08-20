@@ -29,7 +29,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=28">
+    <link rel="stylesheet" href="css/styles.css?v=29">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
             integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk"
@@ -60,10 +60,15 @@
                     </select>
                 </div>
                 <div class="form-field">
-                    <label for="vialSize"><span class="label-icon" aria-hidden="true">💊</span> Vial Size</label>
+                    <label for="vialSize"><span class="label-icon" aria-hidden="true">💊</span> <span id="vialSizeLabelText">Vial Size</span></label>
                     <select id="vialSize" disabled>
                         <option value="">Select a peptide first</option>
                     </select>
+                    <div class="custom-vial">
+                        <input type="number" id="vialSizeCustom" min="0" step="any" hidden
+                               aria-label="Vial size printed on your vial" placeholder="e.g. 12">
+                        <span id="vialSizeCustomUnit" class="custom-vial-unit" hidden aria-hidden="true">mg</span>
+                    </div>
                 </div>
                 <div class="form-field">
                     <label for="reconMl"><span class="label-icon" aria-hidden="true">💧</span> BAC Water</label>
@@ -117,6 +122,6 @@
         <strong>Phenom Vital Labs</strong> &middot; Reference calculator, no products sold
     </footer>
 
-    <script type="module" src="js/main.js?v=28"></script>
+    <script type="module" src="js/main.js?v=29"></script>
 </body>
 </html>

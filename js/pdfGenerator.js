@@ -4,7 +4,7 @@
  * @module pdfGenerator
  */
 
-import { DISCLAIMER_TITLE, DISCLAIMER_BODY, formatDose } from './ui.js';
+import { DISCLAIMER_TITLE, DISCLAIMER_BODY, formatDose, evidenceFor } from './ui.js';
 
 export function generatePDF(peptide, results, inputs, previewMode) {
     try {
@@ -92,7 +92,9 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
         doc.text(
-            `Recommended: ${formatDose(results.doses.med, doseUnit)}  -  ${fmtUnits(medUnits)} units on a ${syringe}U syringe  -  ${peptide.freq || ''}`,
+            results.noRecon
+                ? `Recommended: ${formatDose(results.doses.med, doseUnit)}  -  pre-filled ${results.device}, nothing to draw  -  ${peptide.freq || ''}`
+                : `Recommended: ${formatDose(results.doses.med, doseUnit)}  -  ${fmtUnits(medUnits)} units on a ${syringe}U syringe  -  ${peptide.freq || ''}`,
             margin + 4, y + 6
         );
 
@@ -102,7 +104,7 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         doc.setTextColor(...navy);
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.text('DRAW GUIDE', margin, y);
+        doc.text(results.noRecon ? 'DOSE GUIDE' : 'DRAW GUIDE', margin, y);
         y += 5;
 
         const configs = [
@@ -121,7 +123,8 @@ export function generatePDF(peptide, results, inputs, previewMode) {
             const exceedsVial = results.exceedsVial[c.key];
             // Treat "needs more than one vial" as an overflow for colouring, so the
             // exported card is red on screen and on paper for the same reasons.
-            const overflow = results.overflow[c.key] || exceedsVial;
+            const pooled = (results.vialsPooled && results.vialsPooled[c.key]) || 1;
+            const overflow = (results.overflow[c.key] || exceedsVial) && pooled === 1;
 
             doc.setFillColor(...c.bg);
             doc.setDrawColor(...(overflow ? red : c.color));
@@ -138,6 +141,21 @@ export function generatePDF(peptide, results, inputs, previewMode) {
                 doc.setTextColor(...white);
                 doc.setFontSize(4);
                 doc.text('RECOMMENDED', x + syrW / 2, y + 11, { align: 'center' });
+            }
+
+            // A pre-filled pen has no barrel to draw to. Rendering an empty
+            // syringe for it would be a picture of a measurement that does not exist.
+            if (results.noRecon) {
+                doc.setTextColor(...navy);
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'bold');
+                doc.text(formatDose(results.doses[c.key], doseUnit), x + syrW / 2, y + 24, { align: 'center' });
+                doc.setTextColor(...gray);
+                doc.setFontSize(5);
+                doc.setFont('helvetica', 'normal');
+                doc.text('pen strength', x + syrW / 2, y + 29, { align: 'center' });
+                doc.text('no reconstitution', x + syrW / 2, y + 34, { align: 'center' });
+                continue;
             }
 
             // Barrel
@@ -201,6 +219,10 @@ export function generatePDF(peptide, results, inputs, previewMode) {
                 doc.setFontSize(4);
                 doc.text(parts.map(p => `${p.mcg} mcg ${shortName(p.name)}`).join('  +  '),
                     x + syrW / 2, barrelY + barrelH + 13.5, { align: 'center' });
+            } else if (pooled > 1) {
+                doc.setTextColor(...slate);
+                doc.setFontSize(4);
+                doc.text(`${pooled} vials pooled into one ${results.reconMl} ml volume`, x + syrW / 2, barrelY + barrelH + 13.5, { align: 'center' });
             } else if (exceedsVial) {
                 doc.setTextColor(...red);
                 doc.setFontSize(4);
@@ -231,7 +253,8 @@ export function generatePDF(peptide, results, inputs, previewMode) {
             ['Half-Life', peptide.halfLife || 'N/A'],
             ['Frequency', peptide.freq || 'N/A'],
             ['Cycle', `${peptide.cycle || (peptide.wks || 0) + ' weeks'} (${results.dosesPerCycle} inj)`],
-            ['Vials', `${results.vialsNeeded} x ${results.vialSize}${vialUnit}`],
+            [results.noRecon ? 'Pens' : 'Vials', `${results.vialsNeeded} x ${results.vialSize}${vialUnit}`],
+            ['Evidence', evidenceFor(peptide).label],
             ['Timing', getTiming(peptide)],
             ['For', `${inputs.weight} lbs, ${inputs.age} yrs (reference only)`]
         ];
@@ -257,7 +280,7 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         doc.setTextColor(...navy);
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
-        doc.text('CALCULATION', leftX, y);
+        doc.text(results.noRecon ? 'NO DRAW TO CALCULATE' : 'CALCULATION', leftX, y);
         y += 5;
 
         doc.setFillColor(...lightGray);
@@ -266,11 +289,21 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         doc.setTextColor(...slate);
         doc.setFontSize(5);
         doc.setFont('helvetica', 'normal');
-        doc.text(`${results.vialSize}${vialUnit} vial + ${results.reconMl} ml BAC water = ${round(results.concentration, 2)} ${vialUnit}/ml`, leftX + 3, y + 4);
-        doc.text(`${formatDose(results.doses.med, doseUnit)} / ${round(results.concentration, 2)} ${vialUnit}/ml = ${results.volumeMl.med} ml`, leftX + 3, y + 8.5);
-        doc.text(`${results.volumeMl.med} ml x 100 units/ml = ${fmtUnits(medUnits)} units`, leftX + 3, y + 13);
-        doc.setTextColor(...gray);
-        doc.text('An insulin syringe is U-100: 100 units per ml.', leftX + 3, y + 16);
+        if (results.noRecon) {
+            doc.text(`${peptide.name} is supplied as a pre-filled ${results.device}.`, leftX + 3, y + 4);
+            doc.text('There is no powder, no bacteriostatic water and no draw:', leftX + 3, y + 8.5);
+            doc.text(`the dose is the ${results.vialSize}${vialUnit} ${results.device} itself.`, leftX + 3, y + 13);
+            doc.setTextColor(...gray);
+            doc.text('Reconstitution arithmetic does not apply to this product.', leftX + 3, y + 16);
+        } else {
+            const medPooled = (results.vialsPooled && results.vialsPooled.med) || 1;
+            const medConc = (results.concentrationAt && results.concentrationAt.med) || results.concentration;
+            doc.text(`${medPooled > 1 ? `${medPooled} x ` : ''}${results.vialSize}${vialUnit}${medPooled > 1 ? ' pooled' : ' vial'} + ${results.reconMl} ml BAC water = ${round(medConc, 2)} ${vialUnit}/ml`, leftX + 3, y + 4);
+            doc.text(`${formatDose(results.doses.med, doseUnit)} / ${round(medConc, 2)} ${vialUnit}/ml = ${results.volumeMl.med} ml`, leftX + 3, y + 8.5);
+            doc.text(`${results.volumeMl.med} ml x 100 units/ml = ${fmtUnits(medUnits)} units`, leftX + 3, y + 13);
+            doc.setTextColor(...gray);
+            doc.text('An insulin syringe is U-100: 100 units per ml.', leftX + 3, y + 16);
+        }
 
         // Right column
         let ry = colStartY;
@@ -313,8 +346,12 @@ export function generatePDF(peptide, results, inputs, previewMode) {
 
         y = Math.max(y + 21, ry + consH + 5);
 
-        // Disclaimer - the same text the page shows, not a one-line footer note.
-        const body = doc.splitTextToSize(DISCLAIMER_BODY, contentW - 8);
+        // Disclaimer - the same text the page shows, not a one-line footer note,
+        // and prefixed with how well THIS record's doses are evidenced. A blanket
+        // paragraph reads the same over a Mounjaro label strength and over a forum
+        // figure for a compound that has never been in a human.
+        const ev = evidenceFor(peptide);
+        const body = doc.splitTextToSize(`${ev.label.toUpperCase()}: ${ev.blurb} ${DISCLAIMER_BODY}`, contentW - 8);
         const discH = 7 + body.length * 2.6;
 
         doc.setFillColor(254, 242, 242);

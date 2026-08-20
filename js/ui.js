@@ -14,6 +14,41 @@ export const DISCLAIMER_BODY =
     'supplier for a lot-specific third-party certificate of analysis.';
 
 /**
+ * How well each record's doses are actually evidenced.
+ *
+ * One blanket disclaimer covered all 44 records equally, which flattens a
+ * Mounjaro label strength and a forum figure for a compound that has never been
+ * in a human into the same claim. The class is per record, in the data.
+ */
+export const EVIDENCE = {
+    approved: {
+        label: 'FDA-approved drug',
+        blurb: 'An approved product containing this active ingredient is marketed in the US, '
+            + 'and the doses here are anchored to its labelled strengths.'
+    },
+    trial: {
+        label: 'Human trial data',
+        blurb: 'Published human clinical trials exist at comparable doses. The compound is '
+            + 'not approved for this use, and trial doses were given under supervision.'
+    },
+    convention: {
+        label: 'Community convention',
+        blurb: 'No human dosing study exists. Every figure is vendor and forum convention '
+            + 'extrapolated from animal work.'
+    }
+};
+
+/**
+ * Evidence class for a peptide, defaulting to the weakest claim.
+ * @param {Object} peptide
+ * @returns {{key: string, label: string, blurb: string}}
+ */
+export function evidenceFor(peptide) {
+    const key = EVIDENCE[peptide.evidence] ? peptide.evidence : 'convention';
+    return { key, ...EVIDENCE[key] };
+}
+
+/**
  * Get timing recommendation based on peptide category
  * @param {Object} peptide - Peptide object
  * @returns {string} Timing recommendation
@@ -286,20 +321,78 @@ export function populatePeptideOptions(peptides) {
  */
 export function updateVialSizeForPeptide(peptide, preferred) {
     const select = document.getElementById('vialSize');
+    const custom = document.getElementById('vialSizeCustom');
+    const label = document.getElementById('vialSizeLabelText');
 
     if (!peptide) {
         select.innerHTML = '<option value="">Select a peptide first</option>';
         select.disabled = true;
+        setCustomVial(false);
         return;
     }
 
-    const chosen = peptide.vialSizes.includes(Number(preferred)) ? Number(preferred) : peptide.vialSize;
+    const want = Number(preferred);
+    const known = peptide.vialSizes.includes(want);
+    const chosen = known ? want : peptide.vialSize;
+
+    // A pen has a strength, not a vial size, and nothing is added to it.
+    if (label) label.textContent = peptide.noRecon ? 'Pen Strength' : 'Vial Size';
 
     select.innerHTML = peptide.vialSizes
         .map(s => `<option value="${s}"${s === chosen ? ' selected' : ''}>${s}${peptide.vialUnit}</option>`)
-        .join('');
-    // A blend's ratio is fixed by the vial, so there is nothing to choose.
-    select.disabled = peptide.vialSizes.length === 1;
+        .join('')
+        // OPEN 2 was "fourteen of our vial sizes are convention, not evidence".
+        // The honest fix is not a better guess: it is letting the user enter the
+        // number printed on the vial in front of them. Vial size does not change
+        // the dose, only how far up the barrel it lands - so a wrong list is a
+        // legibility bug, and a typed value removes the list from the answer.
+        + `<option value="custom">Other - type the size on my ${peptide.noRecon ? 'pen' : 'vial'}...</option>`;
+
+    // A blend's ratio is fixed by the vial, but the vial can still be a size we
+    // do not list, so the control stays enabled wherever a choice is meaningful.
+    select.disabled = false;
+
+    if (custom) custom.value = '';
+
+    // A shared link can carry a size that is not in our catalogue. Restore it as
+    // a typed value rather than silently snapping back to the default -- the
+    // recipient of the link would otherwise see different numbers to the sender.
+    const restorable = preferred !== undefined && preferred !== null && preferred !== ''
+        && !known && Number(preferred) > 0;
+
+    if (restorable) {
+        select.value = 'custom';
+        if (custom) custom.value = String(Number(preferred));
+    }
+    setCustomVial(restorable, peptide, false);
+}
+
+/**
+ * Show or hide the typed vial-size input.
+ * @param {boolean} on
+ * @param {Object} [peptide]
+ * @param {boolean} [focus] - Only when the user asked for it; not on page load
+ */
+export function setCustomVial(on, peptide, focus = true) {
+    const custom = document.getElementById('vialSizeCustom');
+    const unit = document.getElementById('vialSizeCustomUnit');
+    if (!custom) return;
+    custom.hidden = !on;
+    if (unit) {
+        unit.hidden = !on;
+        if (peptide) unit.textContent = peptide.vialUnit;
+    }
+    if (on && focus) custom.focus();
+}
+
+/**
+ * The vial size currently in force, whether picked from the list or typed in.
+ * @returns {number} NaN when the custom box is empty or not a number
+ */
+export function readVialSize() {
+    const select = document.getElementById('vialSize');
+    if (select.value !== 'custom') return parseFloat(select.value);
+    return parseFloat(document.getElementById('vialSizeCustom').value);
 }
 
 /**
@@ -315,6 +408,15 @@ export function updateReconOptions(peptide, preferred) {
     const fallback = peptide ? defaultReconMl(peptide) : 3;
     const chosen = RECON_VOLUMES.includes(Number(preferred)) ? Number(preferred) : fallback;
 
+    // Nothing is mixed into a pre-filled pen, so offering it a water volume
+    // invites the user to answer a question that has no answer.
+    if (peptide && peptide.noRecon) {
+        select.innerHTML = '<option value="0">Not reconstituted - pre-filled</option>';
+        select.disabled = true;
+        return;
+    }
+
+    select.disabled = false;
     select.innerHTML = RECON_VOLUMES
         .map(v => `<option value="${v}"${v === chosen ? ' selected' : ''}>${v} ml${v === fallback ? ' (recommended)' : ''}</option>`)
         .join('');
@@ -324,10 +426,17 @@ export function updateReconOptions(peptide, preferred) {
  * Fill the syringe-size dropdown.
  * @param {number} [preferred]
  */
-export function populateSyringeOptions(preferred) {
+export function populateSyringeOptions(preferred, peptide) {
     const select = document.getElementById('syringe');
     const chosen = SYRINGE_SIZES.includes(Number(preferred)) ? Number(preferred) : DEFAULT_SYRINGE;
 
+    if (peptide && peptide.noRecon) {
+        select.innerHTML = '<option value="0">Not drawn - built into the pen</option>';
+        select.disabled = true;
+        return;
+    }
+
+    select.disabled = false;
     select.innerHTML = SYRINGE_SIZES
         .map(s => `<option value="${s}"${s === chosen ? ' selected' : ''}>${s}U (${s / 100} ml)</option>`)
         .join('');
@@ -390,6 +499,7 @@ function doseCard(level, cfg, results) {
     const units = results.syringeUnits[level];
     const overflow = results.overflow[level];
     const exceedsVial = results.exceedsVial[level];
+    const pooled = (results.vialsPooled && results.vialsPooled[level]) || 1;
     const parts = results.components[level];
 
     const componentHtml = parts ? `
@@ -401,7 +511,15 @@ function doseCard(level, cfg, results) {
     // the syringe advice below tells you to use less water, which raises
     // concentration and lowers the unit count -- useless when the vial simply
     // does not contain this much peptide.
-    const drawHtml = exceedsVial ? `
+    const drawHtml = results.noRecon ? `
+        <div class="draw-label">Pen strength</div>
+        <div class="draw-value ${level}">${esc(formatDose(dose, results.doseUnit))}</div>
+        <div class="draw-hint">Pre-filled &mdash; nothing to mix, nothing to draw</div>
+    ` : pooled > 1 ? `
+        <div class="draw-label">Pooled from ${pooled} vials</div>
+        <div class="draw-value ${level}">${formatUnits(units)} units</div>
+        <div class="draw-hint">Mix vial 1 with ${results.reconMl} ml, draw it back up and use that same liquid to dissolve the other ${pooled - 1} &mdash; the sequential method on the label. The volume does not grow: ${results.volumeMl[level]} ml total.</div>
+    ` : exceedsVial ? `
         <div class="draw-label overflow">⚠️ More than one ${results.vialSize}${results.vialUnit} vial holds</div>
         <div class="draw-value overflow">${results.perDoseVials[level]} vials</div>
         <div class="draw-hint">This dose needs ${results.perDoseVials[level]} vials per injection. No reconstitution volume fixes it &mdash; water dilutes, it does not add peptide. Pick a larger vial size, or treat this tier as unverified.</div>
@@ -424,7 +542,7 @@ function doseCard(level, cfg, results) {
                 <div class="mcg-value">${esc(formatDose(dose, results.doseUnit))}</div>
                 ${componentHtml}
             </div>
-            <div class="draw-box${overflow || exceedsVial ? ' overflow' : ''}">${drawHtml}</div>
+            <div class="draw-box${(overflow || exceedsVial) && pooled === 1 && !results.noRecon ? ' overflow' : ''}">${drawHtml}</div>
             ${cfg.hint ? `<div class="dose-hint">${cfg.hint}</div>` : ''}
         </div>
     `;
@@ -446,6 +564,22 @@ export function renderResults(peptide, results, inputs) {
         ['high', { label: 'Advanced', sublabel: 'Maximum Dose', delay: 0.4, hint: 'For experienced users' }]
     ].map(([level, cfg]) => doseCard(level, cfg, results)).join('');
 
+    const medPooled = (results.vialsPooled && results.vialsPooled.med) || 1;
+    const medConc = (results.concentrationAt && results.concentrationAt.med) || results.concentration;
+
+    const ev = evidenceFor(peptide);
+    const evidenceHtml = `
+        <div class="evidence-badge evidence-${ev.key}" role="note">
+            <strong>${esc(ev.label)}</strong>
+            <span>${esc(ev.blurb)}</span>
+        </div>`;
+
+    const deviceNote = results.noRecon ? `
+        <p class="blend-note device-note">${esc(peptide.deviceNote || 'This product is supplied ready to inject.')}</p>` : '';
+
+    const multiVialNote = results.multiVial ? `
+        <p class="blend-note">${esc(peptide.multiVialNote || '')}</p>` : '';
+
     const componentNote = peptide.components ? `
         <p class="blend-note">
             This is a fixed blend: ${peptide.components.map(c => `${esc(c.name)} ${c.mg}mg`).join(' + ')} in one vial.
@@ -458,6 +592,7 @@ export function renderResults(peptide, results, inputs) {
             <div class="peptide-header animate-in">
                 <h2>${esc(peptide.name)}</h2>
                 <p>${esc(peptide.category)}</p>
+                ${evidenceHtml}
             </div>
 
             <div class="summary-card animate-in" style="animation-delay: 0.1s;">
@@ -467,7 +602,9 @@ export function renderResults(peptide, results, inputs) {
                     </div>
                     <div class="summary-title">
                         <h3>Protocol</h3>
-                        <p>${results.vialSize}${u} vial &middot; ${results.reconMl} ml bacteriostatic water &middot; ${trim(results.concentration, 2)} ${u}/ml</p>
+                        <p>${results.noRecon
+        ? `${results.vialSize}${u} pre-filled ${esc(results.device)} &middot; no reconstitution`
+        : `${medPooled > 1 ? `${medPooled} &times; ` : ''}${results.vialSize}${u} vial${medPooled > 1 ? 's pooled' : ''} &middot; ${results.reconMl} ml bacteriostatic water &middot; ${trim(medConc, 2)} ${u}/ml`}</p>
                     </div>
                 </div>
 
@@ -484,11 +621,24 @@ export function renderResults(peptide, results, inputs) {
                     body weight or age &mdash; almost no peptide in this class is dosed per kilogram. Your
                     ${inputs.weight} lbs / ${inputs.age} years are recorded on the protocol sheet for reference only.
                 </p>
+                ${deviceNote}
+                ${multiVialNote}
                 ${componentNote}
             </div>
 
             <div class="dose-grid">${cards}</div>
 
+            ${results.noRecon ? `
+            <div class="calc-box animate-in" style="animation-delay: 0.45s;">
+                <h4>💉 No Draw To Calculate</h4>
+                <p class="calc-footnote">
+                    ${esc(peptide.name)} is dispensed as a pre-filled ${esc(results.device)} at a fixed strength.
+                    There is no powder to reconstitute, no bacteriostatic water to add and no syringe to pull to
+                    &mdash; the dose <em>is</em> the ${esc(results.device)} you were dispensed.
+                    This page shows the marketed strengths and the cycle arithmetic; everything about
+                    reconstitution volume and syringe units belongs to lyophilised vials and does not apply here.
+                </p>
+            </div>` : `
             <div class="syringe-visual animate-in" style="animation-delay: 0.45s;">
                 <h4>💉 Syringe Draw Guide (Recommended Dose)</h4>
                 ${generateSyringeSVG(results.syringeUnits.med, results.syringe)}
@@ -501,16 +651,16 @@ export function renderResults(peptide, results, inputs) {
             <div class="calc-box animate-in" style="animation-delay: 0.48s;">
                 <h4>🧮 Your Calculation</h4>
                 <ol class="calc-steps">
-                    <li>Reconstitute: <strong>${results.vialSize}${u}</strong> vial &divide; <strong>${results.reconMl} ml</strong> water = <strong>${trim(results.concentration, 2)} ${u}/ml</strong></li>
+                    <li>Reconstitute: <strong>${medPooled > 1 ? `${medPooled} &times; ${results.vialSize}${u}` : `${results.vialSize}${u}`}</strong> ${medPooled > 1 ? 'pooled' : 'vial'} &divide; <strong>${results.reconMl} ml</strong> water = <strong>${trim(medConc, 2)} ${u}/ml</strong>${medPooled > 1 ? ' <em>(the same water dissolves every vial)</em>' : ''}</li>
                     <li>Dose: <strong>${esc(formatDose(results.doses.med, results.doseUnit))}</strong>${results.doseUnit === 'mcg' ? ` = ${trim(results.doses.med / 1000, 4)} mg` : ''}</li>
-                    <li>Volume: &divide; ${trim(results.concentration, 2)} ${u}/ml = <strong>${results.volumeMl.med} ml</strong></li>
+                    <li>Volume: &divide; ${trim(medConc, 2)} ${u}/ml = <strong>${results.volumeMl.med} ml</strong></li>
                     <li>Units: &times; 100 units/ml = <strong class="calc-answer">${formatUnits(results.syringeUnits.med)} units</strong></li>
                 </ol>
                 <p class="calc-footnote">
                     An insulin syringe is U-100: <strong>100 units per ml</strong>, whether the barrel holds 30, 50 or 100 units.
                     Barrel size limits how much you can draw at once &mdash; it does not change the reading.
                 </p>
-            </div>
+            </div>`}
 
             <div class="pdf-buttons animate-in" style="animation-delay: 0.5s;">
                 <button class="btn" id="previewPDFTop" type="button">Preview PDF</button>
@@ -539,9 +689,9 @@ export function renderResults(peptide, results, inputs) {
                 </div>
                 <div class="info-card highlight">
                     <div class="info-card-icon" aria-hidden="true">📦</div>
-                    <h4>Vials Needed</h4>
+                    <h4>${results.noRecon ? 'Pens Needed' : 'Vials Needed'}</h4>
                     <p class="big">${results.vialsNeeded}</p>
-                    <small>${results.vialSize}${u} for the full cycle (${trim(results.totalCycle, 2)}${u} total)</small>
+                    <small>${results.vialSize}${u} ${results.noRecon ? 'single-dose pens' : ''} for the full cycle (${trim(results.totalCycle, 2)}${u} total)</small>
                 </div>
             </div>
 
@@ -585,7 +735,9 @@ export function renderResults(peptide, results, inputs) {
                     <li><strong>Bioavailability:</strong> 40-90% via subcutaneous route | Peak plasma: 2-6 hours post-injection</li>
                     <li><strong>Timing Strategy:</strong> Consistent daily timing reduces variability. ${getTimingRecommendation(peptide)}</li>
                     ${peptide.halfLife && peptide.halfLife !== 'Unknown' ? `<li><strong>Half-Life Guidance (${esc(peptide.halfLife)}):</strong> ${getHalfLifeGuidance(peptide.halfLife)}</li>` : ''}
-                    <li><strong>Storage:</strong> Reconstituted vials keep roughly 4-6 weeks refrigerated at 2-8&deg;C in bacteriostatic water, and about 24 hours in plain sterile water. Write the mixing date on the vial.</li>
+                    <li><strong>Storage:</strong> ${results.noRecon
+        ? 'Pre-filled pens are stored refrigerated at 2-8&deg;C in the original carton until use. Nothing is mixed, so there is no reconstitution clock to track.'
+        : 'Reconstituted vials keep roughly 4-6 weeks refrigerated at 2-8&deg;C in bacteriostatic water, and about 24 hours in plain sterile water. Write the mixing date on the vial.'}</li>
                     <li class="renal-warning"><strong>Renal Function:</strong> Patients with GFR &lt;60 may require 25-50% dose reduction. Peptides under 5 kDa are cleared renally.</li>
                 </ul>
             </div>

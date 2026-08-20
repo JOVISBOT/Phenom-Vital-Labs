@@ -1,5 +1,81 @@
 # Changelog
 
+## 2.2.0 - 2026-08-20
+
+Closes the four items `data/DATA-REVIEW.md` still listed as OPEN. Three needed
+evidence the previous pass did not have, so this one went and got it; the fourth
+was a design problem, not a data problem. Sources sit on each change in
+`tools/apply-open-items.js`.
+
+### Doses corrected against published protocols
+
+- **aicar** 50/100/200 mg over 8 weeks -> **10/25/50 mg over 2 weeks**. The old
+  tiers matched no source found. Research-protocol write-ups converge on ~25 mg/day
+  as standard, 1-3 mg at the low end, and cap the run at ~14 days with a 1-2 month
+  washout. 200 mg/day for 56 days is 11.2 g of AICAR - which is why its high tier
+  needed two 100 mg vials per injection.
+- **dihexa** 8/16/32 mg -> **2/3/5 mg**. The old figures are the ORAL range;
+  subcutaneous protocols run 2-5 mg daily, roughly half the oral amount. Putting an
+  oral dose through a syringe draw is the same defect fixed on glutathione last pass.
+
+### Pooled vials (hmg)
+
+Not a defect - a missing concept. MENOPUR is supplied in the US only as **75 IU**
+vials, and its instructions for use say to mix the first with 1 ml of diluent, draw
+it back up, and dissolve up to five more in that same liquid. So 300 IU is four
+vials, and that is the labelled method rather than an error.
+
+Critically, pooling multiplies **concentration, not volume**. Modelling it as
+"4 vials, therefore 4 ml" would have told the user to pull **400 units** on a 100u
+barrel. New `vialsPooled()`; `multiVial` is now the only licence to need more than
+one vial per dose, so a record cannot re-enter that state by being added to a list.
+
+### Pre-filled devices (dulaglutide)
+
+Trulicity is a single-dose pen: no powder, no bacteriostatic water, no draw. The
+calculator computed a reconstitution volume for it anyway - not wrong so much as
+meaningless, which is worse on a page whose job is telling you what to pull to.
+Records can now declare `noRecon`; every draw field returns **null** so nothing
+downstream can render one. The page shows a "No Draw To Calculate" panel, relabels
+the control "Pen Strength", disables water and syringe, and counts pens. Same in
+the PDF.
+
+### Vial size is now typed, not picked
+
+The catalogue listed fourteen sizes that were convention rather than evidence. The
+fix is not a better guess: the control accepts **any value the user types**, so the
+number in force is the one printed on their own vial. Survives a shared link.
+
+### Evidence class on every record
+
+One blanket disclaimer covered all 44 records equally, flattening a Mounjaro label
+strength and a forum figure for a compound never given to a human into the same
+claim. Each record now carries `approved` (8), `trial` (12) or `convention` (24),
+shown on the card and printed in the PDF disclaimer.
+
+### Two defects found by looking at the rendered page
+
+Neither would have failed the suite:
+
+- With pooling in, the calculation box printed `75 IU/ml` and `1 ml` for a 150 IU
+  dose - both individually right, together saying 150 / 75 = 1. `concentrationAt`
+  carries the per-tier figure now, and a test asserts the concentration shown is the
+  one the volume was divided by.
+- A typed 7.5 mg vial left BPC-157's protocol sheet reading "Reconstitute 5mg vial
+  with 3ml bacteriostatic water" under a 7.5 mg header. Rewritten, and a test now
+  rejects any instruction that hardcodes a figure the form owns.
+
+### Tests
+
+18 -> 26. New guards: pooled-volume arithmetic, pre-filled devices report no draw,
+typed vial sizes calculate and validate, evidence classes stay populated,
+displayed concentration matches the one used, instructions do not restate form
+inputs. Golden snapshot moved on exactly 4 of 44 records. DATA_VERSION 30 -> 31.
+
+Verified: 26/26 pass; `tools/drive-ui.py` drove the real page across 19 scenarios
+with zero console errors, both PDFs generating (27 KB standard, 20 KB pen), and no
+mobile overflow.
+
 ## 2.1.0 - 2026-08-20
 
 Closes every open item in `data/DATA-REVIEW.md`. Those were parked by the v2 pass

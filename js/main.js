@@ -8,7 +8,7 @@ import { validateInputs, performCalculation, DEFAULT_SYRINGE } from './calculato
 import {
     renderResults, populateWeightOptions, populateAgeOptions, populatePeptideOptions,
     populateSyringeOptions, updateReconOptions, showLoading, hideLoading,
-    showInlineError, updateVialSizeForPeptide
+    showInlineError, updateVialSizeForPeptide, setCustomVial, readVialSize
 } from './ui.js';
 import { generatePDF } from './pdfGenerator.js';
 
@@ -38,6 +38,16 @@ async function init() {
             $(id).addEventListener('change', () => { if (lastResults) handleCalculate(); });
         }
 
+        // "Other" reveals a box for the number printed on the user's own vial.
+        // Our catalogue is a convenience, not the authority on what is sold.
+        $('vialSize').addEventListener('change', e => {
+            if (e.target.value === 'custom') setCustomVial(true, currentPeptide);
+            else setCustomVial(false, currentPeptide);
+        });
+        $('vialSizeCustom').addEventListener('input', () => {
+            if (lastResults && readVialSize() > 0) handleCalculate();
+        });
+
         restoreFromUrl();
     } catch (error) {
         console.error('Failed to initialize:', error);
@@ -55,7 +65,7 @@ function handlePeptideChange(prefs = {}) {
 
     updateVialSizeForPeptide(currentPeptide, prefs.vialSize);
     updateReconOptions(currentPeptide, prefs.reconMl);
-    populateSyringeOptions(prefs.syringe);
+    populateSyringeOptions(prefs.syringe, currentPeptide);
 }
 
 /**
@@ -67,7 +77,7 @@ function readInputs() {
         peptide: currentPeptide,
         weight: parseInt($('weight').value, 10),
         age: parseInt($('age').value, 10),
-        vialSize: parseFloat($('vialSize').value),
+        vialSize: readVialSize(),
         reconMl: parseFloat($('reconMl').value),
         syringe: parseInt($('syringe').value, 10)
     };

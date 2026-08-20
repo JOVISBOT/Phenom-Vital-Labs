@@ -41,9 +41,11 @@ def run(page, name, peptide, *, recon=None, syringe=None, vial=None, shot=True):
         "summary": page.text_content(".summary-title p").strip(),
         "cards": cards,
         "vials": page.text_content(".info-card.highlight .big").strip(),
-        "calc": " | ".join(t.strip() for t in page.eval_on_selector_all(".calc-steps li", "e => e.map(x=>x.textContent)")),
+        "calc": " | ".join(t.strip() for t in page.eval_on_selector_all(".calc-steps li", "e => e.map(x=>x.textContent)")) or "(no draw)",
         "url": page.url,
         "disclaimer": page.locator(".footer-disclaimer").count(),
+        "evidence": (page.text_content(".evidence-badge strong") or "").strip(),
+        "noDraw": page.locator(".calc-box h4", has_text="No Draw").count(),
     }
     if shot:
         # Cards fade in on a stagger up to 1.1s; screenshot before that and the
@@ -84,7 +86,37 @@ with sync_playwright() as pw:
     run(page, "12-blend-heal-20", "blend_heal_20") # tiers halved to match blend_heal
     run(page, "13-tb500", "tb500")                 # inst claimed 10mg/wk
     run(page, "14-thymalin", "thymalin")           # 10-day course, not 14
-    run(page, "15-hmg-exceeds", "hmg")             # high tier needs 2 vials per dose
+    run(page, "15-hmg-pooled", "hmg")              # 75 IU vials pooled into one volume
+
+    # Schema v4 - the four items left OPEN by the previous pass
+    run(page, "16-dulaglutide-pen", "dulaglutide")  # pre-filled pen: no recon, no draw
+    run(page, "17-aicar-fixed", "aicar")            # 25mg/day, 2-week cap
+    run(page, "18-dihexa-subq", "dihexa")           # subq range, not the oral one
+
+    # A vial size that is not in our catalogue at all
+    page.goto(BASE, wait_until="networkidle")
+    page.select_option("#peptide", "bpc157")
+    page.select_option("#vialSize", "custom")
+    page.fill("#vialSizeCustom", "7.5")
+    page.click("#calculateBtn")
+    page.wait_for_selector(".dose-grid", timeout=5000)
+    page.wait_for_function(
+        "[...document.querySelectorAll('.animate-in')].every(e => getComputedStyle(e).opacity === '1')",
+        timeout=5000)
+    page.screenshot(path=str(OUT / "19-custom-vial.png"), full_page=True)
+    report["customVial"] = {
+        "summary": page.text_content(".summary-title p").strip(),
+        "med": page.text_content(".dose-card.med .draw-value").strip(),
+        "url": page.url,
+    }
+    # ...and it has to survive being shared
+    page.goto(report["customVial"]["url"], wait_until="networkidle")
+    page.wait_for_selector(".dose-grid", timeout=5000)
+    report["customVialShared"] = {
+        "select": page.input_value("#vialSize"),
+        "typed": page.input_value("#vialSizeCustom"),
+        "med": page.text_content(".dose-card.med .draw-value").strip(),
+    }
 
     # URL round-trip
     shared = report["01-blend-gh1"]["url"]
@@ -117,6 +149,24 @@ with sync_playwright() as pw:
         return doc ? doc.output('arraybuffer').byteLength : 0;
     }""")
     report["pdfBytes"] = pdf_bytes
+
+    # The PDF must also survive a record with no draw at all
+    page.goto(BASE + "?p=dulaglutide", wait_until="networkidle")
+    page.wait_for_selector(".dose-grid", timeout=5000)
+    report["pdfBytesPen"] = page.evaluate("""async () => {
+        const mod = await import('./js/pdfGenerator.js');
+        const calc = await import('./js/calculator.js');
+        const data = await (await fetch('./data/peptides.json')).json();
+        const p = data.peptides.find(x => x.id === 'dulaglutide');
+        const results = calc.performCalculation(p, {weightLbs:180});
+        const Real = window.jspdf.jsPDF;
+        let doc = null;
+        window.jspdf.jsPDF = function(...a){ doc = new Real(...a); doc.save = () => {}; return doc; };
+        window.jspdf.jsPDF.prototype = Real.prototype;
+        try { mod.generatePDF(p, results, {weight:180, age:35}, false); }
+        finally { window.jspdf.jsPDF = Real; }
+        return doc ? doc.output('arraybuffer').byteLength : 0;
+    }""")
 
     # Mobile
     page.set_viewport_size({"width": 390, "height": 844})

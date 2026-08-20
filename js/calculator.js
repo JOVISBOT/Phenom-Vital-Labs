@@ -158,6 +158,28 @@ export function vialsPerDose(peptide, doseAmount, vialSize) {
 }
 
 /**
+ * How many vials are dissolved into a single dose.
+ *
+ * One, for everything that is sold in a vial big enough to hold the dose. The
+ * exception is a product whose own label describes sequential reconstitution:
+ * MENOPUR is supplied only as 75 IU vials, and the instructions for use say to
+ * mix the first vial with 1 ml of diluent, draw it back up, and use that same
+ * liquid to dissolve up to five more. So a 150 or 300 IU dose is two or four
+ * vials -- and, critically, the volume does NOT grow with the vial count. The
+ * draw stays 1 ml; the concentration goes up. Modelling it as "N times the
+ * volume" would have told a user to pull 400 units.
+ * @param {Object} peptide
+ * @param {number} doseAmount - Dose in the peptide's `doseUnit`
+ * @param {number} vialSize
+ * @returns {number}
+ */
+export function vialsPooled(peptide, doseAmount, vialSize) {
+    if (peptide.multiVial !== true) return 1;
+    const perDose = toVialUnits(doseAmount, peptide.doseUnit);
+    return Math.max(1, Math.ceil(round(perDose / (vialSize || peptide.vialSize), 6)));
+}
+
+/**
  * Validate all inputs
  * @param {Object} inputs
  * @returns {Object} Validation result
@@ -177,16 +199,22 @@ export function validateInputs(inputs) {
         errors.push('Please enter a valid age (18-100)');
     }
 
-    if (!inputs.vialSize || inputs.vialSize <= 0) {
-        errors.push('Please select a vial size');
+    // Vial size is now typed as well as picked, so this has to reject text and
+    // negatives rather than just an unselected dropdown.
+    if (!Number.isFinite(Number(inputs.vialSize)) || Number(inputs.vialSize) <= 0) {
+        errors.push('Enter a vial size greater than zero');
     }
 
-    if (!RECON_VOLUMES.includes(Number(inputs.reconMl))) {
-        errors.push('Please select a reconstitution volume');
-    }
+    // A pre-filled pen has neither a reconstitution volume nor a syringe, so
+    // requiring them would make the record impossible to calculate.
+    if (!(inputs.peptide && inputs.peptide.noRecon)) {
+        if (!RECON_VOLUMES.includes(Number(inputs.reconMl))) {
+            errors.push('Please select a reconstitution volume');
+        }
 
-    if (!SYRINGE_SIZES.includes(Number(inputs.syringe))) {
-        errors.push('Please select a syringe size');
+        if (!SYRINGE_SIZES.includes(Number(inputs.syringe))) {
+            errors.push('Please select a syringe size');
+        }
     }
 
     return {
@@ -227,16 +255,29 @@ export function performCalculation(peptide, opts = {}) {
     const syringe = opts.syringe || DEFAULT_SYRINGE;
     const weightLbs = opts.weightLbs;
 
+    if (peptide.noRecon === true) {
+        return deviceCalculation(peptide, weightLbs, vialSize);
+    }
+
     const doses = {};
     const syringeUnits = {};
     const volumeMl = {};
     const components = {};
+    const pooled = {};
+    const concentrationAt = {};
 
     for (const level of ['low', 'med', 'high']) {
         doses[level] = calculateDose(peptide, weightLbs, level);
-        volumeMl[level] = round(calculateVolumeMl(peptide, doses[level], vialSize, reconMl), 4);
-        syringeUnits[level] = calculateSyringeUnits(peptide, doses[level], vialSize, reconMl);
         components[level] = splitBlendDose(peptide, doses[level]);
+
+        // Pooled vials share one volume of diluent, so the peptide available in
+        // that volume goes up while the volume itself does not.
+        pooled[level] = vialsPooled(peptide, doses[level], vialSize);
+        const available = vialSize * pooled[level];
+
+        concentrationAt[level] = round(concentration(available, reconMl), 4);
+        volumeMl[level] = round(calculateVolumeMl(peptide, doses[level], available, reconMl), 4);
+        syringeUnits[level] = calculateSyringeUnits(peptide, doses[level], available, reconMl);
     }
 
     const perDoseVialUnits = toVialUnits(doses.med, peptide.doseUnit);
@@ -252,6 +293,12 @@ export function performCalculation(peptide, opts = {}) {
         reconMl,
         syringe,
         concentration: round(concentration(vialSize, reconMl), 4),
+        // Concentration actually in the syringe at each tier. Identical to the
+        // above everywhere except a pooled product, where dissolving N vials in
+        // one volume multiplies it. Printing the single-vial figure next to the
+        // pooled volume made the on-screen arithmetic contradict itself: 150 IU
+        // divided by 75 IU/ml is 2 ml, but the page said 1 ml.
+        concentrationAt,
         doses,
         volumeMl,
         syringeUnits,
@@ -264,18 +311,81 @@ export function performCalculation(peptide, opts = {}) {
             high: syringeUnits.high > syringe
         },
         perDoseVials,
-        // True when one dose needs more peptide than a whole vial holds. NOT
-        // fixable by barrel size or water volume -- it needs a second vial.
+        // Vials dissolved into one dose. >1 only where the label says to.
+        vialsPooled: pooled,
+        // True when one dose needs more peptide than a whole vial holds and the
+        // product has no pooling instruction to cover it. NOT fixable by barrel
+        // size or water volume -- water dilutes, it does not add peptide.
         exceedsVial: {
-            low: perDoseVials.low > 1,
-            med: perDoseVials.med > 1,
-            high: perDoseVials.high > 1
+            low: perDoseVials.low > 1 && pooled.low === 1,
+            med: perDoseVials.med > 1 && pooled.med === 1,
+            high: perDoseVials.high > 1 && pooled.high === 1
         },
         vialsNeeded: calculateVialsNeeded(peptide, doses.med, vialSize),
         totalCycle: round(perDoseVialUnits * dosesPerCycle(peptide), 2),
         dosesPerCycle: dosesPerCycle(peptide),
         weeklyFreq: peptide.f,
-        cycleWeeks: peptide.wks
+        cycleWeeks: peptide.wks,
+        noRecon: false,
+        // Some products are legitimately dosed above one vial. Menotropins are
+        // sold only as 75 IU vials and the label itself describes pooling several
+        // into one syringe, so `exceedsVial` there is procedure, not a defect.
+        multiVial: peptide.multiVial === true
+    };
+}
+
+/**
+ * Results for a product that is never reconstituted.
+ *
+ * A pre-filled pen has no powder, no bacteriostatic water and no draw: the dose
+ * is whichever strength was dispensed. The calculator used to compute a
+ * reconstitution volume for dulaglutide anyway, which is not wrong so much as
+ * meaningless -- and a meaningless number on a page whose whole job is telling
+ * you what to pull to is worse than no number. Every draw field is returned as
+ * null so nothing downstream can render one by accident.
+ * @param {Object} peptide
+ * @param {number} weightLbs
+ * @param {number} strength - Selected device strength, in `vialUnit`
+ * @returns {Object}
+ */
+function deviceCalculation(peptide, weightLbs, strength) {
+    const nulls = { low: null, med: null, high: null };
+    const falses = { low: false, med: false, high: false };
+    const doses = {};
+    const components = {};
+
+    for (const level of ['low', 'med', 'high']) {
+        doses[level] = calculateDose(peptide, weightLbs, level);
+        components[level] = splitBlendDose(peptide, doses[level]);
+    }
+
+    const perDose = toVialUnits(doses.med, peptide.doseUnit);
+
+    return {
+        doseUnit: peptide.doseUnit,
+        vialUnit: peptide.vialUnit,
+        vialSize: strength,
+        reconMl: null,
+        syringe: null,
+        concentration: null,
+        concentrationAt: { low: null, med: null, high: null },
+        doses,
+        volumeMl: { ...nulls },
+        syringeUnits: { ...nulls },
+        components,
+        overflow: { ...falses },
+        perDoseVials: { ...nulls },
+        vialsPooled: { low: 1, med: 1, high: 1 },
+        exceedsVial: { ...falses },
+        // One single-dose device per injection, so the device count is the dose count.
+        vialsNeeded: dosesPerCycle(peptide),
+        totalCycle: round(perDose * dosesPerCycle(peptide), 2),
+        dosesPerCycle: dosesPerCycle(peptide),
+        weeklyFreq: peptide.f,
+        cycleWeeks: peptide.wks,
+        noRecon: true,
+        device: peptide.device || 'device',
+        multiVial: false
     };
 }
 
