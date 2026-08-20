@@ -174,6 +174,27 @@ test('a dose that cannot be drawn in one go says so on the page', () => {
     }
 });
 
+test('a reconstitution volume that overruns the barrel says so too', () => {
+    // The tier table has a Fits? column; the reconstitution table did not, so a
+    // volume that pushed the same dose past 100 units printed bare -- 19 of 44
+    // pages showed a draw nobody can pull in one go, with nothing saying so.
+    let checked = 0;
+    for (const p of peptides) {
+        if (p.noRecon) continue;
+        const html = pageFor(p.id);
+        const table = html.split('Bacteriostatic water')[1] || '';
+        const body = table.split('</table>')[0];
+        for (const m of body.matchAll(/>([0-9]+(?:\.[0-9])?) units/g)) {
+            if (Number(m[1]) <= 100) continue;
+            checked++;
+            const cell = body.slice(m.index, m.index + 120);
+            assert.ok(cell.includes('does not fit one draw'),
+                `${p.id}: ${m[1]} units printed with no overflow flag`);
+        }
+    }
+    assert.ok(checked > 0, 'no overflow rows found - the check would pass vacuously');
+});
+
 test('every page carries the disclaimer', () => {
     for (const p of peptides) {
         assert.ok(pageFor(p.id).includes('Research information only - not medical advice'), `${p.id}`);

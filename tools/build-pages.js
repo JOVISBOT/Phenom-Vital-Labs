@@ -126,14 +126,24 @@ function workingFor(p, r, level = 'med') {
         + `= ${num(r.volumeMl[level], 3)} ml = ${units(r.syringeUnits[level])} units`;
 }
 
-/** Units to draw for the mid dose at each offered water volume. */
+/**
+ * Units to draw for the mid dose at each offered water volume.
+ *
+ * More water is not free: past a point the same dose stops fitting in a barrel.
+ * A U-100 syringe tops out at 100 units, so anything above that is two draws --
+ * printing it bare reads as an instruction a visitor cannot carry out.
+ */
 function reconTable(p) {
     if (p.noRecon) return [];
-    return RECON_VOLUMES.map(ml => ({
-        ml,
-        conc: concentration(p.vialSize, ml),
-        units: calculateSyringeUnits(p, p.med, p.vialSize, ml)
-    }));
+    return RECON_VOLUMES.map(ml => {
+        const u = calculateSyringeUnits(p, p.med, p.vialSize, ml);
+        return {
+            ml,
+            conc: concentration(p.vialSize, ml),
+            units: u,
+            overflow: u > DEFAULT_SYRINGE
+        };
+    });
 }
 
 /* --------------------------------------------------------------- page parts */
@@ -323,7 +333,7 @@ function peptidePage(p, all) {
                     <tr${row.ml === defaultReconMl(p) ? ' class="is-featured"' : ''}>
                         <th scope="row">${num(row.ml, 2)} ml</th>
                         <td>${num(row.conc, 2)} ${esc(p.vialUnit)}/ml</td>
-                        <td>${units(row.units)} units</td>
+                        <td>${units(row.units)} units${row.overflow ? ' <span class="flag">does not fit one draw</span>' : ''}</td>
                     </tr>`).join('');
 
     const list = (items, cls) => (items && items.length)
@@ -391,7 +401,8 @@ function peptidePage(p, all) {
                     </tbody>
                 </table>
                 <p class="note">More water means a bigger, easier-to-read draw for the same dose. A dose that lands near
-                   the 2-unit mark is one half-mark misread away from a 25% dosing error.</p>
+                   the 2-unit mark is one half-mark misread away from a 25% dosing error. Past 100 units the dose no
+                   longer fits a U-100 barrel at all &mdash; that is two injections, not a bigger syringe.</p>
             </section>` : ''}
 
             <section class="card">
