@@ -1,6 +1,13 @@
 /* Styles for the generated reference pages (/p/ and /p/<id>/).
    Kept out of styles.css so the calculator's audited stylesheet is untouched;
-   these pages reuse its variables, card, badge and pros/cons classes. */
+   these pages reuse its variables, card, badge and pros/cons classes.
+
+   Panel backgrounds are tokens, never literals. When dark mode arrived, six
+   rules here still held a literal #f8fafc / #eff6ff / #f5f3ff while the text on
+   top of them was var(--text) -- which had gone light. "Protocol at a glance",
+   the working box, the featured tier row and the open FAQ answer all rendered
+   near-white text on a near-white panel. A test fails the build if a light
+   literal comes back. */
 
 .brand-text{text-decoration:none;color:var(--text)}
 .crumbs{font-size:0.82rem;color:var(--muted);margin-bottom:24px}
@@ -17,7 +24,7 @@
 .answer-card{border:2px solid var(--primary)}
 .answer-lede{font-size:1.05rem;color:var(--text);line-height:1.7;margin-bottom:14px}
 .answer-lede strong{color:var(--primary)}
-.working{background:#f8fafc;border-left:3px solid var(--primary-light);border-radius:6px;padding:12px 14px;margin-bottom:20px}
+.working{background:var(--tint-neutral-2);border-left:3px solid var(--primary-light);border-radius:6px;padding:12px 14px;margin-bottom:20px}
 .working code{font-family:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;font-size:0.86rem;color:var(--text)}
 
 .data-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.88rem}
@@ -27,11 +34,11 @@
 .data-table tbody th{font-weight:600;color:var(--text)}
 .data-table tbody th a{color:var(--primary);text-decoration:none}
 .data-table tbody th a:hover{text-decoration:underline}
-.data-table tr.is-featured{background:#eff6ff}
+.data-table tr.is-featured{background:var(--tint-info)}
 .data-table tr.is-featured th{color:var(--primary)}
 .flag{color:var(--danger);font-weight:600}
 
-.component-list{background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;padding:16px;margin-bottom:20px}
+.component-list{background:var(--tint-accent);border:1px solid var(--tint-accent-line);border-radius:10px;padding:16px;margin-bottom:20px}
 .component-list h3{margin:0 0 10px;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--primary)}
 .component-list ul{list-style:none}
 .component-list li{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:0.88rem;color:var(--muted)}
@@ -43,7 +50,7 @@
 .note a{color:var(--primary)}
 
 .facts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.facts>div{background:#f8fafc;border-radius:10px;padding:12px 14px}
+.facts>div{background:var(--tint-neutral-2);border-radius:10px;padding:12px 14px}
 .facts dt{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);font-weight:600;margin-bottom:4px}
 .facts dd{font-size:0.95rem;font-weight:600;color:var(--text)}
 
@@ -53,13 +60,13 @@
 .pc-list li::before{content:'';position:absolute;left:0;top:12px;width:6px;height:6px;border-radius:50%;background:var(--primary-light)}
 
 .faq details{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px}
-.faq details[open]{border-color:var(--primary-light);background:#f8fafc}
+.faq details[open]{border-color:var(--primary-light);background:var(--tint-neutral-2)}
 .faq summary{font-weight:600;font-size:0.92rem;cursor:pointer;color:var(--text)}
 .faq summary::marker{color:var(--primary)}
 .faq details p{margin-top:10px}
 
 .related{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.related li{background:#f8fafc;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.related li{background:var(--tint-neutral-2);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
 .related a{color:var(--primary);font-weight:600;font-size:0.92rem;text-decoration:none}
 .related a:hover{text-decoration:underline}
 .related span{font-size:0.75rem;color:var(--muted)}

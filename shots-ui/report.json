@@ -1,0 +1,48 @@
+{
+ "combobox": [
+  "CJC-1295 NO DAC 5mg + Ipamorelin 5mg0.4 mg \u00b7 10mg vial"
+ ],
+ "hero": "DRAW\n12units\n= 0.4 mg of CJC1295 NO DAC + Ipamorelin Blend\nCJC-1295 NO DAC 200 mcg\nIpamorelin 200 mcg\n10mg vial \u00b7 3 ml bacteriostatic water \u00b7 3.33 mg/ml \u00b7 100U syringe",
+ "scrollY_after_calc": 1033,
+ "pageHeight": 4574,
+ "heroTop": 1032.875,
+ "themeAttr": "dark",
+ "after_switch": "Tirzepatide\n\nDual GIP/GLP-1 Agonist\n\nFDA-APPROVED, LABEL DOS",
+ "after_switch_hero": "DRAW 25units = 5 mg of Tirzepatide 20mg vial \u00b7 1 ml bacteriostatic water \u00b7 20 mg/ml \u00b7 100U syringe",
+ "tesa_cards": [
+  {
+   "t": "EGRIFTA WR",
+   "d": "1.28 mg",
+   "badge": ""
+  },
+  {
+   "t": "EGRIFTA SV",
+   "d": "1.4 mg",
+   "badge": "Shown above"
+  },
+  {
+   "t": "EGRIFTA",
+   "d": "2 mg",
+   "badge": ""
+  }
+ ],
+ "folds": [
+  {
+   "s": "Research overview",
+   "open": false
+  },
+  {
+   "s": "How it works",
+   "open": false
+  },
+  {
+   "s": "Clinical dosing notes",
+   "open": false
+  }
+ ],
+ "mobile_overflow": 0,
+ "mobile_heroTop": 1514.265625,
+ "mobile_scrollY": 1514,
+ "hub_theme_persist": "dark",
+ "console_errors": []
+}

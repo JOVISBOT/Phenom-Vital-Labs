@@ -17,6 +17,7 @@ import { initThemeToggle } from './theme.js';
 import { enhanceSelect } from './combobox.js';
 
 let currentPeptide = null;
+let peptideCombo = null;
 let lastResults = null;
 let lastInputs = null;
 
@@ -40,7 +41,7 @@ async function init() {
         // loadPeptideData returns a map keyed by id, not an array.
         const records = Object.values(peptidesData);
         try {
-            enhanceSelect($('peptide'), { records, placeholder: `Search ${records.length} peptides...` });
+            peptideCombo = enhanceSelect($('peptide'), { records, placeholder: `Search ${records.length} peptides...` });
         } catch (e) {
             console.warn('Peptide search unavailable, falling back to the plain dropdown:', e);
         }
@@ -249,6 +250,11 @@ function restoreFromUrl() {
     }
 
     $('peptide').value = id;
+    // Setting .value fires no change event, so the search box that now sits in
+    // front of the select never hears about it. A shared link therefore drew a
+    // full protocol under a peptide box still reading "Search 44 peptides...",
+    // and every CTA from the 44 static pages lands on exactly this path.
+    if (peptideCombo) peptideCombo.refresh();
     setIfPresent('weight', params.get('w'));
     setIfPresent('age', params.get('a'));
 

@@ -75,10 +75,18 @@ record says the same thing in prose without carrying the flag.
   and asked the printer for full-bleed dark panels; print now forces light.
 - The reveal cascade ran 1.1s, so everything below the fold was invisible for
   over a second and any capture caught it mid-flight. Now 0.35s.
+- **Contrast.** Every rendered text node on the calculator, a peptide page and
+  the directory was measured against its real background in both themes. Dark
+  came back clean; the pre-existing light theme had 47 elements below WCAG AA --
+  `--muted` reads 4.41 on the tinted panels it actually sits on, and the amber
+  accent 3.19. The five accent values are darkened. Both themes now measure 0.
+  Six rules in `pages.css` also still held literal light backgrounds under text
+  that had gone light, so "Protocol at a glance", the working box, the featured
+  tier row and the open FAQ answer rendered near-white on near-white.
 
 ### Guards
 
-`npm test` 59 -> 77. The data audit runs as part of it, so a record added next
+`npm test` 59 -> 78. The data audit runs as part of it, so a record added next
 month cannot ship a dose that overflows a syringe, a cadence that argues with
 its own prose, or a range quietly republished as a fact. Every new guard was
 proven by breaking it and watching it go red.

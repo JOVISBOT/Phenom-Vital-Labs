@@ -1,4 +1,9 @@
-:root{--primary:#1e40af;--primary-light:#3b82f6;--success:#059669;--warning:#d97706;--danger:#dc2626;--bg:#fefcf3;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb}
+/* Accent and muted values are darkened to clear WCAG AA on the tinted panels
+   they actually sit on, not just on pure white. Measured across every text
+   node on the calculator, a peptide page and the directory: 47 elements were
+   below AA, all of them these five values on a cream or tinted background --
+   #6b7280 body text reads 4.41 on #f1f5f9, and the amber accent 3.19. */
+:root{--primary:#1e40af;--primary-light:#3b82f6;--success:#047857;--warning:#b45309;--danger:#c81e1e;--bg:#fefcf3;--card:#fff;--text:#1f2937;--muted:#5b6472;--border:#e5e7eb}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 header{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px}

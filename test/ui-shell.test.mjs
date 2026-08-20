@@ -205,3 +205,17 @@ test('the answer survives a medium that cannot animate', () => {
     assert.ok(Math.max(...delays) <= 0.5,
         `the reveal cascade runs ${Math.max(...delays)}s; everything below the fold is invisible that long`);
 });
+
+test('no stylesheet hardcodes a light panel colour behind themed text', () => {
+    // When dark mode arrived, six rules in pages.css still held a literal
+    // #f8fafc / #eff6ff / #f5f3ff while the text on them was var(--text),
+    // which had gone light. "Protocol at a glance", the working box, the
+    // featured tier row and the open FAQ answer all rendered near-white on
+    // near-white. Panel backgrounds are tokens; only theme.css defines the
+    // literals the tokens resolve to.
+    const pages = readFileSync(join(ROOT, 'css/pages.css'), 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
+    const literals = pages.match(/background:\s*#[0-9a-f]{3,8}/gi) || [];
+    assert.deepEqual(literals, [],
+        `pages.css sets a literal background: ${literals.join(', ')}`);
+});
