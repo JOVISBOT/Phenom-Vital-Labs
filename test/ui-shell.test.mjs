@@ -95,6 +95,15 @@ test('a tier set that is not a ladder is not labelled like one', () => {
         }
     }
 
+    // The cards were fixed and the row of three doses above them was not: it
+    // still drew low -> med -> high arrows directly over a note reading "not a
+    // low-to-high ladder". Same contradiction, one element higher up.
+    const ui = read('js/ui.js');
+    assert.match(ui, /const rung = variants \? '&middot;' : '&rarr;'/,
+        'the dose row draws the same separator whether or not the tiers escalate');
+    assert.ok(!/dose-arrow" aria-hidden="true">&rarr;</.test(ui),
+        'the dose row hardcodes an escalation arrow again');
+
     // And a record whose instructions say the tiers are not a ladder must be
     // flagged, so the next one added does not slip through unlabelled.
     for (const p of peptides) {
@@ -141,6 +150,34 @@ test('a restored protocol names its own peptide in the picker', () => {
     assert.match(combo, /return \{ refresh \}/, 'combobox no longer exposes refresh()');
     assert.match(combo, /function refresh\(\)[\s\S]{0,200}options\.find\(o => o\.value === select\.value\)/,
         'refresh() does not read the visible text back off the select');
+});
+
+test('nothing centred on a tier card shares its top border with something else', () => {
+    // At phone width the tier cards stay three across (comparing them is the
+    // point), which leaves each card 114px wide. Both .dose-label and
+    // .recommended-badge were centred on the same 8px of top border, so the
+    // green Recommended pill sat behind the STANDARD label and poked out
+    // either side. Measured in Chromium: label 159-231, badge 152-238.
+    const theme = read('css/theme.css');
+    const block = theme.slice(theme.indexOf('/* --- tier cards'));
+    const NL = String.fromCharCode(10);
+    const mobile = block.slice(0, block.indexOf('}' + NL + NL));
+    assert.ok(/\.dose-label\s*\{[^}]*left:\s*50%/.test(mobile), 'the tier label is no longer centred - re-check this guard');
+    assert.ok(/\.recommended-badge\s*\{[^}]*display:\s*none/.test(mobile),
+        'the Recommended badge is drawn on a phone-width card again, on top of the tier label');
+});
+
+test('the dose ladder cannot strand a dose below its own arrow', () => {
+    // 3 pills + 2 decorative arrows in a wrapping flex row: at 390px the pair
+    // "0.4 mg -> 0.6 mg" broke across the wrap, leaving an arrow pointing at
+    // the end of one line and the last dose alone on the next.
+    const css = read('css/styles.css');
+    const narrow = css.split('@media').find(m => /^\(max-width:5[0-9]{2}px\)/.test(m.trim()) && m.includes('.dose-range'));
+    assert.ok(narrow, 'no narrow-width rule for the dose ladder');
+    assert.match(narrow, /\.dose-range\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*1fr\)/,
+        'the ladder is not laid out as three fixed columns at phone width');
+    assert.match(narrow, /\.dose-arrow\s*\{\s*display:\s*none/,
+        'the arrows are still drawn at a width where the row can wrap');
 });
 
 test('renderResults does not move the viewport on its own', () => {

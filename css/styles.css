@@ -192,6 +192,7 @@ footer strong{color:var(--primary)}
 @media(max-width:900px){.form-grid{grid-template-columns:repeat(2,1fr)}.info-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){.container{padding:24px 16px}.card{padding:24px 20px}.dose-grid,.pros-cons-grid{grid-template-columns:1fr}.intro h1{font-size:1.6rem}.dose-card.featured{transform:none}}
 @media(max-width:500px){.form-grid,.info-grid{grid-template-columns:1fr}.pdf-buttons .btn{min-width:100%}}
+@media(max-width:560px){.dose-range{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.dose-range .dose-arrow{display:none}.dose-badge{padding:10px 4px;font-size:0.85rem;text-align:center}}
 
 /* --- email capture dialog ------------------------------------------------ */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;animation:fadeIn 0.2s ease-out}

@@ -676,6 +676,10 @@ export function renderResults(peptide, results, inputs) {
             ['high', { label: 'Advanced', sublabel: 'Maximum Dose', delay: 0.4, hint: 'For experienced users' }]
         ]).map(([level, cfg]) => doseCard(level, cfg, results)).join('');
 
+    // An arrow between the three doses reads as escalation. For a variant set
+    // that is the same contradiction the cards had: the note directly below
+    // says "not a low-to-high ladder" while the row above draws one.
+    const rung = variants ? '&middot;' : '&rarr;';
     const tierNote = variants && peptide.tierNote
         ? `<p class="blend-note tier-note">${esc(peptide.tierNote)}</p>` : '';
 
@@ -764,9 +768,9 @@ export function renderResults(peptide, results, inputs) {
 
                 <div class="dose-range">
                     <span class="dose-badge low">${esc(formatDose(results.doses.low, results.doseUnit))}</span>
-                    <span class="dose-arrow" aria-hidden="true">→</span>
+                    <span class="dose-arrow" aria-hidden="true">${rung}</span>
                     <span class="dose-badge med">${esc(formatDose(results.doses.med, results.doseUnit))}</span>
-                    <span class="dose-arrow" aria-hidden="true">→</span>
+                    <span class="dose-arrow" aria-hidden="true">${rung}</span>
                     <span class="dose-badge high">${esc(formatDose(results.doses.high, results.doseUnit))}</span>
                 </div>
 
@@ -795,7 +799,7 @@ export function renderResults(peptide, results, inputs) {
                 </p>
             </div>` : `
             <div class="syringe-visual animate-in" style="animation-delay: 0.14s;">
-                <h4>💉 Syringe Draw Guide (Recommended Dose)</h4>
+                <h4>💉 Syringe Draw Guide (${variants ? esc(vLabel.med || 'shown above') : 'Recommended Dose'})</h4>
                 ${generateSyringeSVG(results.syringeUnits.med, results.syringe)}
                 <p class="syringe-caption">
                     Pull to <strong>${formatUnits(results.syringeUnits.med)} units</strong>

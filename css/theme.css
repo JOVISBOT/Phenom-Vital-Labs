@@ -238,7 +238,12 @@
     .dose-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .dose-card { padding: 22px 8px 14px; }
     .dose-label { left: 50%; transform: translateX(-50%); font-size: 0.6rem; padding: 3px 8px; white-space: nowrap; }
-    .recommended-badge { right: 50%; transform: translateX(50%); font-size: 0.6rem; padding: 3px 8px; }
+    /* Both of these were centred on the same 8px of top border, so the green
+       "Recommended" pill sat directly behind the STANDARD label and poked out
+       either side of it. A 114px-wide card cannot hold both. The card already
+       says which one it is -- it is the featured card and its own sublabel
+       reads RECOMMENDED DOSE -- so the badge is the one that goes. */
+    .recommended-badge { display: none; }
     .mcg-box, .draw-box { padding: 10px 6px; }
     .mcg-value, .draw-value { font-size: 1.05rem; }
     .mcg-label, .draw-label { font-size: 0.58rem; letter-spacing: 0; }
