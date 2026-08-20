@@ -45,6 +45,9 @@ def run(page, name, peptide, *, recon=None, syringe=None, vial=None, shot=True):
         "url": page.url,
         "disclaimer": page.locator(".footer-disclaimer").count(),
         "evidence": (page.text_content(".evidence-badge strong") or "").strip(),
+        # STILL OPEN 1: the vial catalogue used to be an unmarked list of numbers.
+        "vialProvenance": (page.text_content("#vialSizeProvenance") or "").strip(),
+        "vialOptions": page.eval_on_selector_all("#vialSize option", "e => e.map(x => x.textContent.trim())"),
         "noDraw": page.locator(".calc-box h4", has_text="No Draw").count(),
     }
     if shot:
@@ -92,6 +95,12 @@ with sync_playwright() as pw:
     run(page, "16-dulaglutide-pen", "dulaglutide")  # pre-filled pen: no recon, no draw
     run(page, "17-aicar-fixed", "aicar")            # 25mg/day, 2-week cap
     run(page, "18-dihexa-subq", "dihexa")           # subq range, not the oral one
+
+    # Schema v5 - vial-size provenance
+    run(page, "20-tesamorelin", "tesamorelin")      # EGRIFTA WR's 11.6 mg vial was missing
+    run(page, "21-epo", "epo")                      # offered a 1,000 IU that does not exist
+    run(page, "22-pt141", "pt141")                   # approved active, but no approved vial
+    run(page, "23-hcg-labelled", "hcg", vial=10000)  # a marketed strength, marked
 
     # A vial size that is not in our catalogue at all
     page.goto(BASE, wait_until="networkidle")

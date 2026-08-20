@@ -34,3 +34,7 @@ Thumbs.db
 # Local verification artifacts
 shots/
 ui-report.json
+
+# scratch: openFDA responses and UI-driver output
+.fda/
+.out/

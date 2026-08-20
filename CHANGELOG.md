@@ -1,5 +1,80 @@
 # Changelog
 
+## 2.3.0 - 2026-08-20
+
+Closes the last fixable item in `data/DATA-REVIEW.md` - the vial-size catalogue
+was an unsourced list - and then fixes what sourcing it exposed. Strengths come
+from the openFDA NDC directory (2026-08-19) and FDA labels on DailyMed; sources
+sit on each change in `tools/apply-vial-sources.js` and
+`tools/apply-dose-anchors.js`.
+
+### Every vial size now says where it came from (schema v5)
+
+Letting the user type their own size took the catalogue out of the arithmetic.
+It did not take it off the screen: the dropdown still showed a column of numbers
+with nothing to separate an FDA-labelled strength from a vendor's habit. Each
+record now carries `vialSizeSource` (`label` / `mixed` / `vendor`), the marketed
+sizes in `labelSizes`, and a `labelSource` naming the product. Marked with a tick
+in the dropdown, explained in a note under the control, and printed in the PDF.
+
+Sourcing them found the catalogue wrong in both directions:
+
+- **epo** offered a **1,000 IU vial that does not exist**, and omitted the two
+  largest (20,000 and 40,000 IU/ml).
+- **tirzepatide** was missing three real strengths (2.5, 7.5, 12.5 mg) while
+  offering six that no approved product uses.
+- **tesamorelin** was missing EGRIFTA WR's **11.6 mg vial entirely**.
+- **hgh** was missing Humatrope's 6 mg (18 IU) and 24 mg (72 IU) cartridges.
+- **pt141** inverts it: bremelanotide is approved, but only as a 1.75 mg / 0.3 ml
+  autoinjector, so there is **no approved vial of it at any size**. Tagged
+  vendor-only, with the reason on screen.
+
+Marketed strengths were added, not just flagged. Sizes with no approved
+counterpart stay - a compounded vial is still a vial someone holds.
+
+### The `approved` badge stopped over-claiming (schema v6)
+
+Found by reading the rendered PT-141 page after the above shipped. It said, at
+once: *FDA-approved, doses anchored to labelled strengths* / *none of these sizes
+is a marketed strength* / **MAXIMUM DOSE 2.5 mg** / *"can increase to 1500mcg"*.
+Four claims, no two agreeing. The badge sentence was written once for eight
+records and is true of four.
+
+- **pt141** 0.5/1.5/**2.5** mg -> **0.5/1/1.75 mg**. VYLEESI's labelled dose is
+  1.75 mg subcutaneous, capped at one dose per 24 hours and 8 doses a month - all
+  now on the sheet. The old maximum was 43% above the only labelled dose.
+- **tesamorelin** 1/2/**2.5** mg -> **1.28/1.4/2 mg**, the labelled daily doses of
+  EGRIFTA WR, EGRIFTA SV and the original EGRIFTA. Not an escalating ladder: the
+  SV label states 1.4 mg and 2 mg give similar Cmax and AUC, and the instructions
+  now say so.
+- **ara290** 2/4/**6** mg -> **1/4/8 mg**, the phase 2 arms in painful sarcoid
+  neuropathy (28 days, n=64; nerve-regrowth signal at 4 mg). Its own text read
+  "higher doses (2-4mg)" beside a 6 mg maximum tier.
+
+New `doseAnchor` on approved records: `label` (dulaglutide, tirzepatide,
+tesamorelin, pt141) or `protocol` (hcg, hmg, hgh, epo - approved drugs dosed
+off-label here). The badge reads "FDA-approved, label dose" or
+"FDA-approved, off-label dose" and carries the matching sentence.
+
+### Tests
+
+31 -> 35. New guards: every catalogue declares a provenance and the class is
+*derived* from the sizes rather than trusted; a claimed marketed strength must
+actually be offered; every size in every catalogue still calculates; only an
+approved record may carry a dose anchor; and no instruction may state a ceiling
+below the tier the page offers.
+
+That last one shipped broken - a stray control character where a word boundary
+belonged, so its pattern matched nothing and it passed unconditionally. Repaired
+and then **proved against the pre-fix text**: it fails on "increase to
+1000-1500mcg" beside a 2.5 mg tier. A guard that has never been shown to fail is
+not a guard.
+
+The provenance note renders under the same two controls as the instructions, so
+it inherits the same rule - it may state what a product *is*, never what volume
+to add. The existing "no instruction restates a number the user chooses" test now
+covers it.
+
 ## 2.2.0 - 2026-08-20
 
 Closes the four items `data/DATA-REVIEW.md` still listed as OPEN. Three needed

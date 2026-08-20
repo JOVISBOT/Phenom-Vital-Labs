@@ -31,6 +31,7 @@ import {
     RECON_VOLUMES,
     SYRINGE_SIZES
 } from '../js/calculator.js';
+import { vialProvenanceFor, evidenceFor } from '../js/ui.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const GOLDEN = join(HERE, 'golden.json');
@@ -406,6 +407,11 @@ test('no instruction restates a number the user chooses', () => {
             assert.ok(!(quantity.test(line) && owned.test(line)),
                 `${p.id}: instruction hardcodes a reconstitution figure the form owns - "${line}"`);
         }
+        // The vial-provenance note renders directly under the same two controls,
+        // so it is bound by the same rule: it may state what a product IS, never
+        // what volume to add.
+        assert.ok(!(quantity.test(p.labelSource) && owned.test(p.labelSource)),
+            `${p.id}: labelSource hardcodes a reconstitution figure the form owns - "${p.labelSource}"`);
     }
 });
 
@@ -434,6 +440,209 @@ test('evidence classes are assigned, not defaulted wholesale', () => {
     for (const id of ['tirzepatide', 'dulaglutide', 'tesamorelin', 'hmg']) {
         assert.equal(peptides.find(p => p.id === id).evidence, 'approved', `${id} downgraded`);
     }
+});
+
+// ---------------------------------------------------------------------------
+// Dose anchoring
+//
+// `evidence: approved` says an approved product exists. It used to also claim,
+// in the same sentence, that the doses were anchored to that product's label -
+// which was true of four of the eight. PT-141 offered a 2.5 mg maximum while
+// the only labelled dose is 1.75 mg.
+// ---------------------------------------------------------------------------
+
+test('only an approved record carries a dose anchor, and it always carries one', () => {
+    for (const p of peptides) {
+        if (p.evidence === 'approved') {
+            assert.ok(['label', 'protocol'].includes(p.doseAnchor),
+                `${p.id} is approved but its doseAnchor is ${p.doseAnchor}`);
+        } else {
+            assert.equal(p.doseAnchor, undefined,
+                `${p.id} is not approved but claims doseAnchor '${p.doseAnchor}'`);
+        }
+    }
+    const anchored = peptides.filter(p => p.doseAnchor === 'label');
+    const protocol = peptides.filter(p => p.doseAnchor === 'protocol');
+    assert.ok(anchored.length > 0 && protocol.length > 0,
+        'both anchors must stay populated or the badge stops discriminating');
+});
+
+test('the badge says label-anchored only when the record is', () => {
+    const byId = Object.fromEntries(peptides.map(p => [p.id, p]));
+
+    const onLabel = evidenceFor(byId.tirzepatide);
+    assert.equal(onLabel.anchor, 'label');
+    assert.match(onLabel.label, /label dose/);
+    assert.match(onLabel.blurb, /No dose offered here exceeds/);
+
+    const offLabel = evidenceFor(byId.hcg);
+    assert.equal(offLabel.anchor, 'protocol');
+    assert.match(offLabel.label, /off-label dose/);
+    assert.match(offLabel.blurb, /community and off-label protocol figures/);
+    assert.doesNotMatch(offLabel.blurb, /No dose offered here exceeds/);
+
+    // A non-approved record must never pick up the anchor sentence, even if a
+    // stray doseAnchor is left on it.
+    const stray = evidenceFor({ evidence: 'convention', doseAnchor: 'label' });
+    assert.equal(stray.anchor, null);
+    assert.equal(stray.label, 'Community convention');
+});
+
+test('a label-anchored record does not exceed its own label', () => {
+    // The three ceilings this pass moved, each to a figure on an FDA label.
+    const byId = Object.fromEntries(peptides.map(p => [p.id, p]));
+
+    // VYLEESI: 1.75 mg SC, max one dose in 24h, max 8 doses a month.
+    assert.equal(byId.pt141.high, 1.75);
+    assert.ok(byId.pt141.inst.some(l => /8 doses a month/.test(l)),
+        'the label caps monthly doses and the sheet must say so');
+
+    // EGRIFTA WR 1.28 mg, EGRIFTA SV 1.4 mg, original EGRIFTA 2 mg daily.
+    assert.deepEqual([byId.tesamorelin.low, byId.tesamorelin.med, byId.tesamorelin.high],
+        [1.28, 1.4, 2]);
+
+    // ARA-290 is not approved, so this is a trial anchor, not a label one:
+    // phase 2 randomised 1, 4 and 8 mg daily.
+    assert.equal(byId.ara290.evidence, 'trial');
+    assert.deepEqual([byId.ara290.low, byId.ara290.med, byId.ara290.high],
+        [1000, 4000, 8000]);
+});
+
+test('no instruction claims a ceiling below the tier the page offers', () => {
+    // PT-141 rendered "MAXIMUM DOSE 2.5 mg" directly above its own instruction
+    // to stop at 1.5 mg. Only ceiling phrasings count - "start at X" and "trial
+    // arms were X" are context, not a cap. Within a ceiling clause the HIGHEST
+    // figure is the cap: "increase to 1mg, then to 1.75mg" caps at 1.75.
+    const CEILING = /(?:increase to|up to|maximum of|no more than|not exceed)/i;
+    const FIGURE = /([0-9]+(?:\.[0-9]+)?)\s*(mcg|mg)\b/gi;
+    const toMcg = (v, u) => (u.toLowerCase() === 'mg' ? v * 1000 : v);
+
+    for (const p of peptides) {
+        if (p.doseUnit !== 'mcg' && p.doseUnit !== 'mg') continue;
+        const high = toMcg(p.high, p.doseUnit);
+        for (const line of p.inst) {
+            const at = line.search(CEILING);
+            if (at < 0) continue;
+            const figures = [...line.slice(at).matchAll(FIGURE)]
+                .map(m => toMcg(parseFloat(m[1]), m[2]));
+            if (!figures.length) continue;
+            const cap = Math.max(...figures);
+            assert.ok(cap >= high - 1e-9,
+                `${p.id}: text caps at ${cap}mcg but the page offers ${p.high}${p.doseUnit} - "${line}"`);
+        }
+    }
+});
+
+// ---------------------------------------------------------------------------
+// Vial-size provenance
+//
+// The catalogue used to be an unsourced list. Letting the user type their own
+// size took it out of the arithmetic; these guard the claim the screen now
+// makes about where each listed number came from.
+// ---------------------------------------------------------------------------
+
+test('every vial-size catalogue declares where it came from', () => {
+    for (const p of peptides) {
+        assert.ok(['label', 'mixed', 'vendor'].includes(p.vialSizeSource),
+            `${p.id}.vialSizeSource is '${p.vialSizeSource}'`);
+        assert.ok(Array.isArray(p.labelSizes), `${p.id} has no labelSizes array`);
+        assert.ok(typeof p.labelSource === 'string' && p.labelSource.length > 20,
+            `${p.id} has no readable labelSource`);
+    }
+});
+
+test('a size claimed as a marketed strength is actually offered', () => {
+    for (const p of peptides) {
+        for (const s of p.labelSizes) {
+            assert.ok(p.vialSizes.includes(s),
+                `${p.id} claims ${s}${p.vialUnit} is a labelled strength but does not list it`);
+        }
+        // The class has to follow from the sizes, not be asserted next to them.
+        const expected = p.labelSizes.length === 0 ? 'vendor'
+            : p.vialSizes.every(s => p.labelSizes.includes(s)) ? 'label'
+                : 'mixed';
+        assert.equal(p.vialSizeSource, expected,
+            `${p.id} is tagged '${p.vialSizeSource}' but its sizes say '${expected}'`);
+    }
+});
+
+test('provenance classes are assigned, not defaulted wholesale', () => {
+    const counts = { label: 0, mixed: 0, vendor: 0 };
+    for (const p of peptides) counts[p.vialSizeSource]++;
+    for (const [cls, n] of Object.entries(counts)) {
+        assert.ok(n > 0, `no peptide is '${cls}' - the marking has stopped discriminating`);
+    }
+    assert.equal(counts.label + counts.mixed + counts.vendor, peptides.length);
+
+    // Only a compound with a marketed product may claim a labelled strength.
+    for (const p of peptides) {
+        if (p.labelSizes.length > 0) {
+            assert.equal(p.evidence, 'approved',
+                `${p.id} claims a labelled vial strength but is not an approved product`);
+        }
+    }
+
+    // The specific figures that were wrong before this pass. Each is a US
+    // marketed strength; a regression would put a phantom vial back on screen.
+    const byId = Object.fromEntries(peptides.map(p => [p.id, p]));
+    assert.deepEqual(byId.dulaglutide.labelSizes, [0.75, 1.5, 3, 4.5]);
+    assert.deepEqual(byId.tirzepatide.labelSizes, [2.5, 5, 7.5, 10, 12.5, 15]);
+    assert.deepEqual(byId.tesamorelin.labelSizes, [2, 11.6]);
+    assert.deepEqual(byId.hcg.labelSizes, [5000, 10000]);
+    assert.deepEqual(byId.hmg.labelSizes, [75]);
+    assert.deepEqual(byId.epo.labelSizes, [2000, 3000, 4000, 10000, 20000, 40000]);
+
+    // PT-141 inverts it: bremelanotide IS approved, but only as an autoinjector,
+    // so there is no approved vial of it at any size.
+    assert.equal(byId.pt141.evidence, 'approved');
+    assert.deepEqual(byId.pt141.labelSizes, []);
+    assert.equal(byId.pt141.vialSizeSource, 'vendor');
+});
+
+test('every default and marketed size still calculates', () => {
+    for (const p of peptides) {
+        for (const size of p.vialSizes) {
+            const r = performCalculation(p, { weightLbs: REF_WEIGHT, vialSize: size });
+            if (p.noRecon) {
+                // A pre-filled device has a strength, not a concentration, and
+                // reports no draw at any of them.
+                assert.equal(r.concentration, null,
+                    `${p.id} is a pre-filled device but reported a concentration at ${size}${p.vialUnit}`);
+                continue;
+            }
+            assert.ok(Number.isFinite(r.concentration) && r.concentration > 0,
+                `${p.id} at ${size}${p.vialUnit} gives concentration ${r.concentration}`);
+            assert.ok(r.syringeUnits.med > 0,
+                `${p.id} at ${size}${p.vialUnit} draws ${r.syringeUnits.med} units`);
+        }
+        assert.ok(p.vialSizes.includes(p.vialSize),
+            `${p.id} defaults to ${p.vialSize}${p.vialUnit}, which is not in its own list`);
+    }
+});
+
+test('the provenance line matches the record it describes', () => {
+    const byId = Object.fromEntries(peptides.map(p => [p.id, p]));
+
+    const mixed = vialProvenanceFor(byId.hcg);
+    assert.equal(mixed.key, 'mixed');
+    assert.match(mixed.headline, /marked ✓ are marketed strengths/);
+    assert.match(mixed.headline, /size printed on your own vial/);
+    assert.match(mixed.source, /Novarel/);
+
+    const label = vialProvenanceFor(byId.dulaglutide);
+    assert.equal(label.key, 'label');
+    assert.match(label.headline, /Every size listed is a marketed strength/);
+    assert.match(label.headline, /printed on your own pen/);  // noRecon
+
+    const vendor = vialProvenanceFor(byId.bpc157);
+    assert.equal(vendor.key, 'vendor');
+    assert.match(vendor.headline, /None of these sizes is a marketed strength/);
+
+    // A record missing the field must fall to the weakest claim, never the
+    // strongest - the same defaulting rule the evidence badge follows.
+    const stripped = vialProvenanceFor({ name: 'x' });
+    assert.equal(stripped.key, 'vendor');
+    assert.deepEqual(stripped.labelSizes, []);
 });
 
 // ---------------------------------------------------------------------------

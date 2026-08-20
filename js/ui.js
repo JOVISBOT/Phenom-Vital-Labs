@@ -23,8 +23,7 @@ export const DISCLAIMER_BODY =
 export const EVIDENCE = {
     approved: {
         label: 'FDA-approved drug',
-        blurb: 'An approved product containing this active ingredient is marketed in the US, '
-            + 'and the doses here are anchored to its labelled strengths.'
+        blurb: 'An approved product containing this active ingredient is marketed in the US.'
     },
     trial: {
         label: 'Human trial data',
@@ -39,13 +38,68 @@ export const EVIDENCE = {
 };
 
 /**
+ * Being an approved drug and being dosed the way the label says are two
+ * different claims, and the badge used to make both at once for all eight
+ * approved records. Four of them carry community or off-label protocol figures
+ * that no label prints - PT-141 offered a maximum 43% above the only labelled
+ * dose while calling itself label-anchored.
+ */
+export const DOSE_ANCHOR = {
+    label: {
+        suffix: 'label dose',
+        blurb: 'No dose offered here exceeds a strength or dose on that label.'
+    },
+    protocol: {
+        suffix: 'off-label dose',
+        blurb: 'The doses here are community and off-label protocol figures. The label '
+            + 'prints different ones, for a different purpose, under supervision.'
+    }
+};
+
+/**
  * Evidence class for a peptide, defaulting to the weakest claim.
  * @param {Object} peptide
- * @returns {{key: string, label: string, blurb: string}}
+ * @returns {{key: string, label: string, blurb: string, anchor: string|null}}
  */
 export function evidenceFor(peptide) {
     const key = EVIDENCE[peptide.evidence] ? peptide.evidence : 'convention';
-    return { key, ...EVIDENCE[key] };
+    const anchor = key === 'approved' && DOSE_ANCHOR[peptide.doseAnchor] ? peptide.doseAnchor : null;
+    const base = EVIDENCE[key];
+    return {
+        key,
+        anchor,
+        label: anchor ? `FDA-approved, ${DOSE_ANCHOR[anchor].suffix}` : base.label,
+        blurb: anchor ? `${base.blurb} ${DOSE_ANCHOR[anchor].blurb}` : base.blurb
+    };
+}
+
+/**
+ * Where a peptide's vial-size catalogue came from.
+ *
+ * Letting the user type their own size took the catalogue out of the
+ * arithmetic; it did not take it off the screen. A list of unmarked numbers
+ * reads as equally authoritative whether a number was printed on an approved
+ * carton or copied off a vendor's shop page. `vialSizeSource` says which.
+ *
+ * @param {Object} peptide
+ * @returns {{key: string, headline: string, source: string, labelSizes: number[]}}
+ */
+export function vialProvenanceFor(peptide) {
+    const key = ['label', 'mixed', 'vendor'].includes(peptide.vialSizeSource)
+        ? peptide.vialSizeSource
+        : 'vendor';
+    const noun = peptide.noRecon ? 'pen' : 'vial';
+    const headline = key === 'label'
+        ? `Every size listed is a marketed strength.`
+        : key === 'mixed'
+            ? `Sizes marked ✓ are marketed strengths. The rest are vendor convention.`
+            : `None of these sizes is a marketed strength.`;
+    return {
+        key,
+        headline: `${headline} Whatever the list says, use the size printed on your own ${noun}.`,
+        source: peptide.labelSource || '',
+        labelSizes: peptide.labelSizes || []
+    };
 }
 
 /**
@@ -323,10 +377,12 @@ export function updateVialSizeForPeptide(peptide, preferred) {
     const select = document.getElementById('vialSize');
     const custom = document.getElementById('vialSizeCustom');
     const label = document.getElementById('vialSizeLabelText');
+    const prov = document.getElementById('vialSizeProvenance');
 
     if (!peptide) {
         select.innerHTML = '<option value="">Select a peptide first</option>';
         select.disabled = true;
+        if (prov) { prov.hidden = true; prov.textContent = ''; }
         setCustomVial(false);
         return;
     }
@@ -338,8 +394,22 @@ export function updateVialSizeForPeptide(peptide, preferred) {
     // A pen has a strength, not a vial size, and nothing is added to it.
     if (label) label.textContent = peptide.noRecon ? 'Pen Strength' : 'Vial Size';
 
+    // A size that matches a marketed product is marked, so the list stops
+    // presenting a vendor's habit and an FDA-labelled strength as the same kind
+    // of number. See vialProvenanceFor.
+    const provenance = vialProvenanceFor(peptide);
+    if (prov) {
+        prov.hidden = false;
+        prov.textContent = provenance.source
+            ? `${provenance.headline} ${provenance.source}.`
+            : provenance.headline;
+    }
+
     select.innerHTML = peptide.vialSizes
-        .map(s => `<option value="${s}"${s === chosen ? ' selected' : ''}>${s}${peptide.vialUnit}</option>`)
+        .map(s => {
+            const marked = provenance.labelSizes.includes(s) ? ' ✓' : '';
+            return `<option value="${s}"${s === chosen ? ' selected' : ''}>${s}${peptide.vialUnit}${marked}</option>`;
+        })
         .join('')
         // OPEN 2 was "fourteen of our vial sizes are convention, not evidence".
         // The honest fix is not a better guess: it is letting the user enter the

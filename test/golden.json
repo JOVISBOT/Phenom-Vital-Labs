@@ -84,14 +84,14 @@
     "vial": "10mg",
     "reconMl": 1,
     "doses": {
-      "low": 2000,
+      "low": 1000,
       "med": 4000,
-      "high": 6000
+      "high": 8000
     },
     "units": {
-      "low": 20,
+      "low": 10,
       "med": 40,
-      "high": 60
+      "high": 80
     },
     "vials": 34
   },
@@ -597,13 +597,13 @@
     "reconMl": 2,
     "doses": {
       "low": 0.5,
-      "med": 1.5,
-      "high": 2.5
+      "med": 1,
+      "high": 1.75
     },
     "units": {
       "low": 10,
-      "med": 30,
-      "high": 50
+      "med": 20,
+      "high": 35
     },
     "vials": 1
   },
@@ -660,16 +660,16 @@
     "vial": "5mg",
     "reconMl": 1,
     "doses": {
-      "low": 1,
-      "med": 2,
-      "high": 2.5
+      "low": 1.28,
+      "med": 1.4,
+      "high": 2
     },
     "units": {
-      "low": 20,
-      "med": 40,
-      "high": 50
+      "low": 25.6,
+      "med": 28,
+      "high": 40
     },
-    "vials": 34
+    "vials": 24
   },
   "thymalin": {
     "doseUnit": "mcg",

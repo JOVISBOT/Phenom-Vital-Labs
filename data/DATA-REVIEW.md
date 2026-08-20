@@ -144,15 +144,104 @@ over-claimed.
 
 ---
 
+## RESOLVED 2026-08-20 (v5, v6) - the vial catalogue, and what the badge may claim
+
+Applied by `tools/apply-vial-sources.js` and `tools/apply-dose-anchors.js`.
+
+### v5 - every vial size now says where it came from
+
+The v4 answer to "the catalogue is unsourced" was to let the user type their own
+size, which takes the catalogue out of the *arithmetic*. It does not take it off
+the *screen*: the dropdown still showed a column of numbers with nothing to
+distinguish a strength printed on an FDA carton from one copied off a vendor's
+shop page.
+
+Sourced against the openFDA NDC directory (2026-08-19) and, where the NDC entry
+is a kit and carries no strength, the FDA label's HOW SUPPLIED section:
+
+| Peptide | Catalogue was | Marketed strengths | Result |
+|---|---|---|---|
+| `dulaglutide` | 0.75 / 1.5 / 3 / 4.5 mg | the same four | **label** - the only fully anchored record |
+| `tirzepatide` | 5-80 mg | 2.5 / 5 / 7.5 / 10 / 12.5 / 15 mg | three real strengths were **missing**; six offered sizes match no product |
+| `tesamorelin` | 2 / 5 / 10 / 20 mg | 2 mg (EGRIFTA SV), 11.6 mg (EGRIFTA WR) | WR's vial was **absent entirely** |
+| `hcg` | 1,000 / 2,000 / 5,000 / 10,000 IU | 5,000 and 10,000 USP units | the two smallest match no US product |
+| `hmg` | 75 / 150 IU | 75 IU only | which is *why* this record pools vials |
+| `hgh` | 10 / 12 / 15 / 24 / 36 IU | 15, 18, 36, 72 IU | 18 and 72 were missing (Humatrope 6 and 24 mg) |
+| `epo` | 1,000-10,000 IU | 2,000 to 40,000 IU/ml | a **1,000 IU that does not exist**; the two largest missing |
+| `pt141` | 5 / 10 mg | none | see below |
+
+Marketed strengths were **added** rather than merely flagged - the point is that
+the real sizes are present. Sizes with no approved counterpart stay, tagged,
+because a compounded or research vial is still a vial someone holds.
+
+**PT-141 inverts the exercise.** Bremelanotide *is* approved - as Vyleesi, a
+1.75 mg / 0.3 ml pre-filled autoinjector. There is no approved vial of it at any
+size, so the catalogue stays vendor-only and the note says exactly that. Adding
+1.75 to a list of vial sizes would have implied a vial nobody sells.
+
+Counts: **1 label, 6 mixed, 37 vendor.** A test derives the class from the sizes
+rather than trusting the field, so a record cannot be tagged `label` while
+offering a size no product uses.
+
+### v6 - the `approved` badge was making two claims, and only one was true
+
+Found by reading the rendered PT-141 page after v5 shipped. It said, at once:
+
+- **FDA-APPROVED DRUG** - "the doses here are anchored to its labelled strengths"
+- **None of these sizes is a marketed strength** (the v5 note, correct)
+- **MAXIMUM DOSE 2.5 mg** - 43% above the only labelled dose
+- *"Can increase to 1000-1500mcg if tolerated"* - its own text, capping at 1.5 mg
+
+Four claims about one compound, no two agreeing. The badge sentence was written
+once for eight records and is true of four.
+
+**Three tier sets moved onto their anchors:**
+
+| Peptide | Was | Now | Anchor |
+|---|---|---|---|
+| `pt141` | 0.5 / 1.5 / 2.5 mg | **0.5 / 1 / 1.75 mg** | VYLEESI label: 1.75 mg SC, max one dose per 24h, max 8 doses a month |
+| `tesamorelin` | 1 / 2 / 2.5 mg | **1.28 / 1.4 / 2 mg** | the labelled daily doses of EGRIFTA WR, EGRIFTA SV and the original EGRIFTA. Not a ladder - the SV label states 1.4 mg and 2 mg give similar Cmax and AUC |
+| `ara290` | 2 / 4 / 6 mg | **1 / 4 / 8 mg** | phase 2 in painful sarcoid neuropathy randomised 1, 4 and 8 mg daily for 28 days; the nerve-regrowth signal was at 4 mg |
+
+**And the claim itself is now per record.** New `doseAnchor`, on approved records
+only:
+
+| | Meaning | Records |
+|---|---|---|
+| `label` | no tier exceeds a dose or strength on the approved label | dulaglutide, tirzepatide, tesamorelin, pt141 |
+| `protocol` | community or off-label practice; the label prints different figures for a different purpose | hcg, hmg, hgh, epo |
+
+The badge now reads "FDA-approved, label dose" or "FDA-approved, off-label dose"
+and carries the matching sentence, on the card and in the PDF.
+
+### The guard that could not fire
+
+The regression test written for the PT-141 contradiction - *no instruction may
+state a ceiling below the tier the page offers* - shipped with a stray control
+character where a word boundary belonged, so its pattern matched nothing and it
+passed unconditionally. Repaired, then **proved against the pre-fix text**: it
+fails on "increase to 1000-1500mcg" beside a 2.5 mg tier, and passes on the
+corrected line. A guard that has never been shown to fail is not a guard.
+
+---
+
 ## STILL OPEN
 
-**1. Vial-size catalogues remain unsourced.** They are now defaults rather than
-constraints - the user can type any size - but the pre-filled list is still
-convention for most research compounds. Worth a pass against a real price list.
+**1. Vial sizes for the 37 vendor-class records remain unsourceable.** Not for
+want of looking: no approved product contains those compounds, so there is no
+label to check them against. They are now *stated* to be vendor convention on
+the screen and in the PDF, and the typed-size control means the catalogue never
+has to be right. This is disclosed rather than fixed, and cannot be fixed.
 
-**2. No dose here is validated for human use.** Unchanged, and now stated per
-record rather than once at the bottom of the page. The `trial` anchors
-(cagrilintide, retatrutide, tirzepatide, dulaglutide) are trial arms and label
-strengths from supervised settings, not self-administration guidance. BPC-157 and
-TB-500 have no human dosing study at all, and the FDA compounding advisory
-committee voted 11-3 against adding either to the 503A bulks list in July 2026.
+**2. No dose here is validated for human use.** Unchanged, and now stated at two
+levels: how well the compound is evidenced (`evidence`) and whether the specific
+figures come off a label (`doseAnchor`). The `trial` anchors (cagrilintide,
+retatrutide, ara290) are trial arms from supervised settings, not
+self-administration guidance. BPC-157 and TB-500 have no human dosing study at
+all, and the FDA compounding advisory committee voted 11-3 against adding either
+to the 503A bulks list in July 2026.
+
+**3. Four records are approved drugs dosed off-label here** (hcg, hmg, hgh,
+epo). That is now labelled rather than hidden, but the figures themselves are
+still community practice. Anchoring them would mean changing what the site is
+for, which is a decision about the product, not a defect to fix.

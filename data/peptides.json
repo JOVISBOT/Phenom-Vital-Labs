@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 6,
   "peptides": [
     {
       "id": "ace031",
@@ -24,6 +24,9 @@
         20,
         30
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 2,
       "f": 1,
       "wks": 6,
@@ -80,6 +83,9 @@
         20,
         30
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 7,
       "wks": 12,
@@ -136,6 +142,9 @@
         20,
         30
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 7,
       "wks": 5,
@@ -191,6 +200,9 @@
         50,
         100
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 7,
       "wks": 2,
@@ -246,6 +258,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 21,
       "wks": 12,
@@ -291,9 +306,9 @@
       "freq": "Daily or 3x weekly",
       "cycle": "12 weeks",
       "doseUnit": "mcg",
-      "low": 2000,
+      "low": 1000,
       "med": 4000,
-      "high": 6000,
+      "high": 8000,
       "vialUnit": "mg",
       "vialSize": 10,
       "vialSizes": [
@@ -301,6 +316,9 @@
         10,
         20
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 7,
       "wks": 12,
@@ -326,8 +344,8 @@
         "General: generally well-tolerated"
       ],
       "inst": [
-        "Subcutaneous injection daily or 3x weekly",
-        "Higher doses (2-4mg) for severe neuropathy",
+        "Subcutaneous injection daily",
+        "Trial arms were 1, 4 and 8mg daily for 28 days - the nerve-regrowth signal was at 4mg",
         "Commit to 12 weeks for full effects",
         "Can combine with other nerve support",
         "Monitor pain levels and nerve function"
@@ -357,6 +375,9 @@
         20,
         30
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 2,
       "f": 7,
       "wks": 12,
@@ -408,6 +429,9 @@
       "vialSizes": [
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "components": [
         {
@@ -463,6 +487,9 @@
       "vialSizes": [
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 2,
       "components": [
         {
@@ -518,6 +545,9 @@
       "vialSizes": [
         20
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "components": [
         {
@@ -575,6 +605,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 7,
       "wks": 4,
@@ -630,6 +663,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 2,
       "f": 1,
       "wks": 26,
@@ -683,6 +719,9 @@
       "vialSizes": [
         5
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "components": [
         {
@@ -746,6 +785,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 2,
       "wks": 12,
@@ -800,6 +842,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 2,
       "f": 21,
       "wks": 12,
@@ -854,6 +899,9 @@
         10,
         20
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 7,
       "wks": 3,
@@ -907,6 +955,9 @@
         10,
         20
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 7,
       "wks": 3,
@@ -964,6 +1015,9 @@
         20,
         30
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 1,
       "wks": 1,
@@ -1016,6 +1070,9 @@
         20,
         30
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 7,
       "wks": 6,
@@ -1070,6 +1127,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 7,
       "wks": 4,
@@ -1128,6 +1188,14 @@
         3,
         4.5
       ],
+      "vialSizeSource": "label",
+      "labelSizes": [
+        0.75,
+        1.5,
+        3,
+        4.5
+      ],
+      "labelSource": "Trulicity single-dose pre-filled pen - 0.75, 1.5, 3 and 4.5 mg per 0.5 ml",
       "reconMl": 1,
       "f": 1,
       "wks": 16,
@@ -1166,7 +1234,8 @@
       "noRecon": true,
       "device": "pen",
       "deviceNote": "Trulicity is a single-dose pre-filled pen. The dose is the pen strength you are prescribed - there is nothing to reconstitute and nothing to draw. The strengths listed are the marketed pen sizes.",
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "label"
     },
     {
       "id": "epo",
@@ -1188,8 +1257,20 @@
         2000,
         3000,
         4000,
-        10000
+        10000,
+        20000,
+        40000
       ],
+      "vialSizeSource": "mixed",
+      "labelSizes": [
+        2000,
+        3000,
+        4000,
+        10000,
+        20000,
+        40000
+      ],
+      "labelSource": "Epogen and Retacrit - 2,000 to 40,000 IU per ml, supplied as a ready-made solution in single-dose and multi-dose vials rather than as a powder",
       "reconMl": 1,
       "f": 3,
       "wks": 4,
@@ -1221,7 +1302,8 @@
         "Target Hgb 10-12 g/dL",
         "Medical supervision required"
       ],
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "protocol"
     },
     {
       "id": "follistatin",
@@ -1243,6 +1325,9 @@
         2,
         5
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 2,
       "wks": 10,
@@ -1297,6 +1382,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 1,
       "wks": 1,
@@ -1351,6 +1439,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 21,
       "wks": 12,
@@ -1402,6 +1493,9 @@
         10,
         15
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 21,
       "wks": 10,
@@ -1457,6 +1551,9 @@
         10,
         15
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 21,
       "wks": 10,
@@ -1513,6 +1610,9 @@
         600,
         1200
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 3,
       "wks": 12,
@@ -1566,6 +1666,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 21,
       "wks": 2,
@@ -1619,6 +1722,12 @@
         5000,
         10000
       ],
+      "vialSizeSource": "mixed",
+      "labelSizes": [
+        5000,
+        10000
+      ],
+      "labelSource": "Novarel is supplied at 5,000 and 10,000 USP units and Pregnyl at 10,000 USP units, as multiple-dose vials",
       "reconMl": 3,
       "f": 3,
       "wks": 4,
@@ -1653,7 +1762,8 @@
         "Monitor testosterone and estradiol",
         "Keep refrigerated after reconstitution"
       ],
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "protocol"
     },
     {
       "id": "hexarelin",
@@ -1675,6 +1785,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 21,
       "wks": 8,
@@ -1730,9 +1843,19 @@
         10,
         12,
         15,
+        18,
         24,
-        36
+        36,
+        72
       ],
+      "vialSizeSource": "mixed",
+      "labelSizes": [
+        15,
+        18,
+        36,
+        72
+      ],
+      "labelSource": "Genotropin 5 mg (15 IU) and 12 mg (36 IU), Humatrope 6 mg (18 IU), 12 mg (36 IU) and 24 mg (72 IU) lyophilised cartridges. Norditropin and Omnitrope are pre-filled solutions, so nothing is mixed or drawn from those",
       "reconMl": 2,
       "f": 7,
       "wks": 24,
@@ -1766,7 +1889,8 @@
         "Minimum 6-month commitment for benefits",
         "Requires physician supervision"
       ],
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "protocol"
     },
     {
       "id": "hmg",
@@ -1787,6 +1911,11 @@
         75,
         150
       ],
+      "vialSizeSource": "mixed",
+      "labelSizes": [
+        75
+      ],
+      "labelSource": "MENOPUR 75 IU FSH + 75 IU LH per single-dose vial - the only US strength, which is why larger doses pool several vials",
       "reconMl": 1,
       "f": 3,
       "wks": 4,
@@ -1820,7 +1949,8 @@
       ],
       "multiVial": true,
       "multiVialNote": "Menotropins are supplied as 75 IU vials. Reconstituting several vials into a single syringe is the method described on the label, so a dose above one vial is normal practice here rather than an error.",
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "protocol"
     },
     {
       "id": "melanotan2",
@@ -1840,6 +1970,9 @@
       "vialSizes": [
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 3,
       "wks": 4,
@@ -1897,6 +2030,9 @@
         10,
         20
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 3,
       "wks": 4,
@@ -1955,6 +2091,9 @@
         1000,
         2000
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 7,
       "wks": 12,
@@ -2011,6 +2150,9 @@
         2,
         5
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 3,
       "wks": 4,
@@ -2057,14 +2199,17 @@
       "cycle": "As needed",
       "doseUnit": "mg",
       "low": 0.5,
-      "med": 1.5,
-      "high": 2.5,
+      "med": 1,
+      "high": 1.75,
       "vialUnit": "mg",
       "vialSize": 10,
       "vialSizes": [
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "Bremelanotide is approved as Vyleesi, a 1.75 mg / 0.3 ml pre-filled autoinjector. No approved product is supplied as a vial, so every size here is vendor convention",
       "reconMl": 2,
       "f": 1,
       "wks": 1,
@@ -2094,14 +2239,16 @@
         "Alcohol: interaction studies incomplete"
       ],
       "inst": [
-        "Inject 30-60 minutes before sexual activity",
-        "Subcutaneous abdominal injection",
-        "Start with 500mcg to assess nausea",
-        "Can increase to 1000-1500mcg if tolerated",
+        "Inject 45-60 minutes before sexual activity",
+        "Subcutaneous abdominal or thigh injection",
+        "Start with 0.5mg to assess nausea",
+        "Can increase to 1mg, then to 1.75mg - the approved Vyleesi dose and the ceiling here",
+        "No more than one dose in 24 hours, and no more than 8 doses a month",
         "Take with anti-nausea medication if needed",
         "Effects last 2-4 hours typically"
       ],
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "label"
     },
     {
       "id": "retatrutide",
@@ -2128,6 +2275,9 @@
         50,
         60
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 2,
       "f": 1,
       "wks": 48,
@@ -2187,6 +2337,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 3,
       "f": 7,
       "wks": 12,
@@ -2240,6 +2393,9 @@
         5,
         10
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 2,
       "wks": 6,
@@ -2284,17 +2440,24 @@
       "freq": "Daily",
       "cycle": "12 on, 4 off",
       "doseUnit": "mg",
-      "low": 1,
-      "med": 2,
-      "high": 2.5,
+      "low": 1.28,
+      "med": 1.4,
+      "high": 2,
       "vialUnit": "mg",
       "vialSize": 5,
       "vialSizes": [
         2,
         5,
         10,
+        11.6,
         20
       ],
+      "vialSizeSource": "mixed",
+      "labelSizes": [
+        2,
+        11.6
+      ],
+      "labelSource": "EGRIFTA SV is supplied as a 2 mg vial and EGRIFTA WR as an 11.6 mg vial; their labelled daily doses are 1.4 mg and 1.28 mg",
       "reconMl": 1,
       "f": 7,
       "wks": 12,
@@ -2322,13 +2485,15 @@
         "HIV patients: specifically studied population"
       ],
       "inst": [
-        "Subcutaneous injection in abdominal area (target zone)",
-        "Bedtime preferred but morning also acceptable",
-        "Monitor injection sites for reactions",
-        "Combine with diet/exercise for optimal VAT reduction",
-        "Regular monitoring of IGF-1 and glucose recommended"
+        "Once-daily subcutaneous injection into the abdomen",
+        "These three are the labelled daily doses of the three formulations, not an escalating ladder",
+        "EGRIFTA WR 1.28mg, EGRIFTA SV 1.4mg and the original EGRIFTA 2mg give similar systemic exposure",
+        "Rotate injection sites to limit local reactions",
+        "Effect on visceral fat is assessed at 6 months, not weeks",
+        "Reconstitute with the vial size and volume set above"
       ],
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "label"
     },
     {
       "id": "thymalin",
@@ -2349,6 +2514,9 @@
         10,
         20
       ],
+      "vialSizeSource": "vendor",
+      "labelSizes": [],
+      "labelSource": "No FDA-approved product contains this compound, so no size here is a labelled strength - these are the sizes research vendors commonly supply",
       "reconMl": 1,
       "f": 7,
       "wks": 2,
@@ -2402,8 +2570,11 @@
       "vialUnit": "mg",
       "vialSize": 20,
       "vialSizes": [
+        2.5,
         5,
+        7.5,
         10,
+        12.5,
         15,
         20,
         30,
@@ -2412,6 +2583,16 @@
         60,
         80
       ],
+      "vialSizeSource": "mixed",
+      "labelSizes": [
+        2.5,
+        5,
+        7.5,
+        10,
+        12.5,
+        15
+      ],
+      "labelSource": "Mounjaro and Zepbound - 2.5 to 15 mg per 0.5 ml, supplied ready-made as a solution rather than as a powder. Sizes above 15 mg are compounded or research vials with no approved counterpart",
       "reconMl": 1,
       "f": 1,
       "wks": 20,
@@ -2449,7 +2630,8 @@
         "Subcutaneous injection weekly",
         "Monitor for GI tolerance at each escalation"
       ],
-      "evidence": "approved"
+      "evidence": "approved",
+      "doseAnchor": "label"
     }
   ]
 }

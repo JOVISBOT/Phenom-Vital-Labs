@@ -4,7 +4,7 @@
  * @module pdfGenerator
  */
 
-import { DISCLAIMER_TITLE, DISCLAIMER_BODY, formatDose, evidenceFor } from './ui.js';
+import { DISCLAIMER_TITLE, DISCLAIMER_BODY, formatDose, evidenceFor, vialProvenanceFor } from './ui.js';
 
 export function generatePDF(peptide, results, inputs, previewMode) {
     try {
@@ -249,11 +249,16 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         doc.text('PROTOCOL DETAILS', leftX, y);
         y += 5;
 
+        // Whether the size this sheet was calculated at is a strength an approved
+        // product is actually supplied in, or a research vendor's own number.
+        const prov = vialProvenanceFor(peptide);
+        const sizeProv = prov.labelSizes.includes(results.vialSize) ? 'labelled strength' : 'vendor size';
+
         const details = [
             ['Half-Life', peptide.halfLife || 'N/A'],
             ['Frequency', peptide.freq || 'N/A'],
             ['Cycle', `${peptide.cycle || (peptide.wks || 0) + ' weeks'} (${results.dosesPerCycle} inj)`],
-            [results.noRecon ? 'Pens' : 'Vials', `${results.vialsNeeded} x ${results.vialSize}${vialUnit}`],
+            [results.noRecon ? 'Pens' : 'Vials', `${results.vialsNeeded} x ${results.vialSize}${vialUnit} (${sizeProv})`],
             ['Evidence', evidenceFor(peptide).label],
             ['Timing', getTiming(peptide)],
             ['For', `${inputs.weight} lbs, ${inputs.age} yrs (reference only)`]
@@ -351,7 +356,7 @@ export function generatePDF(peptide, results, inputs, previewMode) {
         // paragraph reads the same over a Mounjaro label strength and over a forum
         // figure for a compound that has never been in a human.
         const ev = evidenceFor(peptide);
-        const body = doc.splitTextToSize(`${ev.label.toUpperCase()}: ${ev.blurb} ${DISCLAIMER_BODY}`, contentW - 8);
+        const body = doc.splitTextToSize(`${ev.label.toUpperCase()}: ${ev.blurb} ${DISCLAIMER_BODY}${prov.source ? ` VIAL SIZES: ${prov.source}.` : ''}`, contentW - 8);
         const discH = 7 + body.length * 2.6;
 
         doc.setFillColor(254, 242, 242);
