@@ -27,8 +27,9 @@ It is worded as "confirm against the vendor's own reconstitution note", never as
 a refusal to compute: 400 mg/ml is a general handling ceiling, not a measurement
 of these two compounds.
 
-In the app it renders as a warning above the tier cards; on the 43
-reconstituted pages it flags the concentration cell in the reconstitution table.
+In the app it renders as a warning above the tier cards; on the peptide pages it
+flags the concentration cell in the reconstitution table, and the paragraph
+explaining what the flag means appears only where a row actually carries one.
 `nadplus` now reads its whole story at a glance -- 1 ml will not dissolve, 3 and
 5 ml will not fit one draw, 2 ml is the only clean row. Styling goes through the
 existing `--tint-warn` tokens, so dark mode and the print sheet follow with no
@@ -58,9 +59,9 @@ breaking them -- raising the ceiling, then renaming the flag -- and watching eac
 go red.
 
 That second guard caught itself while being written. It first matched the bare
-phrase "may not dissolve", which the explanatory note now carries on all 43
-pages, so it could not tell a flagged row from an unflagged page. It matches the
-flag element instead.
+phrase "may not dissolve", which the explanatory note under the table also
+contains -- so it passed on any page carrying the note regardless of whether a
+row was flagged. It matches the flag element instead.
 
 ## 2.5.0 - 2026-08-20
 

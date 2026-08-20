@@ -13,7 +13,10 @@
 .crumbs{font-size:0.82rem;color:var(--muted);margin-bottom:24px}
 .crumbs a{color:var(--primary);text-decoration:none}
 .crumbs a:hover{text-decoration:underline}
-.crumbs span[aria-hidden]{margin:0 6px;color:var(--border)}
+.crumbs span[aria-hidden]{margin:0 6px;color:var(--muted);opacity:0.55}
+/* --border on the page background is 1.2:1 in light and 1.6:1 in dark -- the
+   separators were invisible and the trail read as three run-together words.
+   Decorative, so it does not owe 4.5:1, but it does owe being seen. */
 
 .intro-left{text-align:left;margin-bottom:20px}
 .peptide-page h2{font-size:1.25rem;font-weight:700;margin-bottom:14px}

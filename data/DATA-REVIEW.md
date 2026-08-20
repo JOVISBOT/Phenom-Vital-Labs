@@ -315,8 +315,8 @@ note, and not something to change on a guess. Reported as a NOTE, not an error.
 visitor never saw: the calculator printed `500 mg/ml` and a tidy 50-unit draw
 with nothing saying the solution may not exist. `solubilityCheck` in
 `calculator.js` flags any mg-scale vial x water combination above the ceiling,
-in the app and in the reconstitution table on all 43 reconstituted pages, and
-names the water volume that clears it. Nine combinations across these two
+in the app and in the reconstitution table on the peptide pages, and names the
+water volume that clears it. Nine combinations across these two
 records are affected; nothing else in the catalogue comes near.
 
 **The open decision, sharpened.** The flagged row is not an edge case a visitor

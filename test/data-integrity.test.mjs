@@ -176,9 +176,11 @@ test('the page flags the concentration it cannot dissolve', () => {
     // The flag has to survive the trip through build-pages.js, or the 44 static
     // pages keep publishing a number the app now warns about.
     const nad = readFileSync(join(ROOT, 'p/nadplus/index.html'), 'utf8');
-    // Match the flag element, not the phrase: the explanatory note under the
-    // table says "may not dissolve" on all 43 pages, so the bare phrase cannot
-    // tell a flagged row from an unflagged page. This assertion caught itself.
+    // Match the flag element, not the bare phrase. The explanatory note under
+    // the table also contains the words "may not dissolve", so a phrase match
+    // passes on any page carrying the note whether or not a row is flagged.
+    // The note is conditional today, which makes the distinction invisible --
+    // exactly the reason to assert on the element and not rely on that.
     const FLAG = /<span class="flag">may not dissolve<\/span>/;
     assert.match(nad, FLAG, 'nadplus 1ml row must carry the flag');
     // The template wraps that sentence across source lines, so match on the
