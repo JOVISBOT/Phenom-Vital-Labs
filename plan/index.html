@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peptide Mix &amp; Cycle Planner | Phenom Vital Labs</title>
+    <meta name="description" content="Work out how much bacteriostatic water to add so the draw lands on a readable mark, how long a reconstituted vial lasts before it empties or expires, and how many vials a full cycle takes.">
+    <link rel="canonical" href="https://jovisbot.github.io/Phenom-Vital-Labs/plan/">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#1e40af">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Phenom Vital Labs">
+    <meta property="og:title" content="Peptide Mix &amp; Cycle Planner">
+    <meta property="og:description" content="How much water to add, how long the vial lasts, and how many vials the run takes. Shows the arithmetic.">
+    <meta property="og:url" content="https://jovisbot.github.io/Phenom-Vital-Labs/plan/">
+    <meta property="og:image" content="https://jovisbot.github.io/Phenom-Vital-Labs/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Phenom Vital Labs peptide mix and cycle planner">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Peptide Mix &amp; Cycle Planner">
+    <meta name="twitter:description" content="How much water to add, how long the vial lasts, and how many vials the run takes.">
+    <meta name="twitter:image" content="https://jovisbot.github.io/Phenom-Vital-Labs/og-image.png">
+
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="../manifest.json">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css?v=32">
+    <link rel="stylesheet" href="../css/pages.css?v=32">
+    <link rel="stylesheet" href="../css/plan.css?v=32">
+    <link rel="stylesheet" href="../css/theme.css?v=32">
+
+    <!-- Theme before first paint. Inlined from js/theme.js THEME_BOOT so the
+         boot logic and the toggle cannot drift; a test asserts they match. -->
+    <script>(function(){try{var s=localStorage.getItem('pvl-theme');var d=s?s==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.setAttribute('data-theme',d?'dark':'light');}catch(e){}})();</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Peptide Dosage Calculator","item":"https://jovisbot.github.io/Phenom-Vital-Labs/"},{"@type":"ListItem","position":2,"name":"Mix and cycle planner","item":"https://jovisbot.github.io/Phenom-Vital-Labs/plan/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much bacteriostatic water should I add to a peptide vial?","acceptedAnswer":{"@type":"Answer","text":"Enough that the dose you take lands on a mark you can read. Water sets the concentration, not the amount of peptide - the vial holds the same milligrams whatever you add - so more water means a longer pull for the same dose. The planner compares every volume from 0.5 ml to 5 ml and picks the one whose draw is a whole unit, fits the barrel, and still fits the vial, which is commonly 2-3 ml of glass."}},{"@type":"Question","name":"How long does a reconstituted peptide vial last?","acceptedAnswer":{"@type":"Answer","text":"Refrigerated and mixed with bacteriostatic water, roughly 28 to 42 days - the preservative is what buys the weeks. Mixed with plain sterile water there is no preservative and the vial is single-use. The number that matters is whichever comes first: the day it runs out, or the day the window closes. A smaller draw can flip a vial from one to the other without anything on the vial changing."}},{"@type":"Question","name":"How many vials does a peptide cycle take?","acceptedAnswer":{"@type":"Answer","text":"Total doses divided by doses per vial, rounded up. Doses per vial is the reconstituted volume divided by the volume of one draw, so it moves with the dose but not with the water. The planner also dates each vial, because vials are mixed one after another and a later vial in a long run can sit past its shelf life while an earlier one never came close."}}]}</script>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a class="brand-text" href="../"><span>Phenom</span> Vital Labs</a>
+            <div class="header-actions">
+                <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+                <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <nav class="crumbs" aria-label="Breadcrumb">
+            <a href="../">Calculator</a><span aria-hidden="true">&rsaquo;</span>Mix &amp; cycle planner
+        </nav>
+
+        <div class="intro intro-left">
+            <h1>Mix &amp; cycle planner</h1>
+            <p>
+                How much water to add so the draw lands on a mark you can read, where the vial in your fridge
+                stands, and how many vials the whole run takes.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="form-title">Your protocol</div>
+
+            <fieldset class="plan-group">
+                <legend>The vial</legend>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="peptide"><span class="label-icon" aria-hidden="true">&#128300;</span> Peptide</label>
+                        <select id="peptide">
+                            <option value="">Select peptide...</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="vialSize"><span class="label-icon" aria-hidden="true">&#128138;</span> Vial size</label>
+                        <div class="with-unit">
+                            <input type="number" id="vialSize" min="0" step="any" placeholder="10">
+                            <span class="unit" id="vialUnit" aria-hidden="true">mg</span>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="reconMl"><span class="label-icon" aria-hidden="true">&#128167;</span> BAC water added</label>
+                        <div class="with-unit">
+                            <input type="number" id="reconMl" min="0" step="any" placeholder="3">
+                            <span class="unit" aria-hidden="true">ml</span>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="diluent"><span class="label-icon" aria-hidden="true">&#129514;</span> Diluent</label>
+                        <select id="diluent">
+                            <option value="bac">Bacteriostatic water</option>
+                            <option value="sterile">Plain sterile water</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="plan-group">
+                <legend>The dose</legend>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="doseAmount"><span class="label-icon" aria-hidden="true">&#127919;</span> Dose per injection</label>
+                        <div class="with-unit">
+                            <input type="number" id="doseAmount" min="0" step="any" placeholder="250">
+                            <span class="unit" id="doseUnit" aria-hidden="true">mcg</span>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="dosesPerWeek"><span class="label-icon" aria-hidden="true">&#128197;</span> Doses per week</label>
+                        <input type="number" id="dosesPerWeek" min="0" step="any" placeholder="7">
+                    </div>
+                    <div class="form-field">
+                        <label for="syringe"><span class="label-icon" aria-hidden="true">&#128137;</span> Syringe</label>
+                        <select id="syringe"></select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="plan-group">
+                <legend>The dates</legend>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="mixDate">Date this vial was mixed</label>
+                        <input type="date" id="mixDate">
+                    </div>
+                    <div class="form-field">
+                        <label for="dosesTaken">Doses used from it <span class="opt">optional</span></label>
+                        <input type="number" id="dosesTaken" min="0" step="1" placeholder="estimated from the date">
+                    </div>
+                    <div class="form-field">
+                        <label for="startDate">Cycle start</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-field">
+                        <label for="weeksOn">Weeks on</label>
+                        <input type="number" id="weeksOn" min="0" step="any" placeholder="12">
+                    </div>
+                    <div class="form-field">
+                        <label for="weeksOff">Weeks off <span class="opt">optional</span></label>
+                        <input type="number" id="weeksOff" min="0" step="any" placeholder="4">
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="plan-actions">
+                <button class="btn" id="planBtn" type="button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z"/></svg>
+                    Plan it
+                </button>
+                <button class="btn btn-secondary" id="saveBtn" type="button">Save in this browser</button>
+                <button class="btn btn-ghost" id="clearBtn" type="button">Clear saved plan</button>
+            </div>
+            <p class="note" id="saveNote" role="status"></p>
+            <p class="note">
+                Saving keeps your plan in this browser's local storage and nowhere else. It is never uploaded,
+                never put in the link, and never sent to analytics. On a shared computer, use Clear.
+            </p>
+        </div>
+
+        <div id="planResults"></div>
+
+        <section class="card directory-teaser">
+            <h2>Need the dose itself first?</h2>
+            <p>
+                The calculator works out what to draw for any of the 44 records at their published tiers. This page
+                takes a dose you have already decided on and plans the mixing, the vial and the run around it.
+            </p>
+            <a class="btn btn-secondary cta" href="../" data-cta="calculator">Open the calculator</a>
+        </section>
+
+        <div class="footer-disclaimer" role="note">
+            <strong>Research information only - not medical advice</strong>
+            <p>
+                Phenom Vital Labs publishes reference calculations for research peptides. Nothing here is a
+                prescription, a diagnosis, or a recommendation to inject anything. Most of these compounds are not
+                approved for human use, dosing conventions are drawn from community practice rather than controlled
+                trials, and product identity, purity and sterility vary by supplier. Shelf-life figures are general
+                handling conventions for refrigerated, preserved solutions, not a measurement of your product. Talk
+                to a licensed physician before starting, changing or stopping any protocol, and ask your supplier
+                for a lot-specific third-party certificate of analysis.
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <strong>Phenom Vital Labs</strong> &middot; Reference calculator, no products sold &middot;
+        <a href="../p/">All peptides</a>
+    </footer>
+
+    <script type="module" src="../js/plan.js?v=32"></script>
+</body>
+</html>

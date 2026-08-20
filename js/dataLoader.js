@@ -22,7 +22,12 @@ export async function loadPeptideData() {
     }
     
     try {
-        const response = await fetch(`./data/peptides.json?v=${DATA_VERSION}`);
+        // Resolved against THIS MODULE, not the document. `./data/...` is
+        // relative to the page, so it fetched /data/peptides.json from the
+        // calculator at the root and /plan/data/peptides.json from anywhere
+        // else - a 404 that only appears once a second page exists.
+        const url = new URL(`../data/peptides.json?v=${DATA_VERSION}`, import.meta.url);
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

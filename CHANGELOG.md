@@ -1,5 +1,96 @@
 # Changelog
 
+## 2.7.0 - 2026-08-20
+
+### Mix & cycle planner - `/plan/`
+
+The calculator answers "how many units do I draw". Three questions come after
+it and nothing on the site addressed any of them: how much water should go in
+so the draw lands on a mark you can read, where the vial in the fridge actually
+stands, and how many vials the whole run takes.
+
+**Mixing.** `reconOptions` compares every water volume from 0.5 ml to 5 ml for
+one already-decided dose, and picks the one whose draw is a whole mark. It is
+the mix-time question, and the calculator could not answer it: there, the water
+is an input. Here it is the output. A candidate is rejected outright when the
+draw will not fit the barrel or the powder cannot dissolve, and penalised when
+the draw is too small to read.
+
+Two things the ranking gets right that the obvious version does not. It
+tie-breaks toward the LARGER draw, not the smaller: saving water optimises the
+wrong variable, because more water buys a longer pull for the same peptide and
+a longer pull is the one you can read. And it will not recommend more water
+than the vial can hold -- glass peptide vials are commonly 2-3 ml, so "add 5 ml"
+is a spill, not a recommendation. Volumes above `TYPICAL_VIAL_CAPACITY_ML` are
+still shown and still computed, flagged, and never picked.
+
+**This vial.** Doses left, millilitres left, the day it runs out, the day the
+window closes -- and which of those two comes first. That last part is the
+reason the card exists. A vial that empties before it expires needs no date
+tracking at all; the same vial at a smaller draw outlives its own preservative,
+and the person is injecting past-window product with plenty still in the
+barrel. Changing the dose silently moves which limit binds, and nothing on the
+vial tells you. Bacteriostatic and plain sterile water are modelled separately:
+one letter apart on a bottle, four weeks apart in consequence.
+
+**The run.** Total doses, total peptide, vials to buy, the midpoint, and a
+dated schedule of when each vial gets mixed. Vials are mixed one after another,
+so vial N's window opens when vial N-1 runs dry -- and a later vial in a long
+run can sit past its shelf life while an earlier one never came close. Those
+are flagged individually. The schedule is labelled as the plan rather than a
+record, because "This vial" above it uses the mix date actually entered and the
+two will differ once a run drifts off cadence.
+
+Saving is local. A compound, a dose and a set of injection dates describe a
+named person's protocol, so the plan goes into this browser's local storage and
+nowhere else: never uploaded, never in the URL where a copied link would carry
+it, never into an analytics call. A test fails the build if `plan.js` or
+`planStore.js` grows a `fetch`, a `sendBeacon`, or a call that puts a dose or a
+date into an event. Only the peptide id -- a catalogue fact -- is measured.
+
+### Fixed
+
+- **`dataLoader` fetched a page-relative path.** `fetch('./data/peptides.json')`
+  resolves against the DOCUMENT, so it found the file from the calculator at the
+  root and 404'd from `/plan/`. The planner rendered a header, a form and no
+  peptides. It resolves against `import.meta.url` now, which is correct at any
+  depth. This was latent from the day the file was written and only became
+  reachable when a second page existed - the sort of bug a one-page site cannot
+  have and a two-page site has immediately.
+- **A number arguing with its own label.** 0.167 mg at 3.33 mg/ml is 5.01
+  units, and the page printed "5.01 units, a whole mark". 5.01 is not something
+  a barrel can show. `units` stays exact for the arithmetic; `drawUnits` is the
+  mark a person pulls to.
+- **The working line did not foot.** The dose printed at 2 dp while the
+  millilitre figure used the exact value: `0.17 mg = 0.0501 ml`. On a page whose
+  whole claim is that it shows the arithmetic, arithmetic that does not add up
+  is the one thing it cannot do.
+- **Horizontal overflow on a phone.** Measured at 436 px of table in a 390 px
+  viewport, dragging the whole document sideways. Tables scroll inside their own
+  box now, with a fade at the edge so a clipped column does not read as a
+  missing one.
+- **Dimming applied to rows that must be read.** A flagged vial in the schedule
+  was styled with `is-out`, which means "you cannot act on this". It is the row
+  the visitor most needs to act on.
+
+### Added
+
+- `js/planner.js` - pure functions: `reconOptions`, `vialProjection`,
+  `cyclePlan`, plus ISO date arithmetic anchored at noon UTC so a day count
+  cannot slip across a daylight-saving boundary.
+- `js/planStore.js` - local persistence. Every call wrapped, because storage
+  throws rather than returning null in a blocked context, and a planner that
+  cannot save is still a planner while one that throws at boot is a blank page.
+- `test/planner.test.mjs` - 30 tests. Both DST boundaries, 29 February, a mix
+  date of 30 February that must not roll into March, the empty-vs-expiry flip,
+  the schedule summing to the run, and every one of the 44 records producing a
+  coherent plan or an honest null.
+- `tools/drive-plan.py` - Playwright driver: twelve scenarios including the save
+  round trip, the deep link, a mcg-scale record and a mg-scale one, plain
+  sterile water, a 30-unit barrel, an impossible dose, and both phone themes.
+- Cross-links: the calculator, every reference page with a reconstitution table
+  (`/plan/?p=<id>`), and every footer. Sitemap 46 -> 47.
+
 ## 2.6.0 - 2026-08-20
 
 ### A concentration the powder cannot reach

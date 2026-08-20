@@ -19,7 +19,7 @@ python -m http.server 8765
 ## Tests
 
 ```bash
-npm test                   # 58 tests, no dependencies
+npm test                   # 116 tests, no dependencies
 ```
 
 `test/calculator.test.mjs` holds the schema invariants, the dose-model rules and a
@@ -41,7 +41,20 @@ To check the rendered page rather than the numbers:
 ```bash
 python tools/drive-ui.py            # the calculator
 python tools/drive-pages.py         # the reference pages, mobile, and the email gate
+python tools/drive-plan.py          # the mix & cycle planner, save round trip, phone themes
 ```
+
+## Mix & cycle planner
+
+`/plan/` takes a dose that has already been decided and answers what comes after the
+calculator: how much bacteriostatic water makes the draw land on a readable mark, how
+long the reconstituted vial lasts before it empties **or** expires - whichever comes
+first - and how many vials the run takes, with a date for each one.
+
+Everything it remembers stays in the browser. A compound, a dose and a set of injection
+dates describe a named person's protocol, so the saved plan goes to `localStorage` and
+nowhere else: not to an endpoint, not into the URL, not into an analytics event. A test
+fails the build if that changes.
 
 ## Reference pages
 

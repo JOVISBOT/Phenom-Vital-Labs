@@ -1,0 +1,102 @@
+/* Styles for the mix & cycle planner (/plan/).
+
+   Kept out of styles.css so the calculator's audited stylesheet is untouched.
+   Reuses the card, form-grid, data-table, facts, working, note and flag classes
+   from styles.css and pages.css; only the pieces this page introduces live here.
+
+   Panel backgrounds are tokens, never literals - the same rule pages.css is
+   held to, and for the same reason: a literal #f8fafc survives the theme
+   switch while the var(--text) on top of it does not, and the panel renders
+   near-white text on near-white. A test fails the build if a literal appears
+   in either sheet. */
+
+/* --- form ------------------------------------------------------------- */
+
+.plan-group{border:none;padding:0;margin:0 0 8px}
+.plan-group legend{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.7px;color:var(--primary);font-weight:700;padding:0;margin-bottom:12px}
+
+.plan-group input[type=number],
+.plan-group input[type=date]{
+    width:100%;padding:14px 16px;border:2px solid var(--border);border-radius:12px;
+    background-color:var(--card);color:var(--text);
+    font-size:0.95rem;font-family:inherit;min-width:0
+}
+.plan-group input:focus-visible{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
+/* Safari and Chrome render the native date picker icon dark-on-dark. */
+.plan-group input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:0.65}
+
+.with-unit{display:flex;align-items:center;gap:8px;min-width:0}
+.with-unit input{flex:1;min-width:0}
+.unit{font-size:0.85rem;font-weight:600;color:var(--muted);white-space:nowrap;min-width:26px}
+
+.form-field label .opt{font-weight:400;font-size:0.72rem;color:var(--muted);text-transform:none;letter-spacing:0}
+
+.plan-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.plan-actions .btn{width:auto;flex:1 1 200px}
+.btn-ghost{background:none;color:var(--muted);border:2px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--primary-light);box-shadow:none;transform:none}
+
+/* --- results ---------------------------------------------------------- */
+
+.plan-card{margin-bottom:24px}
+.plan-card h2{font-size:1.15rem;font-weight:700;margin-bottom:16px}
+.plan-card .answer-lede{font-size:1.02rem;color:var(--text);line-height:1.7;margin-bottom:14px}
+.plan-card .answer-lede strong{color:var(--primary)}
+.plan-card .facts{margin:16px 0}
+
+/* A result card carries the colour of its own worst finding, so the state is
+   legible before a word is read. */
+.tone-warn{border-left:4px solid var(--tint-warn-line)}
+.tone-bad{border-left:4px solid var(--danger)}
+.plan-card .answer-lede.tone-bad{border:none}
+.plan-card .answer-lede.tone-bad strong{color:var(--danger)}
+
+.plan-warn{
+    background:var(--tint-warn);border:1px solid var(--tint-warn-line);border-radius:10px;
+    padding:14px 16px;margin:16px 0;font-size:0.88rem;line-height:1.65;color:var(--tint-warn-ink)
+}
+.plan-warn strong{color:var(--tint-warn-ink)}
+
+.meter{height:10px;border-radius:6px;background:var(--tint-neutral-2);overflow:hidden;margin:6px 0 10px}
+.meter-fill{height:100%;background:linear-gradient(90deg,var(--primary-light),var(--primary));border-radius:6px}
+
+.tag{
+    display:inline-block;font-size:0.66rem;text-transform:uppercase;letter-spacing:0.5px;
+    font-weight:700;color:var(--primary);background:var(--tint-info);
+    border-radius:5px;padding:2px 6px;margin-left:6px;vertical-align:middle
+}
+
+/* A row the visitor cannot act on: over the barrel, over the vial, or past its
+   window. Dimmed rather than hidden, because "why isn't 5 ml here" is a
+   question the table should answer. */
+.data-table tr.is-out th,
+.data-table tr.is-out td{opacity:0.62}
+
+/* Not the same thing as .is-out. A flagged vial in the schedule is still part
+   of the plan - it is the row the visitor most needs to read, so it gets
+   attention rather than the dimming that means "ignore this". */
+.data-table tr.is-flagged th,
+.data-table tr.is-flagged td{background:var(--tint-warn)}
+.data-table tr.is-flagged th{color:var(--tint-warn-ink)}
+
+/* Five columns do not fit a 390px phone. Measured at 436px of content in a
+   390px viewport, which dragged the whole page sideways. Scroll the table
+   inside its own box instead of scrolling the document. */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:16px 0;position:relative}
+.table-scroll .data-table{margin:0;min-width:420px}
+/* A clipped last column looks like a missing column. The fade says "there is
+   more to the right" without needing a caption nobody reads. */
+.table-scroll::after{
+    content:'';position:sticky;right:0;top:0;float:right;width:26px;height:100%;
+    margin-left:-26px;pointer-events:none;
+    background:linear-gradient(to right,transparent,var(--card))
+}
+
+.plan-card .working{margin-bottom:18px}
+.plan-card .working code{white-space:pre-wrap;line-height:1.8}
+
+@media(max-width:640px){
+    .plan-actions .btn{flex:1 1 100%}
+    .plan-card .card,.plan-card{padding:22px 18px}
+    .plan-card .working code{font-size:0.78rem}
+}

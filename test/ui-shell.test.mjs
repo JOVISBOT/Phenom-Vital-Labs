@@ -22,6 +22,7 @@ const peptides = JSON.parse(read('data/peptides.json')).peptides;
 
 const pageFiles = [
     'index.html',
+    'plan/index.html',
     'p/index.html',
     ...readdirSync(join(ROOT, 'p'), { withFileTypes: true })
         .filter(d => d.isDirectory())
@@ -273,11 +274,11 @@ test('no stylesheet hardcodes a light panel colour behind themed text', () => {
     // featured tier row and the open FAQ answer all rendered near-white on
     // near-white. Panel backgrounds are tokens; only theme.css defines the
     // literals the tokens resolve to.
-    const pages = readFileSync(join(ROOT, 'css/pages.css'), 'utf8')
-        .replace(/\/\*[\s\S]*?\*\//g, '');
-    const literals = pages.match(/background:\s*#[0-9a-f]{3,8}/gi) || [];
-    assert.deepEqual(literals, [],
-        `pages.css sets a literal background: ${literals.join(', ')}`);
+    for (const sheet of ['css/pages.css', 'css/plan.css']) {
+        const css = readFileSync(join(ROOT, sheet), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+        const literals = css.match(/background(-color)?:\s*#[0-9a-f]{3,8}/gi) || [];
+        assert.deepEqual(literals, [], `${sheet} sets a literal background: ${literals.join(', ')}`);
+    }
 });
 
 test('a theme override never resets a control that paints its own background-image', () => {

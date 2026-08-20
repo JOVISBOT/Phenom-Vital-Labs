@@ -210,7 +210,8 @@ function foot(rel) {
     return `
     <footer>
         <strong>Phenom Vital Labs</strong> &middot; Reference calculator, no products sold &middot;
-        <a href="${rel}p/">All peptides</a>
+        <a href="${rel}p/">All peptides</a> &middot;
+        <a href="${rel}plan/">Mix &amp; cycle planner</a>
     </footer>
     <script type="module" src="${rel}js/analytics.js?v=${ASSET_V}"></script>
     <script type="module">
@@ -446,6 +447,9 @@ function peptidePage(p, all) {
                    readable, but the powder is being asked to go into solution above roughly
                    ${SOLUBILITY_CEILING_MG_ML} mg/ml, where lyophilised material generally stops doing so. Add more
                    water, or confirm the figure against the vendor's own reconstitution note.` : ''}</p>
+                <a class="btn btn-secondary cta" href="../../plan/?p=${encodeURIComponent(p.id)}" data-cta="planner">
+                    Plan the mixing &mdash; and how long a vial lasts
+                </a>
             </section>` : ''}
 
             <section class="card">
@@ -586,11 +590,11 @@ ${DISCLAIMER}
 /* -------------------------------------------------------------------- main */
 
 function sitemap(all) {
-    const urls = [siteUrl(''), siteUrl('p/'), ...all.map(p => siteUrl(`p/${p.id}/`))];
+    const urls = [siteUrl(''), siteUrl('plan/'), siteUrl('p/'), ...all.map(p => siteUrl(`p/${p.id}/`))];
     const body = urls.map((u, i) => `  <url>
     <loc>${u}</loc>
     <changefreq>monthly</changefreq>
-    <priority>${i === 0 ? '1.0' : i === 1 ? '0.9' : '0.8'}</priority>
+    <priority>${i === 0 ? '1.0' : i <= 2 ? '0.9' : '0.8'}</priority>
   </url>`).join('\n');
     return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

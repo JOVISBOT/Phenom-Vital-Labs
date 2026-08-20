@@ -119,9 +119,11 @@ test('the sitemap lists every page and nothing that does not exist', () => {
     const xml = read('sitemap.xml');
     const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1]);
 
-    assert.equal(locs.length, peptides.length + 2);
+    // 44 peptide pages + the calculator, the directory and the planner.
+    assert.equal(locs.length, peptides.length + 3);
     assert.ok(locs.includes(siteUrl('')));
     assert.ok(locs.includes(siteUrl('p/')));
+    assert.ok(locs.includes(siteUrl('plan/')), 'the planner is not in the sitemap');
 
     for (const loc of locs) {
         const rel = loc.replace(siteUrl(''), '');
@@ -140,6 +142,16 @@ test('internal links resolve to files that exist', () => {
         assert.ok(html.includes('href="../../?p='), `${p.id}: no link back into the calculator`);
     }
     assert.ok(read('index.html').includes('href="p/"'), 'home page does not link to the directory');
+    assert.ok(read('index.html').includes('href="plan/"'), 'home page does not link to the planner');
+    // Every peptide page that shows a reconstitution table hands the visitor
+    // to the planner with that compound already chosen. A CTA whose query
+    // string drifts from the record id lands on an empty form.
+    for (const p of peptides) {
+        const html = pageFor(p.id);
+        if (!html.includes('Reconstitution table')) continue;
+        assert.ok(html.includes(`href="../../plan/?p=${p.id}"`),
+            `${p.id}: reconstitution table with no link into the planner`);
+    }
 });
 
 /* ------------------------------------------------------- numbers on page */
