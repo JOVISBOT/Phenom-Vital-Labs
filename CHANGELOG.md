@@ -73,6 +73,15 @@ record says the same thing in prose without carrying the flag.
 - **Print.** A fridge card: the answer, the tiers, the working, the warnings,
   the disclaimer. Printing while dark mode was on produced a black-on-black hero
   and asked the printer for full-bleed dark panels; print now forces light.
+- **Three things only a phone-width screenshot showed.** The Recommended badge
+  and the tier label were both centred on the same 8px of card border, so on a
+  114px-wide card the green pill sat behind STANDARD and poked out either side
+  (measured: label 159-231, badge 152-238). The dose row wrapped mid-pair,
+  leaving an arrow pointing at the end of a line and the last dose stranded
+  below it. And the row still drew low -> med -> high arrows for tesamorelin,
+  directly over the note saying its tiers are not a ladder -- the cards were
+  relabelled and the row above them was not. Variant records now separate with
+  a middot and the syringe heading names the variant it drew.
 - The reveal cascade ran 1.1s, so everything below the fold was invisible for
   over a second and any capture caught it mid-flight. Now 0.35s.
 - **Contrast.** Every rendered text node on the calculator, a peptide page and
@@ -86,7 +95,7 @@ record says the same thing in prose without carrying the flag.
 
 ### Guards
 
-`npm test` 59 -> 79. The data audit runs as part of it, so a record added next
+`npm test` 59 -> 81. The data audit runs as part of it, so a record added next
 month cannot ship a dose that overflows a syringe, a cadence that argues with
 its own prose, or a range quietly republished as a fact. Every new guard was
 proven by breaking it and watching it go red.
