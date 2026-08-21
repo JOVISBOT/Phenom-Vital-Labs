@@ -357,12 +357,12 @@ function peptidePage(p, all) {
         : { low: 'Conservative', med: 'Recommended', high: 'Advanced' };
 
     const doseRows = tiers.map(t => `
-                    <tr${t === 'med' ? ' class="is-featured"' : ''}>
-                        <th scope="row">${tierLabel[t]}</th>
-                        <td>${esc(formatDose(r.doses[t], r.doseUnit))}</td>
-                        <td>${r.noRecon ? '&mdash;' : `${units(r.syringeUnits[t])} units`}</td>
-                        <td>${r.noRecon ? '&mdash;' : `${num(r.volumeMl[t], 3)} ml`}</td>
-                        <td>${r.overflow[t] || r.exceedsVial[t] ? '<span class="flag">does not fit one draw</span>' : 'single draw'}</td>
+                    <tr role="row"${t === 'med' ? ' class="is-featured"' : ''}>
+                        <th role="rowheader" scope="row">${tierLabel[t]}</th>
+                        <td role="cell" data-label="Dose">${esc(formatDose(r.doses[t], r.doseUnit))}</td>
+                        <td role="cell" data-label="Draw">${r.noRecon ? '&mdash;' : `${units(r.syringeUnits[t])} units`}</td>
+                        <td role="cell" data-label="Volume">${r.noRecon ? '&mdash;' : `${num(r.volumeMl[t], 3)} ml`}</td>
+                        <td role="cell" data-label="Fits?">${r.overflow[t] || r.exceedsVial[t] ? '<span class="flag">does not fit one draw</span>' : 'single draw'}</td>
                     </tr>`).join('');
 
     const componentRows = (r.components.med || []).map(c => `
@@ -375,10 +375,10 @@ function peptidePage(p, all) {
     const anyUndissolvable = reconRowData.some(row => row.solubility.overCeiling);
     const reconRows = reconRowData.map(row => `
                     <tr${row.ml === defaultReconMl(p) ? ' class="is-featured"' : ''}>
-                        <th scope="row">${num(row.ml, 2)} ml</th>
-                        <td>${num(row.conc, 2)} ${esc(p.vialUnit)}/ml${row.solubility.overCeiling
+                        <th role="rowheader" scope="row">${num(row.ml, 2)} ml</th>
+                        <td role="cell" data-label="Concentration">${num(row.conc, 2)} ${esc(p.vialUnit)}/ml${row.solubility.overCeiling
                             ? ' <span class="flag">may not dissolve</span>' : ''}</td>
-                        <td>${units(row.units)} units${row.overflow ? ' <span class="flag">does not fit one draw</span>' : ''}</td>
+                        <td role="cell" data-label="Draw">${units(row.units)} units${row.overflow ? ' <span class="flag">does not fit one draw</span>' : ''}</td>
                     </tr>`).join('');
 
     const list = (items, cls) => (items && items.length)
@@ -422,10 +422,10 @@ function peptidePage(p, all) {
                     <p class="note">Dosing conventions for a blend are stated per component, so the combined figure alone reads as double.</p>
                 </div>` : ''}
 
-                <table class="data-table">
+                <table role="table" class="data-table data-table--stack">
                     <caption>Dose tiers at a ${num(p.vialSize, 3)} ${esc(p.vialUnit)} vial in ${num(defaultReconMl(p), 2)} ml, U-100 syringe</caption>
-                    <thead><tr><th scope="col">Tier</th><th scope="col">Dose</th><th scope="col">Draw</th><th scope="col">Volume</th><th scope="col">Fits?</th></tr></thead>
-                    <tbody>${doseRows}
+                    <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Tier</th><th role="columnheader" scope="col">Dose</th><th role="columnheader" scope="col">Draw</th><th role="columnheader" scope="col">Volume</th><th role="columnheader" scope="col">Fits?</th></tr></thead>
+                    <tbody role="rowgroup">${doseRows}
                     </tbody>
                 </table>
 
@@ -439,10 +439,10 @@ function peptidePage(p, all) {
                 <h2>Reconstitution table</h2>
                 <p>How far up the barrel ${esc(formatDose(r.doses.med, r.doseUnit))} sits at each water volume. The peptide
                    in the vial never changes &mdash; only the concentration, and therefore the draw.</p>
-                <table class="data-table">
+                <table role="table" class="data-table data-table--stack">
                     <caption>${num(p.vialSize, 3)} ${esc(p.vialUnit)} vial, recommended dose of ${esc(formatDose(r.doses.med, r.doseUnit))}</caption>
-                    <thead><tr><th scope="col">Bacteriostatic water</th><th scope="col">Concentration</th><th scope="col">Draw</th></tr></thead>
-                    <tbody>${reconRows}
+                    <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Bacteriostatic water</th><th role="columnheader" scope="col">Concentration</th><th role="columnheader" scope="col">Draw</th></tr></thead>
+                    <tbody role="rowgroup">${reconRows}
                     </tbody>
                 </table>
                 <p class="note">More water means a bigger, easier-to-read draw for the same dose. A dose that lands near
@@ -529,20 +529,20 @@ function hubPage(all) {
             .map(p => {
                 const r = reference(p);
                 return `
-                    <tr>
-                        <th scope="row"><a href="${esc(p.id)}/">${esc(p.name)}</a></th>
-                        <td>${esc(formatDose(r.doses.med, r.doseUnit))}</td>
-                        <td>${r.noRecon ? 'pre-filled' : `${units(r.syringeUnits.med)} units`}</td>
-                        <td>${esc(p.freq)}</td>
+                    <tr role="row">
+                        <th role="rowheader" scope="row"><a href="${esc(p.id)}/">${esc(p.name)}</a></th>
+                        <td role="cell" data-label="Recommended dose">${esc(formatDose(r.doses.med, r.doseUnit))}</td>
+                        <td role="cell" data-label="Draw">${r.noRecon ? 'pre-filled' : `${units(r.syringeUnits.med)} units`}</td>
+                        <td role="cell" data-label="Frequency">${esc(p.freq)}</td>
                     </tr>`;
             }).join('');
 
         return `
             <section class="card">
                 <h2>${esc(t)}</h2>
-                <table class="data-table">
-                    <thead><tr><th scope="col">Peptide</th><th scope="col">Recommended dose</th><th scope="col">Draw</th><th scope="col">Frequency</th></tr></thead>
-                    <tbody>${rows}
+                <table role="table" class="data-table data-table--stack data-table--compact">
+                    <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Peptide</th><th role="columnheader" scope="col">Recommended dose</th><th role="columnheader" scope="col">Draw</th><th role="columnheader" scope="col">Frequency</th></tr></thead>
+                    <tbody role="rowgroup">${rows}
                     </tbody>
                 </table>
             </section>`;

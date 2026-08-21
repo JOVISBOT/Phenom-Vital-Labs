@@ -4,12 +4,13 @@
   "private": true,
   "description": "Peptide dosage calculator - reconstitution concentration and insulin-syringe units for 44 research peptides.",
   "scripts": {
-    "test": "node --test test/calculator.test.mjs test/planner.test.mjs test/pages.test.mjs test/data-integrity.test.mjs test/ui-shell.test.mjs test/ui-shell-refinement.test.mjs",
+    "test": "node --test test/calculator.test.mjs test/planner.test.mjs test/pages.test.mjs test/data-integrity.test.mjs test/ui-shell.test.mjs test/ui-shell-refinement.test.mjs test/responsive-tables.test.mjs",
     "test:update": "node test/calculator.test.mjs --update",
     "build:pages": "node tools/build-pages.js",
     "check:pages": "node tools/build-pages.js --check",
     "serve": "python -m http.server 8765",
-    "verify:data": "node tools/verify-data.js"
+    "verify:data": "node tools/verify-data.js",
+    "probe:widths": "python tools/probe-widths.py"
   },
   "license": "UNLICENSED"
 }

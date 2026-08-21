@@ -83,6 +83,49 @@ footer a{color:var(--primary)}
     .peptide-page .card{padding:22px 18px}
 }
 
+/* ---- tables on a phone ----
+   A four-column table of peptide, dose, draw and frequency cannot compress
+   below about 400px: the shortest cell is a dose like "0.25 mg" and none of
+   the four is droppable. Left alone it does not clip, it widens the PAGE --
+   every card on the directory ran ~25px past a 390px viewport, so the whole
+   document scrolled sideways and the right edge of every card sat off-screen.
+
+   Below 560px each row becomes its own block: the row header (peptide name,
+   tier, water volume) on its own line, then one line per cell labelled from
+   the column head it came from. The <thead> is hidden -- its text is carried
+   by data-label instead -- but it is hidden with a clip, not display:none, so
+   the table still exposes column headers to a screen reader.
+
+   Opt-in via .data-table--stack. The planner's tables scroll horizontally
+   inside .table-scroll instead, and must not be re-flowed underneath it. */
+@media(max-width:560px){
+    .data-table--stack{display:block;font-size:0.86rem}
+    .data-table--stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+    .data-table--stack tbody,.data-table--stack tr,.data-table--stack th,.data-table--stack td{display:block;width:auto}
+    .data-table--stack tr{border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:var(--card)}
+    .data-table--stack tr.is-featured{background:var(--tint-info);border-color:var(--primary)}
+    .data-table--stack th,.data-table--stack td{border-bottom:0;padding:3px 0}
+    .data-table--stack tbody th{font-size:0.98rem;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid var(--border)}
+    .data-table--stack td[data-label]{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+    .data-table--stack td[data-label]::before{content:attr(data-label);color:var(--muted);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.6px;font-weight:600;flex:none}
+    /* A caption inside a display:block table is still display:table-caption,
+       so it shrink-to-fits an anonymous table box and sets one word per
+       line: "DOSE / TIERS / AT A 10 / MG VIAL" down the left margin. */
+    .data-table--stack caption{display:block;width:auto;padding-bottom:12px}
+
+    /* The directory is 44 records deep. Four stacked lines each turns a
+       3,900px page into an 8,800px one, which is a worse way to lose a
+       peptide than scrolling sideways was. Here the three cells run on one
+       wrapped line under the name: the dose carries the weight, the unit
+       suffix on each value does the labelling the column head used to. */
+    .data-table--compact tbody tr{padding:10px 12px;margin-bottom:8px}
+    .data-table--compact tbody th{border-bottom:0;padding-bottom:2px;font-size:0.95rem}
+    .data-table--compact td[data-label]{display:inline;padding:0;font-size:0.82rem;color:var(--muted)}
+    .data-table--compact td[data-label]::before{content:''}
+    .data-table--compact td[data-label]:first-of-type{color:var(--text);font-weight:600}
+    .data-table--compact td[data-label]:not(:first-of-type)::before{content:'\00B7';margin:0 7px;color:var(--border);font-weight:400}
+}
+
 /* directory teaser on the calculator home page */
 .directory-teaser h2{font-size:1.25rem;font-weight:700;margin-bottom:10px}
 .directory-teaser p{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:18px}

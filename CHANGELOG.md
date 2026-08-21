@@ -2,6 +2,80 @@
 
 ## 2.8.0 - 2026-08-20
 
+### The pages nobody measured were the broken ones
+
+The suite was green at 134, the browser drive reported zero console errors, and
+the calculator's own `mobileOverflowX` check said false. Two layouts were
+broken on every phone anyway, because the thing doing the measuring only ever
+looked at the calculator.
+
+**The form printed its own labels through each other.** `.optional-fields` --
+the folded weight and age block added in this same UI pass -- carries
+`grid-column:span 2` so it fills the rest of the row beside the syringe select.
+Below 500px the form is ONE column, and a span of two in a one-column grid does
+not widen the item: it conjures an implicit second column, and every field in
+the form is re-flowed into auto-sized columns narrower than their own contents.
+At 390px the computed track list was `102px 200px`. "Peptide" overprinted "Vial
+Size", "BAC Water" overprinted "Syringe", the peptide combobox sat on top of
+the vial select, and a stray chevron floated in the left margin.
+
+The fix is mobile-first: the base rule is `grid-column:auto`, and the span
+lives behind `@media(min-width:501px)`. The first attempt put the override
+inside the max-width query instead, which sits EARLIER in the file than the
+`.optional-fields` block -- equal specificity, later wins, and nothing changed
+on screen. A test now asserts the ordering, because the fix that looks right
+and does nothing is the one that ships.
+
+**The directory pushed the document 25px past the viewport.** Four columns of
+peptide, dose, draw and frequency cannot compress below about 400px, and none
+of the four is droppable. Left alone a table does not clip -- it widens the
+page. Every card on `/p/` ran to 415px inside a 390px viewport, so the whole
+document scrolled sideways and the right edge of every card sat off-screen.
+This one was live: `origin/main` measures 415px too. It is not a regression
+from the UI pass, it shipped with the directory.
+
+Below 560px each row is now its own block. `<thead>` is hidden -- clipped, not
+`display:none`, so column heads still reach a screen reader -- and each cell
+re-prints the head it came from via `data-label`.
+
+The directory takes a denser variant of the same thing. Four stacked lines per
+record turned a 3,900px page into an 8,800px one, which is a worse way to lose
+a peptide than scrolling sideways was; the three cells run on one wrapped line
+under the name instead, and the unit suffix on each value (`0.4 mg`,
+`12 units`) does the labelling the column head used to. 5,700px, and the
+type-ahead filter is the real answer to a 44-record list.
+
+Two details that came out of doing it:
+
+- **`display:block` strips a table of its role** in several screen readers. The
+  implicit roles are restated explicitly on the three built tables, so the grid
+  stays navigable by row and column for exactly the readers who cannot see the
+  layout that replaced it.
+- **A `<caption>` in a display:block table is still `display:table-caption`,**
+  so it shrink-to-fits an anonymous table box. Before it was re-typed, the
+  reference pages set their caption one word per line down the left margin:
+  "DOSE / TIERS / AT A 10 / MG VIAL / IN 3 ML".
+
+The planner is deliberately left out of this. It already solves the same
+problem by scrolling horizontally inside `.table-scroll`, and a test fails if
+its tables ever opt into stacking underneath their own scroller.
+
+### Guards
+
+- `test/responsive-tables.test.mjs` -- six checks, each one mutated back to the
+  real defect and confirmed to go red before being kept: the span outside a
+  min-width query, the override losing the cascade, a `<td>` with no
+  `data-label`, a stacked table with no roles, a caption that is not re-typed,
+  and the planner opting into stacking.
+- `tools/probe-widths.py` (`npm run probe:widths`) walks four pages across
+  eleven widths from 320px up, and fails on a horizontal scroll or on two form
+  labels overlapping. This is the measurement that did not exist: 44 page/width
+  combinations, where before only the calculator was ever looked at.
+- Asset stamps bumped to `v=36`, so a returning visitor is not served the
+  stylesheet that overlaps its own form.
+
+## 2.8.0 - 2026-08-20
+
 ### The answer scrolled away
 
 A result page runs about 4,900px on a desktop and 6,900px on a phone, and the

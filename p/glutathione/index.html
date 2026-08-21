@@ -24,9 +24,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/styles.css?v=35">
-    <link rel="stylesheet" href="../../css/pages.css?v=35">
-    <link rel="stylesheet" href="../../css/theme.css?v=35">
+    <link rel="stylesheet" href="../../css/styles.css?v=36">
+    <link rel="stylesheet" href="../../css/pages.css?v=36">
+    <link rel="stylesheet" href="../../css/theme.css?v=36">
 
     <!-- Theme before first paint. Inlined from js/theme.js THEME_BOOT so the
          boot logic and the toggle cannot drift; a test asserts they match. -->
@@ -76,30 +76,30 @@
                 <p class="working"><code>200 mg ÷ 600 mg/ml = 0.333 ml = 33.3 units</code></p>
                 
 
-                <table class="data-table">
+                <table role="table" class="data-table data-table--stack">
                     <caption>Dose tiers at a 600 mg vial in 1 ml, U-100 syringe</caption>
-                    <thead><tr><th scope="col">Tier</th><th scope="col">Dose</th><th scope="col">Draw</th><th scope="col">Volume</th><th scope="col">Fits?</th></tr></thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">Conservative</th>
-                        <td>100 mg</td>
-                        <td>16.7 units</td>
-                        <td>0.167 ml</td>
-                        <td>single draw</td>
+                    <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Tier</th><th role="columnheader" scope="col">Dose</th><th role="columnheader" scope="col">Draw</th><th role="columnheader" scope="col">Volume</th><th role="columnheader" scope="col">Fits?</th></tr></thead>
+                    <tbody role="rowgroup">
+                    <tr role="row">
+                        <th role="rowheader" scope="row">Conservative</th>
+                        <td role="cell" data-label="Dose">100 mg</td>
+                        <td role="cell" data-label="Draw">16.7 units</td>
+                        <td role="cell" data-label="Volume">0.167 ml</td>
+                        <td role="cell" data-label="Fits?">single draw</td>
                     </tr>
-                    <tr class="is-featured">
-                        <th scope="row">Recommended</th>
-                        <td>200 mg</td>
-                        <td>33.3 units</td>
-                        <td>0.333 ml</td>
-                        <td>single draw</td>
+                    <tr role="row" class="is-featured">
+                        <th role="rowheader" scope="row">Recommended</th>
+                        <td role="cell" data-label="Dose">200 mg</td>
+                        <td role="cell" data-label="Draw">33.3 units</td>
+                        <td role="cell" data-label="Volume">0.333 ml</td>
+                        <td role="cell" data-label="Fits?">single draw</td>
                     </tr>
-                    <tr>
-                        <th scope="row">Advanced</th>
-                        <td>500 mg</td>
-                        <td>83.3 units</td>
-                        <td>0.833 ml</td>
-                        <td>single draw</td>
+                    <tr role="row">
+                        <th role="rowheader" scope="row">Advanced</th>
+                        <td role="cell" data-label="Dose">500 mg</td>
+                        <td role="cell" data-label="Draw">83.3 units</td>
+                        <td role="cell" data-label="Volume">0.833 ml</td>
+                        <td role="cell" data-label="Fits?">single draw</td>
                     </tr>
                     </tbody>
                 </table>
@@ -114,29 +114,29 @@
                 <h2>Reconstitution table</h2>
                 <p>How far up the barrel 200 mg sits at each water volume. The peptide
                    in the vial never changes &mdash; only the concentration, and therefore the draw.</p>
-                <table class="data-table">
+                <table role="table" class="data-table data-table--stack">
                     <caption>600 mg vial, recommended dose of 200 mg</caption>
-                    <thead><tr><th scope="col">Bacteriostatic water</th><th scope="col">Concentration</th><th scope="col">Draw</th></tr></thead>
-                    <tbody>
+                    <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Bacteriostatic water</th><th role="columnheader" scope="col">Concentration</th><th role="columnheader" scope="col">Draw</th></tr></thead>
+                    <tbody role="rowgroup">
                     <tr class="is-featured">
-                        <th scope="row">1 ml</th>
-                        <td>600 mg/ml <span class="flag">may not dissolve</span></td>
-                        <td>33.3 units</td>
+                        <th role="rowheader" scope="row">1 ml</th>
+                        <td role="cell" data-label="Concentration">600 mg/ml <span class="flag">may not dissolve</span></td>
+                        <td role="cell" data-label="Draw">33.3 units</td>
                     </tr>
                     <tr>
-                        <th scope="row">2 ml</th>
-                        <td>300 mg/ml</td>
-                        <td>66.7 units</td>
+                        <th role="rowheader" scope="row">2 ml</th>
+                        <td role="cell" data-label="Concentration">300 mg/ml</td>
+                        <td role="cell" data-label="Draw">66.7 units</td>
                     </tr>
                     <tr>
-                        <th scope="row">3 ml</th>
-                        <td>200 mg/ml</td>
-                        <td>100 units</td>
+                        <th role="rowheader" scope="row">3 ml</th>
+                        <td role="cell" data-label="Concentration">200 mg/ml</td>
+                        <td role="cell" data-label="Draw">100 units</td>
                     </tr>
                     <tr>
-                        <th scope="row">5 ml</th>
-                        <td>120 mg/ml</td>
-                        <td>166.7 units <span class="flag">does not fit one draw</span></td>
+                        <th role="rowheader" scope="row">5 ml</th>
+                        <td role="cell" data-label="Concentration">120 mg/ml</td>
+                        <td role="cell" data-label="Draw">166.7 units <span class="flag">does not fit one draw</span></td>
                     </tr>
                     </tbody>
                 </table>
@@ -229,9 +229,9 @@
         <a href="../../p/">All peptides</a> &middot;
         <a href="../../plan/">Mix &amp; cycle planner</a>
     </footer>
-    <script type="module" src="../../js/analytics.js?v=35"></script>
+    <script type="module" src="../../js/analytics.js?v=36"></script>
     <script type="module">
-        import { initThemeToggle } from '../../js/theme.js?v=35';
+        import { initThemeToggle } from '../../js/theme.js?v=36';
         initThemeToggle();
     </script>
 </body>
