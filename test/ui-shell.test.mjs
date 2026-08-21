@@ -325,6 +325,30 @@ test('a theme override never resets a control that paints its own background-ima
     }
     assert.deepEqual(offenders, [],
         `these override a painted control with the background shorthand: ${offenders.join(', ')}`);
+
+    // The same reset, from the base sheet against itself -- which the scan above
+    // cannot see, because it only ever reads theme.css for offenders.
+    // `select:disabled{background:#f3f4f6}` sat four lines under the rule that
+    // paints the chevron. In light mode the shorthand also cleared the image, so
+    // nothing showed; in dark mode theme.css re-declares the image at higher
+    // specificity while repeat and position stay reset, and the arrow tiled
+    // across the disabled Vial Size control, printing over "Select a peptide
+    // first". A rule that shorthands a painted control must say what happens to
+    // the image -- `none`, or the url again. Silence is the bug.
+    const unsaid = [];
+    for (const sheet of ['css/styles.css', 'css/theme.css']) {
+        const css = strip(readFileSync(join(ROOT, sheet), 'utf8'));
+        for (const [, sel, body] of css.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+            if (!/(^|;)\s*background\s*:/.test(body)) continue;
+            if (/background-image\s*:/.test(body)) continue;
+            for (const one of sel.split(',')) {
+                const base = one.trim().split(/\s+/).pop().split(/[:[]/)[0];
+                if (painted.has(base)) unsaid.push(`${sheet} ${one.trim()}`);
+            }
+        }
+    }
+    assert.deepEqual(unsaid, [],
+        `these shorthand a painted control without restating background-image: ${unsaid.join(', ')}`);
 });
 
 test('the planner labels a blend dose as combined, from one place', () => {

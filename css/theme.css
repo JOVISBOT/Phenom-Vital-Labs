@@ -42,6 +42,12 @@
 
     --primary: #7aa5ff;
     --primary-light: #a8c4ff;
+    /* The chips stay dark surfaces here. --primary is lifted to #7aa5ff so it
+       reads on a #0b1120 page; a chip built from it turns pale and buries its
+       own white glyph at 2.43:1. #2c5bd0 is the value the dark .btn already
+       uses, and white clears 5.98:1 on it. */
+    --chip-1: #2c5bd0;
+    --chip-2: #1e3a8a;
     --success: #34d399;
     --warning: #fbbf24;
     --danger: #f87171;
@@ -84,7 +90,10 @@
 :root[data-theme="dark"] select,
 :root[data-theme="dark"] .modal input[type=email],
 :root[data-theme="dark"] .custom-vial input { background-color: var(--tint-neutral); color: var(--text); }
-:root[data-theme="dark"] select:disabled { background-color: var(--tint-neutral-2); color: var(--muted); }
+/* background-image:none is load-bearing: the `:root[data-theme="dark"] select`
+   rule below re-declares the chevron, and without this the disabled control
+   inherits it back. */
+:root[data-theme="dark"] select:disabled { background-color: var(--tint-neutral-2); color: var(--muted); background-image: none; }
 :root[data-theme="dark"] optgroup { background: var(--tint-info); color: var(--primary); }
 :root[data-theme="dark"] optgroup option { background: var(--card); color: var(--text); }
 :root[data-theme="dark"] select {
@@ -113,6 +122,27 @@
 :root[data-theme="dark"] .draw-box { background: var(--tint-good); border-color: var(--tint-good-line); }
 :root[data-theme="dark"] .draw-box.overflow { background: var(--tint-bad); border-color: var(--tint-bad-line); }
 :root[data-theme="dark"] .syringe-container { background: var(--tint-neutral-2); border-color: var(--border); }
+/* The syringe itself stays a light object in the dark - a barrel painted
+   #0b1120 is not a syringe. Only the scale and the callout, which sit OUTSIDE
+   the barrel on the dark panel, get lifted; the numbers under the barrel were
+   #475569 on #161e30 before this. */
+:root[data-theme="dark"] .syringe-container {
+    --syr-body: #eef2f8;
+    --syr-edge: #5b8cf7;
+    --syr-hub: #b6c2d4;
+    --syr-metal: #8492a6;
+    --syr-tick: #9aa6b8;
+    --syr-tick-major: #6b7a90;
+    --syr-ink: #c3cfe0;
+    --syr-ink-faint: #8a97ab;
+    /* The plunger straddles two backgrounds: its head sits on the light
+       barrel and its rod runs out over the dark panel. One colour has to
+       clear both - #3b6fe0 reads 4.13:1 on the barrel and 3.4:1 on the
+       panel. The callout is only ever on the panel, so it goes lighter. */
+    --syr-plunger: #3b6fe0;
+    --syr-rod: #7f93bd;
+    --syr-accent: #8fb2ff;
+}
 :root[data-theme="dark"] .calc-box { background: var(--tint-info); border-color: var(--tint-info-line); }
 :root[data-theme="dark"] .calc-footnote { border-top-color: var(--tint-info-line); }
 :root[data-theme="dark"] .info-card.highlight { background: linear-gradient(135deg, var(--tint-info), var(--tint-info-2)); border-color: var(--tint-info-line); }
@@ -141,6 +171,56 @@
 
 /* --- theme toggle -------------------------------------------------------- */
 .header-actions { display: flex; align-items: center; gap: 12px; }
+
+/* ---- primary navigation -------------------------------------------------
+   The site has three destinations and, until now, the header linked to none
+   of them: the directory and the planner were reachable only from the footer
+   of a page that runs 8,000px on a result. Every page carries the same three
+   links.
+
+   .header-strip is display:contents on a wide screen, so nav and the
+   compliance pill are ordinary flex children of the header row. Below 760px
+   it becomes a real flex row of its own beneath the brand, and it wraps -- so
+   at 320px the pill drops to its own line by itself, with no third breakpoint
+   guessing where that happens. */
+.header-strip { display: contents; }
+.site-nav { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.nav-link {
+    display: inline-block; padding: 7px 12px; border-radius: 8px;
+    font-size: 0.86rem; font-weight: 600; color: var(--muted);
+    text-decoration: none; white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+.nav-link:hover { background: var(--tint-neutral-2); color: var(--text); }
+.nav-link:focus-visible { outline: 3px solid var(--primary-light); outline-offset: 2px; }
+.nav-link.is-current { background: var(--tint-info); color: var(--primary); }
+.verified { white-space: nowrap; margin-left: 14px; }
+.nav-short { display: none; }
+
+@media (max-width: 760px) {
+    .header-inner { flex-wrap: wrap; height: auto; min-height: 70px; padding: 10px 0; row-gap: 8px; }
+    .brand-text { margin-right: auto; }
+    .header-strip {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+        flex-basis: 100%; order: 3; justify-content: space-between;
+        border-top: 1px solid var(--border); padding-top: 8px;
+    }
+    .site-nav { margin-left: 0; gap: 4px; }
+    .nav-full { display: none; }
+    .nav-short { display: inline; }
+    .verified { margin-left: 0; }
+    .nav-link { padding: 6px 10px; }
+}
+/* Below this the nav and the pill cannot share a line, so the pill stops
+   trying: full width and centred reads as a statement, where an orphaned pill
+   sitting left under the nav reads as a leftover. */
+@media (max-width: 520px) {
+    .verified { flex-basis: 100%; justify-content: center; }
+}
+@media (max-width: 420px) {
+    .brand-text { font-size: 1.2rem; }
+    .verified { font-size: 0.68rem; padding: 5px 10px; }
+}
 .theme-toggle {
     display: inline-flex; align-items: center; justify-content: center;
     width: 38px; height: 38px; padding: 0;
@@ -208,6 +288,13 @@
     background: var(--card); color: var(--text);
     font-size: 0.95rem; font-family: inherit;
 }
+/* The picker holds names as long as "CJC-1295 NO DAC 5mg + Ipamorelin Blend".
+   An <input> clips at its padding edge with no ellipsis, so the selected
+   peptide read "CJC-1295 NO DAC 5mg + Ipamoreli" - cut mid-word, with nothing
+   saying it had been cut. Chrome honours text-overflow on an input while it is
+   not focused, which is exactly when this is being read rather than typed. */
+.combo-input { text-overflow: ellipsis; }
+.combo-input:focus { text-overflow: clip; }
 .combo-input::placeholder { color: var(--muted); }
 .combo-input:hover { border-color: var(--primary-light); }
 .combo-input:focus-visible { border-color: var(--primary); outline: none; box-shadow: var(--focus-ring); }

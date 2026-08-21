@@ -977,75 +977,105 @@ export function disclaimerHTML() {
 }
 
 /**
- * Generate SVG syringe visualization
+ * The syringe draw guide - the one picture on the page that says what to do.
+ *
+ * It was 400x130 with a `width` attribute, so on a 952px container it sat in
+ * the middle at 42% scale with 552px of dead air either side, and the barrel
+ * carried a "100U Insulin Syringe" watermark straight across its own tick
+ * grid. Measured, not guessed: syringeInner 400 inside syringeContainer 952.
+ *
+ * Two things changed beyond size. The scale now runs from the NEEDLE, because
+ * that is where a real insulin syringe's zero is - the plunger tip rests at
+ * the needle end when fully depressed, and the graduations count away from it
+ * toward the thumb. Drawing the needle on the right and filling from the left
+ * put zero at the far end from the needle, which is backwards. Needle left,
+ * numbers rising rightward, plunger on the right reads left-to-right AND
+ * matches the object in your hand.
+ *
+ * And it has minor ticks now. Every unit up to 50, every two at 100. A dose
+ * you have to locate between two marks 52px apart is a dose you can misread by
+ * five units; the comb is what makes 12 a position rather than an assertion.
+ *
+ * Colours come through custom properties so the dark theme restyles the glass
+ * and the scale without this function knowing a theme exists.
+ *
  * @param {number} units - Units to draw
  * @param {number} syringeSize - Barrel size (30, 50, or 100)
  * @returns {string} SVG markup
  */
 export function generateSyringeSVG(units, syringeSize) {
-    const width = 400;
-    const height = 130;
-    const barrelY = 45;
-    const barrelHeight = 40;
-    const barrelStartX = 60;
-    const barrelWidth = 280;
-    const endX = barrelStartX + barrelWidth;
+    const W = 720, H = 212;
+    const barrelX = 104, barrelW = 516, barrelY = 92, barrelH = 60;
+    const barrelEnd = barrelX + barrelW;
+    const midY = barrelY + barrelH / 2;
 
     // The plunger used to be unbounded, so an overflowing dose drew the fill,
     // plunger and rod straight through the needle tip and off the graphic.
     const overflow = units > syringeSize;
     const fraction = Math.min(Math.max(units / syringeSize, 0), 1);
-    const plungerX = barrelStartX + fraction * barrelWidth;
+    const plungerX = barrelX + fraction * barrelW;
 
-    const steps = syringeSize <= 30 ? 5 : 10;
-    let ticks = '';
-    let labels = '';
-    for (let i = 0; i <= syringeSize; i += steps) {
-        const x = barrelStartX + (i / syringeSize) * barrelWidth;
-        ticks += `<line x1="${x}" y1="${barrelY}" x2="${x}" y2="${barrelY + barrelHeight}" stroke="#cbd5e1" stroke-width="1"/>`;
-        labels += `<text x="${x}" y="${barrelY + barrelHeight + 18}" text-anchor="middle" font-size="11" fill="#64748b">${i}</text>`;
+    const at = i => barrelX + (i / syringeSize) * barrelW;
+    const minorStep = syringeSize > 50 ? 2 : 1;
+    const majorStep = syringeSize > 50 ? 10 : 5;
+
+    let minor = '', major = '', labels = '';
+    for (let i = 0; i <= syringeSize; i += minorStep) {
+        if (i % majorStep === 0) continue;
+        minor += `<line x1="${at(i).toFixed(1)}" y1="${barrelY}" x2="${at(i).toFixed(1)}" y2="${barrelY + 11}"/>`;
+    }
+    for (let i = 0; i <= syringeSize; i += majorStep) {
+        const x = at(i).toFixed(1);
+        major += `<line x1="${x}" y1="${barrelY}" x2="${x}" y2="${barrelY + barrelH}"/>`;
+        labels += `<text x="${x}" y="${barrelY + barrelH + 21}" text-anchor="middle">${i}</text>`;
     }
 
-    let fillColor = '#3b82f6';
-    if (fraction > 0.75) fillColor = '#f59e0b';
-    if (overflow) fillColor = '#ef4444';
+    let fillColor = 'var(--syr-fill, #3b82f6)';
+    if (fraction > 0.75) fillColor = 'var(--syr-fill-high, #f59e0b)';
+    if (overflow) fillColor = 'var(--syr-fill-over, #ef4444)';
 
-    const readout = overflow
-        ? `<text x="${width / 2}" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#dc2626">
-               ${formatUnits(units)} units - exceeds this ${syringeSize}U syringe
-           </text>
-           <text x="${width / 2}" y="34" text-anchor="middle" font-size="10" fill="#64748b">
-               needs ${Math.ceil(units / syringeSize)} draws, a larger barrel, or less bacteriostatic water
-           </text>`
-        : `<line x1="${plungerX}" y1="${barrelY - 12}" x2="${plungerX}" y2="${barrelY - 6}" stroke="#1e40af" stroke-width="2"/>
-           <text x="${plungerX}" y="${barrelY - 26}" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e40af">${formatUnits(units)}</text>
-           <text x="${plungerX}" y="${barrelY - 15}" text-anchor="middle" font-size="10" fill="#64748b">units</text>`;
+    // The callout is 12 units wide at most; clamped so a dose at either end of
+    // the barrel cannot hang its own label off the graphic.
+    const calloutX = Math.min(Math.max(plungerX, 44), W - 44);
+
+    const callout = overflow
+        ? `<text class="syr-over" x="${W / 2}" y="34" text-anchor="middle">${formatUnits(units)} units - exceeds this ${syringeSize}U syringe</text>
+           <text class="syr-over-sub" x="${W / 2}" y="58" text-anchor="middle">needs ${Math.ceil(units / syringeSize)} draws, a larger barrel, or less bacteriostatic water</text>`
+        : `<line class="syr-leader" x1="${calloutX}" y1="70" x2="${plungerX}" y2="${barrelY - 5}"/>
+           <text class="syr-callout" x="${calloutX}" y="46" text-anchor="middle">${formatUnits(units)}</text>
+           <text class="syr-callout-sub" x="${calloutX}" y="64" text-anchor="middle">units</text>`;
 
     return `
     <div class="syringe-container">
-        <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"
+        <svg class="syringe-svg" width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"
              role="img" aria-label="Draw ${formatUnits(units)} units on a ${syringeSize} unit insulin syringe">
-            ${readout}
 
-            <rect x="${barrelStartX}" y="${barrelY}" width="${barrelWidth}" height="${barrelHeight}"
-                  fill="#f8fafc" stroke="#1e40af" stroke-width="3" rx="4"/>
-            ${ticks}
-            ${labels}
+            <!-- needle and hub, at the end the scale counts from -->
+            <polygon class="syr-metal" points="4,${midY} 44,${midY - 2.5} 44,${midY + 2.5}"/>
+            <rect class="syr-metal" x="44" y="${midY - 4}" width="26" height="8" rx="2"/>
+            <path class="syr-hub" d="M70 ${midY - 9} L${barrelX} ${barrelY + 4} L${barrelX} ${barrelY + barrelH - 4} L70 ${midY + 9} Z"/>
 
-            <rect x="${barrelStartX + 2}" y="${barrelY + 2}"
-                  width="${Math.max(0, plungerX - barrelStartX - 4)}" height="${barrelHeight - 4}"
-                  fill="${fillColor}" opacity="0.8" rx="2"/>
+            <!-- barrel -->
+            <rect class="syr-body" x="${barrelX}" y="${barrelY}" width="${barrelW}" height="${barrelH}" rx="5"/>
+            <rect class="syr-liquid" x="${barrelX + 2}" y="${barrelY + 2}"
+                  width="${Math.max(0, plungerX - barrelX - 3)}" height="${barrelH - 4}" rx="3" fill="${fillColor}"/>
+            <g class="syr-minor">${minor}</g>
+            <g class="syr-major">${major}</g>
+            <rect class="syr-edge" x="${barrelX}" y="${barrelY}" width="${barrelW}" height="${barrelH}" rx="5"/>
+            <g class="syr-label">${labels}</g>
 
             ${overflow ? '' : `
-            <rect x="${plungerX - 2}" y="${barrelY - 5}" width="4" height="${barrelHeight + 10}" fill="#1e3a8a" rx="2"/>
-            <rect x="${plungerX - 8}" y="${barrelY - 8}" width="16" height="4" fill="#1e3a8a" rx="2"/>`}
+            <!-- plunger: head parked on the mark, rod out through the thumb rest.
+                 The rod is deliberately lighter than the head - you do see it
+                 through a clear barrel, but at full weight it is a bar straight
+                 across the tick grid, competing with the thing being read. -->
+            <rect class="syr-rod" x="${(plungerX + 2).toFixed(1)}" y="${midY - 3}" width="${Math.max(0, 666 - plungerX)}" height="6" rx="3"/>
+            <rect class="syr-plunger" x="${(plungerX - 3).toFixed(1)}" y="${barrelY - 3}" width="6" height="${barrelH + 6}" rx="3"/>
+            <rect class="syr-plunger" x="666" y="${barrelY - 14}" width="11" height="${barrelH + 28}" rx="5"/>`}
 
-            <polygon points="${endX},${barrelY + 15} ${endX + 15},${barrelY + 20} ${endX},${barrelY + 25}" fill="#94a3b8"/>
+            ${callout}
 
-            <text x="${barrelStartX + barrelWidth / 2}" y="${barrelY + barrelHeight / 2 + 5}"
-                  text-anchor="middle" font-size="10" fill="#94a3b8" opacity="0.7">
-                ${syringeSize}U Insulin Syringe
-            </text>
+            <text class="syr-barrel-name" x="${barrelEnd}" y="${H - 6}" text-anchor="end">${syringeSize}U insulin syringe</text>
         </svg>
     </div>
     `;

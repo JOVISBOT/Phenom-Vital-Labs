@@ -158,7 +158,40 @@ function reconTable(p) {
 
 /* --------------------------------------------------------------- page parts */
 
-function head({ title, description, canonical, extraCss = '', jsonLd = [] }) {
+/**
+ * The three places this site goes, in the header of every page.
+ *
+ * They used to live only in the footer, which on a result page is 8,000px
+ * down - so the planner and the directory were, in practice, unreachable from
+ * the screen anyone actually looks at. `nav` is the index of the current
+ * destination, or -1 for none.
+ *
+ * The same markup is hand-written into index.html and plan/index.html, which
+ * have no build step. test/ui-shell-refinement.test.mjs asserts all four
+ * headers still carry the same three hrefs, because that is exactly the kind
+ * of duplication that drifts.
+ */
+function siteNav(root, current) {
+    const SEP = `
+                `;
+    // Two labels, not one word plus a prefix: "All 44 " + "Peptides" reads as
+    // "All 44 Peptides" on a wide screen, which is not a phrase anyone writes.
+    // Exactly one of the pair is display:none, so a screen reader hears one.
+    const items = [['', 'Calculator', 'Calculator'],
+                   ['p/', 'All 44 peptides', 'Peptides'],
+                   ['plan/', 'Mix &amp; cycle planner', 'Planner']];
+    return `<nav class="site-nav" aria-label="Primary">
+                ${items.map(([href, full, short], i) => {
+                    const on = i === current;
+                    return `<a class="nav-link${on ? ' is-current' : ''}" href="${root}${href}"`
+                        + `${on ? ' aria-current="page"' : ''}>`
+                        + `${full === short ? full
+                              : `<span class="nav-full">${full}</span><span class="nav-short">${short}</span>`}</a>`;
+                }).join(SEP)}
+            </nav>`;
+}
+
+function head({ title, description, canonical, extraCss = '', jsonLd = [], nav = -1 }) {
     const ld = jsonLd.map(o => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join('\n    ');
     return `<!DOCTYPE html>
 <html lang="en">
@@ -199,8 +232,11 @@ function head({ title, description, canonical, extraCss = '', jsonLd = [] }) {
     <header>
         <div class="header-inner">
             <a class="brand-text" href="${extraCss}"><span>Phenom</span> Vital Labs</a>
-            <div class="header-actions">
+            <div class="header-strip">
+                ${siteNav(extraCss, nav)}
                 <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+            </div>
+            <div class="header-actions">
                 <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
                     <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -385,7 +421,7 @@ function peptidePage(p, all) {
         ? `<ul class="${cls}">${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`
         : '';
 
-    return head({ title, description, canonical, extraCss: '../../', jsonLd })
+    return head({ title, description, canonical, extraCss: '../../', jsonLd, nav: 1 })
         + `
     <main class="container">
         <nav class="crumbs" aria-label="Breadcrumb">
@@ -574,7 +610,8 @@ function hubPage(all) {
             + `each with its own reconstitution table and cycle maths. Every number computed, not copied.`,
         canonical,
         extraCss: '../',
-        jsonLd
+        jsonLd,
+        nav: 1
     }) + `
     <main class="container">
         <nav class="crumbs" aria-label="Breadcrumb">

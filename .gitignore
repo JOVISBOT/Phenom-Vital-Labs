@@ -39,6 +39,11 @@ Thumbs.db
 # four of them (shots-eval, shots-final, shots-refine, shots-verify) were sitting
 # untracked and unignored before this was widened.
 shots*/
+# ...and the dot-prefixed spellings. `shots*/` does not match `.shots/`, so
+# .shots, .shots-dark, .shots-ui and .parts were all sitting untracked and
+# unignored again -- the exact escape the widening above was written to stop.
+.shots*/
+.parts*/
 ui-report.json
 plan-report.json
 plan-err.txt

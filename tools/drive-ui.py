@@ -5,7 +5,10 @@ Usage:  python tools/drive-ui.py [base_url] [out_dir]
 import sys, json, pathlib
 from playwright.sync_api import sync_playwright
 
-BASE = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8765/"
+# Every other driver here takes the base WITHOUT a trailing slash; this one
+# concatenated raw and turned a stripped arg into "...:8765404.html". Normalise
+# so both forms work rather than failing on the fifth page.
+BASE = (sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8765").rstrip("/") + "/"
 OUT = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else "shots")
 OUT.mkdir(exist_ok=True)
 

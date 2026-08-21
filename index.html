@@ -29,9 +29,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=36">
-    <link rel="stylesheet" href="css/pages.css?v=36">
-    <link rel="stylesheet" href="css/theme.css?v=36">
+    <link rel="stylesheet" href="css/styles.css?v=37">
+    <link rel="stylesheet" href="css/pages.css?v=37">
+    <link rel="stylesheet" href="css/theme.css?v=37">
 
     <!-- Set the theme before first paint. Doing this from a module would flash
          white first. Mirrors js/theme.js THEME_BOOT; the test asserts they agree. -->
@@ -46,8 +46,15 @@
     <header>
         <div class="header-inner">
             <div class="brand-text"><span>Phenom</span> Vital Labs</div>
-            <div class="header-actions">
+            <div class="header-strip">
+                <nav class="site-nav" aria-label="Primary">
+                <a class="nav-link is-current" href="./" aria-current="page">Calculator</a>
+                <a class="nav-link" href="p/"><span class="nav-full">All 44 peptides</span><span class="nav-short">Peptides</span></a>
+                <a class="nav-link" href="plan/"><span class="nav-full">Mix &amp; cycle planner</span><span class="nav-short">Planner</span></a>
+            </nav>
                 <div class="verified"><span class="verified-dot" aria-hidden="true"></span>Research use only</div>
+            </div>
+            <div class="header-actions">
                 <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark theme">
                     <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                     <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -100,7 +107,6 @@
                                aria-label="Vial size printed on your vial" placeholder="e.g. 12">
                         <span id="vialSizeCustomUnit" class="custom-vial-unit" hidden aria-hidden="true">mg</span>
                     </div>
-                    <p id="vialSizeProvenance" class="vial-provenance" role="note" hidden></p>
                 </div>
                 <div class="form-field">
                     <label for="reconMl"><span class="label-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7l5 6.4a6.3 6.3 0 11-10 0z"/></svg></span> BAC Water</label>
@@ -142,6 +148,16 @@
                     </div>
                 </details>
             </div>
+
+            <!-- Where the vial sizes come from. This used to be the last child of
+                 the Vial Size cell, which made that one cell 100px taller than the
+                 two beside it and left the first grid row visibly ragged (measured:
+                 283x100 inside a three-up row). It is a footnote about the whole
+                 catalogue, not a hint on one control, so it sits under the grid at
+                 full width - and it stays VISIBLE rather than folding behind a
+                 disclosure, because it is the page saying what these numbers are
+                 not. -->
+            <p id="vialSizeProvenance" class="vial-provenance" role="note" hidden></p>
 
             <button class="btn" id="calculateBtn" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -200,6 +216,6 @@
         <a href="plan/">Mix &amp; cycle planner</a>
     </footer>
 
-    <script type="module" src="js/main.js?v=36"></script>
+    <script type="module" src="js/main.js?v=37"></script>
 </body>
 </html>

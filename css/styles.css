@@ -3,7 +3,13 @@
    node on the calculator, a peptide page and the directory: 47 elements were
    below AA, all of them these five values on a cream or tinted background --
    #6b7280 body text reads 4.41 on #f1f5f9, and the amber accent 3.19. */
-:root{--primary:#1e40af;--primary-light:#3b82f6;--success:#047857;--warning:#b45309;--danger:#c81e1e;--bg:#fefcf3;--card:#fff;--text:#1f2937;--muted:#5b6472;--border:#e5e7eb}
+/* --chip-* are the inverted tiles: a dark square with a white glyph on it.
+   They are NOT --primary. --primary inverts between themes because its job is
+   to be legible ON the page background; a chip's job is to be a dark surface
+   the page's foreground sits on, which is the opposite requirement. Building
+   the chips out of --primary made them light blue in dark mode and dropped
+   every white glyph to 2.43:1. Measured by tools/probe-icon-contrast.py. */
+:root{--primary:#1e40af;--primary-light:#3b82f6;--success:#047857;--warning:#b45309;--danger:#c81e1e;--bg:#fefcf3;--card:#fff;--text:#1f2937;--muted:#5b6472;--border:#e5e7eb;--chip-1:#1e40af;--chip-2:#1e3a8a;--chip-accent:#7c3aed}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 header{background:var(--card);border-bottom:1px solid var(--border);padding:0 24px}
@@ -17,16 +23,24 @@ header{background:var(--card);border-bottom:1px solid var(--border);padding:0 24
 /* ---- form ---- */
 .card{background:var(--card);border-radius:24px;box-shadow:0 8px 32px rgba(0,0,0,0.08);padding:36px;margin-bottom:24px}
 .form-title{font-size:1.25rem;font-weight:700;margin-bottom:28px;display:flex;align-items:center;gap:10px}
-.form-title::before{content:'';width:5px;height:24px;background:linear-gradient(180deg,var(--primary),#a78bfa);border-radius:3px}
+.form-title::before{content:'';width:5px;height:24px;background:linear-gradient(180deg,var(--chip-1),var(--chip-accent));border-radius:3px}
 .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
 .form-field{display:flex;flex-direction:column;min-width:0}
 .form-note{font-size:0.8rem;color:var(--muted);margin-bottom:20px;line-height:1.5}
 label{font-size:0.75rem;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.label-icon{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:linear-gradient(135deg,var(--primary),#a78bfa);border-radius:6px;color:#fff;font-size:0.8rem}
+.label-icon{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:linear-gradient(135deg,var(--chip-1),var(--chip-accent));border-radius:6px;color:#fff;font-size:0.8rem}
 select{width:100%;padding:14px 42px 14px 16px;border:2px solid var(--border);border-radius:12px;background:var(--card);font-size:0.95rem;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%231e40af' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:calc(100% - 14px) center;cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;min-width:0}
 select:hover{border-color:#bfdbfe}
 select:focus-visible{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
-select:disabled{background:#f3f4f6;color:#9ca3af;cursor:not-allowed;opacity:0.7}
+/* background-color + an explicit background-image, never the `background`
+   shorthand: the rule above paints the chevron with background-repeat:no-repeat
+   and a right-edge background-position, and the shorthand silently resets both
+   to `repeat` and `0% 0%`. In light mode that was invisible because the same
+   shorthand also cleared the image; in dark mode the theme re-declares the
+   image at higher specificity, so the arrow tiled across the whole control and
+   printed over "Select a peptide first". A disabled dropdown shows no arrow --
+   stated here once, for both themes. */
+select:disabled{background-color:#f3f4f6;background-image:none;color:#9ca3af;cursor:not-allowed;opacity:0.7}
 optgroup{color:var(--primary);font-weight:600;background:#eff6ff;font-size:0.85rem}
 optgroup option{color:var(--text);font-weight:400;font-size:0.9rem;background:#fff}
 .btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--primary),#1e3a8a);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -46,7 +60,7 @@ optgroup option{color:var(--text);font-weight:400;font-size:0.9rem;background:#f
 .peptide-header p{color:var(--muted);font-size:0.9rem}
 .summary-card{background:#fff;border:2px solid var(--primary);border-radius:16px;padding:24px;margin-bottom:24px;box-shadow:0 4px 15px rgba(30,64,175,0.15)}
 .summary-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-.summary-icon{width:48px;height:48px;flex-shrink:0;background:linear-gradient(135deg,var(--primary),#1e3a8a);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff}
+.summary-icon{width:48px;height:48px;flex-shrink:0;background:linear-gradient(135deg,var(--chip-1),var(--chip-2));border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff}
 .summary-icon svg{width:26px;height:26px}
 .summary-title h3{font-size:1.2rem;font-weight:700}
 .summary-title p{font-size:0.85rem;color:var(--muted)}
@@ -90,8 +104,39 @@ optgroup option{color:var(--text);font-weight:400;font-size:0.9rem;background:#f
 /* ---- syringe + calculation ---- */
 .syringe-visual{margin:20px 0}
 .syringe-visual h4{text-align:center;margin-bottom:12px;color:var(--primary);font-size:1rem}
-.syringe-container{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:16px;border:2px solid #e2e8f0;display:flex;justify-content:center;padding:16px}
-.syringe-container svg{max-width:100%;height:auto}
+.syringe-container{background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:16px;border:2px solid #e2e8f0;display:flex;justify-content:center;padding:20px 16px}
+/* The graphic is the answer in picture form, so it takes the width it is
+   given. It used to carry width="400" and sit at 42% of a 952px container. */
+.syringe-svg{width:100%;max-width:820px;height:auto;display:block}
+.syr-metal{fill:var(--syr-metal,#9aa6b8)}
+.syr-hub{fill:var(--syr-hub,#cbd5e1);stroke:var(--syr-edge,#1e40af);stroke-width:2;stroke-linejoin:round}
+.syr-body{fill:var(--syr-body,#fff)}
+.syr-edge{fill:none;stroke:var(--syr-edge,#1e40af);stroke-width:3}
+.syr-liquid{opacity:0.85}
+.syr-minor line{stroke:var(--syr-tick,#c3ccd9);stroke-width:1}
+.syr-major line{stroke:var(--syr-tick-major,#94a3b8);stroke-width:1.5}
+.syr-label text{fill:var(--syr-ink,#475569);font-size:13px;font-weight:600}
+.syr-plunger{fill:var(--syr-plunger,#1e3a8a)}
+.syr-rod{fill:var(--syr-rod,#93a7d4)}
+.syr-leader{stroke:var(--syr-accent,#1e3a8a);stroke-width:2}
+.syr-callout{fill:var(--syr-accent,#1e3a8a);font-size:30px;font-weight:800}
+.syr-callout-sub{fill:var(--syr-ink,#475569);font-size:13px;font-weight:600;letter-spacing:0.4px}
+.syr-barrel-name{fill:var(--syr-ink-faint,#8a95a6);font-size:12px;letter-spacing:0.3px}
+.syr-over{fill:var(--danger);font-size:19px;font-weight:700}
+.syr-over-sub{fill:var(--syr-ink,#475569);font-size:13px}
+/* The SVG scales with its viewBox, so a 13px label on a 720-wide graphic in a
+   358px container renders at 6.5 CSS px - unreadable on the phone this page is
+   most used on. Type is re-sized in USER units here, which is the only place a
+   media query can reach inside an SVG. */
+@media(max-width:560px){
+    .syr-label text{font-size:21px}
+    .syr-callout{font-size:46px}
+    .syr-callout-sub{font-size:20px}
+    .syr-barrel-name{font-size:18px}
+    .syr-over{font-size:26px}
+    .syr-over-sub{font-size:18px}
+    .syringe-container{padding:14px 10px}
+}
 .syringe-caption{text-align:center;margin-top:14px;color:var(--muted);font-size:0.9rem}
 .syringe-caption strong{color:var(--primary);font-size:1.1rem}
 .calc-box{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid #bae6fd;border-radius:12px;padding:20px;margin:20px 0}
@@ -107,7 +152,12 @@ optgroup option{color:var(--text);font-weight:400;font-size:0.9rem;background:#f
 .info-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:border-color 0.3s,box-shadow 0.3s}
 .info-card:hover{border-color:var(--primary);box-shadow:0 4px 12px rgba(30,64,175,0.15)}
 .info-card.highlight{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#bfdbfe}
-.info-card-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),#1e3a8a);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.4rem}
+/* `color` is not decoration on an inverted chip - the glyph strokes with
+   currentColor. Without it this inherited --text and painted #1F2937 on a
+   #1E3D9D gradient: 1.50:1, measured. Four of these sit on every result and
+   all four read as one identical dark square. Its two siblings, .label-icon
+   and .summary-icon, both set #fff; this was the outlier. */
+.info-card-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--chip-1),var(--chip-2));border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.4rem;color:#fff}
 .info-card h4{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:8px}
 .info-card p{font-size:1.05rem;font-weight:700}
 .info-card p.highlight{font-size:1.1rem;color:var(--primary)}
@@ -175,7 +225,7 @@ footer strong{color:var(--primary)}
 .custom-vial-unit[hidden]{display:none}
 
 /* ---- vial-size provenance (STILL OPEN 1: the catalogue was unsourced) ---- */
-.vial-provenance{margin:6px 0 0;font-size:0.72rem;line-height:1.45;color:var(--muted)}
+.vial-provenance{margin:0 0 20px;padding:12px 14px;font-size:0.76rem;line-height:1.55;color:var(--muted);background:var(--tint-neutral,#f9fafb);border-left:3px solid var(--border);border-radius:0 8px 8px 0}
 .vial-provenance[hidden]{display:none}
 
 /* ---- evidence class (OPEN 4: one blanket disclaimer flattened all 44 records) ---- */
@@ -241,7 +291,15 @@ footer strong{color:var(--primary)}
 .optional-fields>summary:hover{color:var(--text)}
 .optional-fields>summary:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
 .optional-summary-text{font-weight:600}
-.optional-values{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--text);font-weight:600}
+.optional-values{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--text);font-weight:600;white-space:nowrap}
+/* At 390px the row read "For the printed sheet / only" beside "180 lbs . 30-/39"
+   - both halves wrapped, and the age range broke across lines at its own
+   hyphen. The values never wrap now, and below 500px the summary stacks
+   rather than fighting for one line. */
+@media(max-width:500px){
+    .optional-fields>summary{flex-wrap:wrap;row-gap:2px}
+    .optional-values{margin-left:26px;flex-basis:100%}
+}
 .optional-body{padding:0 16px 14px}
 .optional-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:12px}
 .optional-body .form-note{margin-bottom:0}

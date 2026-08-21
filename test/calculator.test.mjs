@@ -407,7 +407,7 @@ test('no instruction restates a number the user chooses', () => {
             assert.ok(!(quantity.test(line) && owned.test(line)),
                 `${p.id}: instruction hardcodes a reconstitution figure the form owns - "${line}"`);
         }
-        // The vial-provenance note renders directly under the same two controls,
+        // The vial-provenance note renders in the same card as those controls,
         // so it is bound by the same rule: it may state what a product IS, never
         // what volume to add.
         assert.ok(!(quantity.test(p.labelSource) && owned.test(p.labelSource)),
