@@ -3,6 +3,7 @@
  */
 
 import { RECON_VOLUMES, SYRINGE_SIZES, DEFAULT_SYRINGE, defaultReconMl } from './calculator.js';
+import { icon } from './icons.js';
 
 export const DISCLAIMER_TITLE = 'Research information only - not medical advice';
 export const DISCLAIMER_BODY =
@@ -805,7 +806,7 @@ export function renderResults(peptide, results, inputs) {
 
             ${results.noRecon ? `
             <div class="calc-box animate-in" style="animation-delay: 0.14s;">
-                <h4>💉 No Draw To Calculate</h4>
+                <h4>${icon('syringe')} No draw to calculate</h4>
                 <p class="calc-footnote">
                     ${esc(peptide.name)} is dispensed as a pre-filled ${esc(results.device)} at a fixed strength.
                     There is no powder to reconstitute, no bacteriostatic water to add and no syringe to pull to
@@ -815,7 +816,7 @@ export function renderResults(peptide, results, inputs) {
                 </p>
             </div>` : `
             <div class="syringe-visual animate-in" style="animation-delay: 0.14s;">
-                <h4>💉 Syringe Draw Guide (${variants ? esc(vLabel.med || 'shown above') : 'Recommended Dose'})</h4>
+                <h4>${icon('syringe')} Syringe draw guide (${variants ? esc(vLabel.med || 'shown above') : 'recommended dose'})</h4>
                 ${generateSyringeSVG(results.syringeUnits.med, results.syringe)}
                 <p class="syringe-caption">
                     Pull to <strong>${formatUnits(results.syringeUnits.med)} units</strong>
@@ -824,7 +825,7 @@ export function renderResults(peptide, results, inputs) {
             </div>
 
             <div class="calc-box animate-in" style="animation-delay: 0.15s;">
-                <h4>🧮 Your Calculation</h4>
+                <h4>${icon('calculator')} Your calculation</h4>
                 <ol class="calc-steps">
                     <li>Reconstitute: <strong>${medPooled > 1 ? `${medPooled} &times; ${results.vialSize}${u}` : `${results.vialSize}${u}`}</strong> ${medPooled > 1 ? 'pooled' : 'vial'} &divide; <strong>${results.reconMl} ml</strong> water = <strong>${trim(medConc, 2)} ${u}/ml</strong>${medPooled > 1 ? ' <em>(the same water dissolves every vial)</em>' : ''}</li>
                     <li>Dose: <strong>${esc(formatDose(results.doses.med, results.doseUnit))}</strong>${results.doseUnit === 'mcg' ? ` = ${trim(results.doses.med / 1000, 4)} mg` : ''}</li>
@@ -845,13 +846,13 @@ export function renderResults(peptide, results, inputs) {
 
             <div class="info-grid animate-in" style="animation-delay: 0.18s;">
                 <div class="info-card">
-                    <div class="info-card-icon" aria-hidden="true">⏱️</div>
+                    <div class="info-card-icon" aria-hidden="true">${icon('clock')}</div>
                     <h4>Half-Life</h4>
                     <p class="highlight">${esc(peptide.halfLife || 'N/A')}</p>
                     <small>Time in body</small>
                 </div>
                 <div class="info-card">
-                    <div class="info-card-icon" aria-hidden="true">📅</div>
+                    <div class="info-card-icon" aria-hidden="true">${icon('repeat')}</div>
                     <h4>Frequency</h4>
                     <p class="highlight">${esc(peptide.freq || 'N/A')}</p>
                     <small>${results.weeklyFreqRange.assumed
@@ -859,14 +860,14 @@ export function renderResults(peptide, results, inputs) {
                         : `${formatRange(results.weeklyFreqRange)}x per week`}</small>
                 </div>
                 <div class="info-card">
-                    <div class="info-card-icon" aria-hidden="true">🔄</div>
+                    <div class="info-card-icon" aria-hidden="true">${icon('cycle')}</div>
                     <h4>Cycle</h4>
                     <p class="highlight">${esc(peptide.cycle || peptide.wks + ' weeks')}</p>
                     <small>${formatRange(results.dosesPerCycleRange)} injections in full${
                         results.dosesPerCycleRange.assumed ? ` (${ASSUMED_NOTE})` : ''}</small>
                 </div>
                 <div class="info-card highlight">
-                    <div class="info-card-icon" aria-hidden="true">📦</div>
+                    <div class="info-card-icon" aria-hidden="true">${icon('box')}</div>
                     <h4>${results.noRecon ? 'Pens Needed' : 'Vials Needed'}</h4>
                     <p class="big">${formatRange(results.vialsRange)}</p>
                     <small>${results.vialSize}${u} ${results.noRecon ? 'single-dose pens' : ''} for the full cycle${
@@ -898,6 +899,9 @@ export function renderResults(peptide, results, inputs) {
                 </div>
             ` : ''}
 
+            <!-- Three collapsed prose folds, stacked, were three full-width rows of
+                 nothing. Side by side above 1180px; still stacked on a phone. -->
+            <div class="fold-pair">
             <details class="fold animate-in" style="animation-delay: 0.11s;">
                 <summary>Research overview</summary>
                 <div class="fold-body"><div class="research-box" style="margin:0">
@@ -928,6 +932,7 @@ export function renderResults(peptide, results, inputs) {
             </div>
                 </div>
             </details>
+            </div>
 
             <div class="protocol-box animate-in" style="animation-delay: 0.13s;">
                 <h3>Administration Instructions</h3>
@@ -936,10 +941,10 @@ export function renderResults(peptide, results, inputs) {
                 </ul>
             </div>
 
-            <div class="pdf-buttons animate-in" style="animation-delay: 0.35s;">
-                <button class="btn" id="previewPDF" type="button">Preview Protocol PDF</button>
-                <button class="btn" id="downloadPDF" type="button">Download PDF</button>
-            </div>
+            <!-- A second, identical Preview/Download pair used to sit here. Two action
+                 bars for two actions on one page: whichever one a visitor found, the
+                 other was dead weight. main.js binds both id sets in a loop, so the
+                 remaining bar above the info tiles carries the buttons on its own. -->
         </div>
     `;
 

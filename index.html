@@ -29,9 +29,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=34">
-    <link rel="stylesheet" href="css/pages.css?v=34">
-    <link rel="stylesheet" href="css/theme.css?v=34">
+    <link rel="stylesheet" href="css/styles.css?v=35">
+    <link rel="stylesheet" href="css/pages.css?v=35">
+    <link rel="stylesheet" href="css/theme.css?v=35">
 
     <!-- Set the theme before first paint. Doing this from a module would flash
          white first. Mirrors js/theme.js THEME_BOOT; the test asserts they agree. -->
@@ -56,6 +56,25 @@
         </div>
     </header>
 
+    <!-- The answer scrolls away. A result page runs ~4,900px on a desktop and
+         ~6,900px on a phone, and the number a visitor came for is in the top
+         12% of it - so reading the syringe guide, the warnings or the
+         instructions means the units are off screen. This bar carries the
+         answer down the page and appears only once the hero has left. -->
+    <div class="answer-dock" id="answerDock" hidden>
+        <div class="answer-dock-inner">
+            <div class="answer-dock-text">
+                <span class="answer-dock-name" id="dockName"></span>
+                <span class="answer-dock-dose" id="dockDose"></span>
+            </div>
+            <div class="answer-dock-draw"><strong id="dockUnits"></strong><span id="dockUnitWord">units</span></div>
+            <a class="answer-dock-top" href="#answer">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                <span>Back to the answer</span>
+            </a>
+        </div>
+    </div>
+
     <main class="container">
         <div class="intro">
             <h1>Peptide Dosage Calculator</h1>
@@ -66,13 +85,13 @@
             <div class="form-title">Configuration</div>
             <div class="form-grid">
                 <div class="form-field">
-                    <label for="peptide"><span class="label-icon" aria-hidden="true">🔬</span> Peptide</label>
+                    <label for="peptide"><span class="label-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6M10 3v5.2a2 2 0 01-.3 1L6.4 14a4 4 0 003.4 6h4.4a4 4 0 003.4-6l-3.3-4.8a2 2 0 01-.3-1V3"/><path d="M7 15h10"/></svg></span> Peptide</label>
                     <select id="peptide">
                         <option value="">Select peptide...</option>
                     </select>
                 </div>
                 <div class="form-field">
-                    <label for="vialSize"><span class="label-icon" aria-hidden="true">💊</span> <span id="vialSizeLabelText">Vial Size</span></label>
+                    <label for="vialSize"><span class="label-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="4" rx="1"/><path d="M9 6v12a3 3 0 006 0V6"/><path d="M9 13h6"/></svg></span> <span id="vialSizeLabelText">Vial Size</span></label>
                     <select id="vialSize" disabled>
                         <option value="">Select a peptide first</option>
                     </select>
@@ -84,30 +103,46 @@
                     <p id="vialSizeProvenance" class="vial-provenance" role="note" hidden></p>
                 </div>
                 <div class="form-field">
-                    <label for="reconMl"><span class="label-icon" aria-hidden="true">💧</span> BAC Water</label>
+                    <label for="reconMl"><span class="label-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7l5 6.4a6.3 6.3 0 11-10 0z"/></svg></span> BAC Water</label>
                     <select id="reconMl"></select>
                 </div>
                 <div class="form-field">
-                    <label for="syringe"><span class="label-icon" aria-hidden="true">💉</span> Syringe</label>
+                    <label for="syringe"><span class="label-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2l4 4M17.5 6.5l-11 11L3 21l3.5-3.5"/><path d="M14 5l5 5-2.5 2.5-5-5z"/><path d="M9 10l5 5M11.5 12.5l-1.5 1.5"/></svg></span> Syringe</label>
                     <select id="syringe"></select>
                 </div>
-                <div class="form-field">
-                    <label for="weight"><span class="label-icon" aria-hidden="true">⚖️</span> Body Weight</label>
-                    <select id="weight">
-                        <option value="">Select weight...</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label for="age"><span class="label-icon" aria-hidden="true">🎂</span> Age</label>
-                    <select id="age">
-                        <option value="">Select age...</option>
-                    </select>
-                </div>
+                <!-- Weight and age do not enter the arithmetic - the page says so itself, in
+                     a note under the form. They were still six-of-six equal-weight controls, so a
+                     third of the form was fields that cannot change the answer. Folded away, with
+                     their current values shown on the summary so nothing is hidden, only demoted. -->
+                <details class="form-field optional-fields" id="optionalFields">
+                    <summary>
+                        <span class="optional-summary-text">For the printed sheet only</span>
+                        <span class="optional-values" id="optionalValues"></span>
+                    </summary>
+                    <div class="optional-body">
+                        <div class="optional-grid">
+                            <div class="form-field">
+                                <label for="weight"><span class="label-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M6 20h12"/><path d="M4 8h16"/><path d="M4 8l-2 5a3.2 3.2 0 004 0z"/><path d="M20 8l-2 5a3.2 3.2 0 004 0z"/><circle cx="12" cy="4" r="1.5"/></svg></span> Body Weight</label>
+                                <select id="weight">
+                                    <option value="">Select weight...</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="age"><span class="label-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></span> Age</label>
+                                <select id="age">
+                                    <option value="">Select age...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="form-note">
+                            Weight and age are recorded on the protocol sheet for reference. They do not change
+                            the dose &mdash; peptides in this class are dosed as flat protocol amounts, not per
+                            kilogram.
+                        </p>
+                    </div>
+                </details>
             </div>
-            <p class="form-note">
-                Weight and age are recorded on the protocol sheet for reference. They do not change the dose &mdash;
-                peptides in this class are dosed as flat protocol amounts, not per kilogram.
-            </p>
+
             <button class="btn" id="calculateBtn" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                 Generate Protocol
@@ -118,6 +153,14 @@
             <!-- Populated by js/ui.js -->
         </div>
 
+
+        <!-- Once there is an answer on the page the two teaser cards below collapse
+             to this strip (CSS, body.has-results). Same two destinations, ~600px less
+             of them under a result that already runs several screens. -->
+        <nav class="teaser-strip" aria-label="Next steps">
+            <a href="plan/" data-cta="planner-compact">Mix &amp; cycle planner</a>
+            <a href="p/" data-cta="directory-compact">All 44 peptides</a>
+        </nav>
 
         <section class="card directory-teaser">
             <h2>Now work out the mixing and the run</h2>
@@ -157,6 +200,6 @@
         <a href="plan/">Mix &amp; cycle planner</a>
     </footer>
 
-    <script type="module" src="js/main.js?v=34"></script>
+    <script type="module" src="js/main.js?v=35"></script>
 </body>
 </html>

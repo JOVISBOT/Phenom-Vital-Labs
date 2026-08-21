@@ -34,11 +34,11 @@ Thumbs.db
 # Environment variables - keep secrets local
 .env
 
-# Local verification artifacts
-shots/
-shots-live/
-shots-ui/
-shots-plan/
+# Local verification artifacts.
+# Globbed rather than listed: every driver run invents its own out-dir name and
+# four of them (shots-eval, shots-final, shots-refine, shots-verify) were sitting
+# untracked and unignored before this was widened.
+shots*/
 ui-report.json
 plan-report.json
 plan-err.txt

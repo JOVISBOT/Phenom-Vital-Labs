@@ -108,7 +108,11 @@ def main():
 
         gate.goto(BASE + "?p=blend_gh1&w=165&a=34&v=10&r=3&s=100", wait_until="networkidle")
         gate.wait_for_selector(".dose-grid", timeout=8000)
-        gate.click("#downloadPDF")
+        # The result used to render two identical Preview/Download bars; the
+        # lower one carried the bare ids and this driver clicked it. Only the
+        # bar above the info tiles survives, so the "Top" ids are the ones
+        # actually on the page.
+        gate.click("#downloadPDFTop")
         gate.wait_for_selector(".modal", timeout=5000)
         # The overlay fades in over 200ms; screenshotting through it makes an
         # opaque dialog look half-transparent and reads as a bug that is not one.
@@ -135,7 +139,7 @@ def main():
         report["gate"]["stored"] = gate.evaluate("() => localStorage.getItem('pvl.email')")
 
         # asked once: a second download must not re-open it
-        gate.click("#downloadPDF")
+        gate.click("#downloadPDFTop")
         gate.wait_for_timeout(800)
         report["gate"]["reasked"] = gate.is_visible(".modal")
         gate.close()

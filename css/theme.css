@@ -92,6 +92,13 @@
 }
 :root[data-theme="dark"] .btn { background: linear-gradient(135deg, #2c5bd0, #1e3a8a); }
 :root[data-theme="dark"] .btn-secondary { background: var(--card); color: var(--primary); }
+/* .btn-ghost carries .btn too, and the dark .btn rule above is more specific
+   than the light .btn-ghost rule in plan.css - so in dark mode the one
+   destructive control on the planner ("Clear saved plan") painted itself as a
+   filled primary button, louder than Save right beside it. Pre-dates the icon
+   pass; found by looking at the dark screenshot rather than the light one. */
+:root[data-theme="dark"] .btn-ghost { background: transparent; color: var(--muted); border-color: transparent; }
+:root[data-theme="dark"] .btn-ghost:hover { background: transparent; color: var(--danger); border-color: var(--danger); }
 :root[data-theme="dark"] .peptide-header { background: linear-gradient(135deg, var(--tint-info), var(--tint-info-2)); }
 :root[data-theme="dark"] .summary-card,
 :root[data-theme="dark"] .dose-card,

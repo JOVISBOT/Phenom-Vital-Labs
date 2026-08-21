@@ -86,3 +86,21 @@ footer a{color:var(--primary)}
 /* directory teaser on the calculator home page */
 .directory-teaser h2{font-size:1.25rem;font-weight:700;margin-bottom:10px}
 .directory-teaser p{color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:18px}
+
+/* ---- directory filter (added 2026-08-20) ----
+   44 records in seven tables down a ~3,900px page, reachable only by scrolling.
+   The input is injected by js/hubFilter.js, so these rules only ever apply to a
+   control that actually works. */
+.hub-filter{position:relative;margin:-16px 0 28px}
+.hub-filter-label{position:absolute;left:18px;top:15px;color:var(--muted);display:flex;pointer-events:none}
+.hub-filter-label .icon{width:18px;height:18px}
+.hub-filter input{width:100%;padding:14px 18px 14px 46px;border:2px solid var(--border);border-radius:14px;
+    background:var(--card);color:var(--text);font-family:inherit;font-size:0.95rem;appearance:none}
+.hub-filter input::placeholder{color:var(--muted)}
+.hub-filter input:focus-visible{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
+.hub-filter input::-webkit-search-cancel-button{cursor:pointer}
+.hub-filter-count{margin:8px 2px 0;font-size:0.78rem;color:var(--muted);min-height:1.2em}
+.hub-filter-empty{margin:10px 2px 0;font-size:0.9rem;color:var(--muted)}
+.hub-filter-empty[hidden]{display:none}
+.hub-filter-clear{background:none;border:0;padding:0;font:inherit;color:var(--primary);font-weight:600;cursor:pointer;text-decoration:underline}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}

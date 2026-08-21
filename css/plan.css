@@ -107,3 +107,26 @@
 .field-hint[hidden]{display:none}
 .blend-split{border-left:3px solid var(--tint-info-line);padding-left:10px}
 
+/* ---- UI refinement pass, 2026-08-20 ---------------------------------------
+   Two things were visibly wrong on this form.
+
+   1. Four fields in a three-column grid left Diluent alone on a row of its own
+      with two thirds of that row empty. The mix group gets its own four-column
+      track instead, weighted so the peptide picker still has room to show a
+      name.
+   2. "The dates" carried a three-line hint under one of six cells. In a grid
+      every cell in a row is as tall as the tallest, so the hint pushed the
+      whole second row down and left two tall blanks above it - the form read
+      as broken. Split into "This vial" and "The run": the hint now sits at the
+      end of its own group, and the two halves were different questions anyway.
+   ------------------------------------------------------------------------- */
+@media(min-width:900px){
+    .plan-group--mix .form-grid{grid-template-columns:1.5fr 1fr 1fr 1.2fr}
+}
+.plan-group--vialstate .field-hint{margin-bottom:0}
+
+/* Clear is the only control here that destroys something. It was drawn as a
+   second outlined button, indistinguishable from Save right beside it. */
+.plan-actions .btn-ghost{border-color:transparent;background:transparent;color:var(--muted);box-shadow:none;font-weight:600}
+.plan-actions .btn-ghost:hover{color:var(--danger);border-color:var(--danger);background:transparent}
+.plan-actions .btn-ghost:focus-visible{outline:2px solid var(--danger);outline-offset:2px}

@@ -1,10 +1,10 @@
 {
   "name": "phenom-vital-labs",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "private": true,
   "description": "Peptide dosage calculator - reconstitution concentration and insulin-syringe units for 44 research peptides.",
   "scripts": {
-    "test": "node --test test/calculator.test.mjs test/planner.test.mjs test/pages.test.mjs test/data-integrity.test.mjs test/ui-shell.test.mjs",
+    "test": "node --test test/calculator.test.mjs test/planner.test.mjs test/pages.test.mjs test/data-integrity.test.mjs test/ui-shell.test.mjs test/ui-shell-refinement.test.mjs",
     "test:update": "node test/calculator.test.mjs --update",
     "build:pages": "node tools/build-pages.js",
     "check:pages": "node tools/build-pages.js --check",

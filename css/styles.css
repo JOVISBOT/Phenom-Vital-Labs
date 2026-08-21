@@ -208,3 +208,100 @@ footer strong{color:var(--primary)}
 .modal-skip{background:none;border:none;color:var(--muted);font-family:inherit;font-size:0.85rem;padding:14px 0 0;cursor:pointer;text-decoration:underline}
 .modal-skip:hover{color:var(--text)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* =========================================================================
+   UI refinement pass, 2026-08-20
+   ========================================================================= */
+
+/* ---- one icon set ----
+   These were emoji sitting inside gradient tiles: the tile was consistent, the
+   glyph inside it was whatever font the visitor's OS ships. Now one 24px
+   monoline set in currentColor. */
+.icon{width:1em;height:1em;flex:none;display:block}
+.label-icon .icon{width:13px;height:13px}
+.info-card-icon .icon{width:20px;height:20px}
+.calc-box h4 .icon,.syringe-visual h4 .icon{width:17px;height:17px}
+.calc-box h4,.syringe-visual h4{display:flex;align-items:center;gap:8px}
+
+/* ---- weight and age, demoted ----
+   Two controls that by the page's own note cannot change the answer used to be
+   two of six equal cells. Folded, spanning the rest of the row so the grid
+   still reads as a grid. */
+.optional-fields{grid-column:auto;align-self:end;border:1px dashed var(--border);border-radius:12px;background:transparent}
+/* Span the rest of the row only where a rest of the row exists. Below 500px
+   the form is ONE column, and `grid-column:span 2` there does not widen this
+   block - it conjures an implicit second column, and every field in the form
+   is re-flowed into auto-sized columns narrower than their own contents. The
+   labels then overlap each other: "Peptide" printed through "Vial Size". */
+@media(min-width:501px){.optional-fields{grid-column:span 2}}
+.optional-fields>summary{list-style:none;cursor:pointer;padding:13px 16px;display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--muted);border-radius:12px}
+.optional-fields>summary::-webkit-details-marker{display:none}
+.optional-fields>summary::before{content:'';width:0;height:0;border:5px solid transparent;border-left-color:currentColor;flex:none;transition:transform 0.2s}
+.optional-fields[open]>summary::before{transform:rotate(90deg) translateX(2px)}
+.optional-fields>summary:hover{color:var(--text)}
+.optional-fields>summary:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
+.optional-summary-text{font-weight:600}
+.optional-values{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--text);font-weight:600}
+.optional-body{padding:0 16px 14px}
+.optional-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:12px}
+.optional-body .form-note{margin-bottom:0}
+
+/* ---- the answer bar that rides down the page ----
+   Hidden until the hero has actually scrolled off, so it never appears on a
+   short page or before anything is calculated. */
+.answer-dock{position:fixed;top:0;left:0;right:0;z-index:60;background:var(--primary);color:#fff;
+    box-shadow:0 6px 20px rgba(0,0,0,0.22);animation:dockIn 0.22s ease-out}
+.answer-dock[hidden]{display:none}
+.answer-dock-inner{max-width:1000px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:18px}
+.answer-dock-text{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.answer-dock-name{font-size:0.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.answer-dock-dose{font-size:0.72rem;opacity:0.82;font-variant-numeric:tabular-nums}
+.answer-dock-draw{margin-left:auto;display:flex;align-items:baseline;gap:5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.answer-dock-draw strong{font-size:1.5rem;font-weight:800;letter-spacing:-0.5px}
+.answer-dock-draw span{font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;opacity:0.82}
+.answer-dock.is-overflow .answer-dock-draw strong{color:#fde68a}
+.answer-dock-top{display:inline-flex;align-items:center;gap:7px;flex:none;color:#fff;text-decoration:none;
+    font-size:0.78rem;font-weight:600;padding:8px 14px;border:1px solid rgba(255,255,255,0.45);border-radius:9px}
+.answer-dock-top .icon{width:14px;height:14px}
+.answer-dock-top:hover{background:rgba(255,255,255,0.14)}
+.answer-dock-top:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@keyframes dockIn{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+/* The bar is fixed and 58px tall, so a jump to #answer would otherwise land
+   with the word DRAW underneath it. scroll-margin on the target rather than
+   scroll-padding on the root: it is the only in-page anchor on the site, and
+   the extra breathing room reads better on a Generate scroll too. */
+.answer-hero{scroll-margin-top:72px}
+@media(max-width:640px){
+    .answer-dock-inner{padding:8px 16px;gap:12px}
+    .answer-dock-top span{display:none}
+    .answer-dock-top{padding:8px 10px}
+    .answer-dock-draw strong{font-size:1.3rem}
+}
+@media print{.answer-dock{display:none!important}}
+
+/* ---- the two teaser cards, once there is a result to read ----
+   They are the right next step and the wrong size: two full cards of prose
+   repeated under every answer, on a page already ~4,900px long. Collapsed to a
+   two-up strip of links; the destinations survive, the ~600px does not. */
+body.has-results .directory-teaser{display:none}
+body.has-results .teaser-strip{display:grid}
+.teaser-strip{display:none;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+.teaser-strip a{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);
+    border:1px solid var(--border);border-radius:14px;padding:16px 20px;text-decoration:none;color:var(--text);
+    font-weight:600;font-size:0.9rem;transition:border-color 0.2s,transform 0.2s}
+.teaser-strip a:hover{border-color:var(--primary-light);transform:translateY(-1px)}
+.teaser-strip a::after{content:'\2192';color:var(--primary);font-weight:700}
+@media(max-width:640px){.teaser-strip{grid-template-columns:1fr}}
+
+/* ---- one content width, and use the room inside it ----
+   Widening the container to 1180 while pinning the prose blocks at 1000 was
+   tried first and thrown out: it left the hero, the summary and the disclaimer
+   visibly inset from the tier cards and the info tiles directly above and below
+   them. A ragged edge down a page reads as a bug, not as emphasis. So the
+   column stays 1000px everywhere and the saving comes from what goes side by
+   side inside it. */
+@media(min-width:900px){
+    /* Three collapsed folds, stacked, were three full-width rows of nothing. */
+    .fold-pair{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
+    .fold-pair .fold{margin-bottom:0}
+}

@@ -76,11 +76,34 @@ async function init() {
             if (lastResults && readVialSize() > 0) handleCalculate();
         });
 
+        // Weight and age moved behind a disclosure because they cannot change the
+        // answer. Folded away is not the same as hidden: the summary keeps
+        // showing what they are currently set to.
+        syncOptionalSummary();
+        for (const id of ['weight', 'age']) {
+            $(id).addEventListener('change', () => {
+                syncOptionalSummary();
+                if (lastResults) handleCalculate();
+            });
+        }
+
         restoreFromUrl();
     } catch (error) {
         console.error('Failed to initialize:', error);
         showInlineError('Failed to load peptide data. Please refresh the page.');
     }
+}
+
+/**
+ * Echo the folded-away weight and age onto the disclosure summary.
+ */
+function syncOptionalSummary() {
+    const out = $('optionalValues');
+    if (!out) return;
+    const w = $('weight'), a = $('age');
+    const wText = w && w.value ? `${w.options[w.selectedIndex].text}` : null;
+    const aText = a && a.value ? `${a.options[a.selectedIndex].text}` : null;
+    out.textContent = [wText, aText].filter(Boolean).join(' · ');
 }
 
 /**
@@ -103,6 +126,8 @@ function clearResults() {
     lastResults = null;
     lastInputs = null;
     document.getElementById('results').innerHTML = '';
+    document.body.classList.remove('has-results');
+    hideAnswerDock();
     history.replaceState(null, '', window.location.pathname);
 }
 
@@ -150,6 +175,8 @@ async function handleCalculate(scrollToAnswer = false) {
 
     hideLoading();
     renderResults(currentPeptide, lastResults, inputs);
+    document.body.classList.add('has-results');
+    updateAnswerDock(currentPeptide, lastResults);
 
     // Put the answer on screen. Re-running because a vial or water volume
     // changed must NOT scroll -- the user is standing at that control watching
@@ -179,6 +206,67 @@ async function handleCalculate(scrollToAnswer = false) {
     });
     writeUrl(inputs);
     wireResultButtons();
+}
+
+/**
+ * The answer bar that rides down the page.
+ *
+ * A result page is ~4,900px on a desktop and ~6,900px on a phone, and the units
+ * a visitor came for sit in the top 12% of it. Everything below - the syringe
+ * guide, the warnings, the administration notes - is read with the number off
+ * screen. The bar mirrors the hero and reveals itself only once the hero has
+ * actually scrolled out, so on a short result (or before anything is
+ * calculated) it never appears at all.
+ *
+ * Uses IntersectionObserver where it exists and simply stays hidden where it
+ * does not - a missing convenience bar is not a broken page.
+ */
+let dockObserver = null;
+
+function updateAnswerDock(peptide, results) {
+    const dock = $('answerDock');
+    if (!dock) return;
+
+    if (dockObserver) { dockObserver.disconnect(); dockObserver = null; }
+
+    const hero = document.getElementById('answer');
+    // A pre-filled pen has no draw at all, so there is no number to carry.
+    if (!hero || !results || results.noRecon) { hideAnswerDock(); return; }
+
+    const units = formatDockUnits(results.syringeUnits.med);
+    $('dockName').textContent = peptide.name;
+    $('dockDose').textContent = dockDoseText(results);
+    $('dockUnits').textContent = units;
+    $('dockUnitWord').textContent = units === '1' ? 'unit' : 'units';
+    dock.classList.toggle('is-overflow', !!(results.overflow && results.overflow.med));
+
+    if (typeof IntersectionObserver !== 'function') return;
+    dockObserver = new IntersectionObserver(([entry]) => {
+        // Only reveal once the hero is above the viewport. Scrolling back up
+        // past it, or landing on it, leaves the bar out of the way.
+        const gone = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+        dock.hidden = !gone;
+        document.body.classList.toggle('dock-visible', gone);
+    }, { threshold: 0 });
+    dockObserver.observe(hero);
+}
+
+function hideAnswerDock() {
+    const dock = $('answerDock');
+    if (dock) dock.hidden = true;
+    document.body.classList.remove('dock-visible');
+    if (dockObserver) { dockObserver.disconnect(); dockObserver = null; }
+}
+
+/** Trailing '.0' reads as false precision on a bar this small. */
+function formatDockUnits(n) {
+    return Number.isFinite(n) ? String(Math.round(n * 10) / 10) : '--';
+}
+
+function dockDoseText(results) {
+    const d = results.doses.med;
+    const u = results.doseUnit || 'mcg';
+    return `${Number.isInteger(d) ? d : Math.round(d * 100) / 100} ${u}`;
 }
 
 /**

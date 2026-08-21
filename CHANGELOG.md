@@ -1,5 +1,110 @@
 # Changelog
 
+## 2.8.0 - 2026-08-20
+
+### The answer scrolled away
+
+A result page runs about 4,900px on a desktop and 6,900px on a phone, and the
+units a visitor came for sit in the top 12% of it. Everything under that -- the
+syringe guide, the warnings, the administration notes -- is read with the number
+off screen. This is a tool used standing at a fridge holding a vial, and it made
+you scroll back up to check what you were told.
+
+A fixed bar now carries `12 units - 0.4 mg - CJC1295 NO DAC + Ipamorelin Blend`
+down the page. It reveals itself only once the hero has actually scrolled out,
+so it never appears on a short page, before anything is calculated, or on a
+pre-filled pen record that has no draw to carry. `.answer-hero` picked up a
+`scroll-margin-top` so the bar's own "back to the answer" link does not land the
+word DRAW underneath it -- measured at 58px desktop, 49px phone, hero lands at
+71.5px.
+
+### A page 4,900px long, of which ~800px was repetition
+
+Three things were on the page twice.
+
+* **Two identical Preview/Download bars.** Whichever one a visitor found, the
+  other was dead weight. `main.js` binds both id sets in a loop, so removing the
+  lower pair changed no behaviour -- and a re-added bar would work silently,
+  which is why there is now a test that counts them.
+* **Two full teaser cards of prose** repeated under every answer, pointing at
+  the planner and the directory. Collapsed to a two-up strip of links once there
+  is a result to read; same destinations, ~600px less of them.
+* **Three collapsed prose folds** stacked as three full-width rows of nothing.
+  Side by side above 900px.
+
+Desktop result: 4,865px -> 4,100px. Phone: 6,905px -> 5,833px.
+
+Widening the container to 1180px on results was tried first and thrown out. It
+left the hero, the summary and the disclaimer visibly inset from the tier cards
+and info tiles directly above and below them, and a ragged edge down a page
+reads as a bug rather than as emphasis. The column stays 1000px; the saving
+comes from what goes side by side inside it.
+
+### Emoji were doing an icon's job
+
+Thirteen labels and headings wore emoji, six of them inside gradient tiles -- so
+the tile was consistent and the glyph inside it was whatever font the visitor's
+OS ships: a flat mark on one machine, a glossy 3D sticker on another, a hollow
+box where no emoji font is installed. Replaced with one 16-icon monoline set in
+`js/icons.js`, 24px viewBox, `currentColor`, `aria-hidden` beside its own text.
+
+The planner made it worse by iconing two of its three field groups and leaving
+the third bare -- the kind of inconsistency you see from across the room. Every
+field on that form now carries one, and a test fails if any label loses it.
+
+### Two controls that cannot change the answer had a third of the form
+
+Body weight and age are recorded on the printed sheet and enter no arithmetic --
+the page said so itself, in a note under the form. They were still two of six
+equal-weight cells. Folded into a disclosure that reads back their current
+values (`180 lbs - 30-39`), so they are demoted rather than hidden; the ids, the
+PDF and the protocol note are untouched.
+
+### The planner's date row read as broken
+
+"The dates" carried a three-line hint under one of six cells. In a grid every
+cell in a row is as tall as the tallest, so that hint pushed the whole second
+row down and left two tall blanks above it. Split into **This vial** and **The
+run** -- the hint now sits at the end of its own group, and the two halves were
+different questions anyway. Four fields in the three-column "mix" group also
+left Diluent alone on a row of its own; that group gets its own four-column
+track.
+
+### The one destructive control was the loudest one, in dark mode
+
+`.btn-ghost` also carries `.btn`, and `:root[data-theme="dark"] .btn` is more
+specific than the `.btn-ghost` rule in `plan.css`. So in dark mode **Clear saved
+plan** painted itself as a filled primary button, louder than Save beside it.
+Light mode looked correct, which is how it survived. Found by looking at the
+dark screenshot rather than the light one; pre-dates this pass.
+
+### 44 records reachable only by scrolling
+
+The directory listed 44 peptides in seven tables down a 3,900px page with no way
+to get to one except reading. `js/hubFilter.js` adds type-ahead over name, dose,
+draw and frequency; sections with nothing left hide themselves; a live region
+reports `3 of 44 peptides`. Space-separated words AND rather than OR, so "blend
+weekly" narrows. Progressive enhancement on purpose -- the tables are built at
+build time and every row is a real link, so the input is *created by the script*
+rather than shipped in the markup. A page whose script is blocked shows no
+search box instead of a dead one.
+
+### Verification
+
+`npm test` 134/134. Nine new guards in `test/ui-shell-refinement.test.mjs`, each
+mutation-tested: re-introducing the emoji, the second PDF bar, the dark filled
+ghost button, a hardcoded filter input, or a dock left up after `clearResults`
+each turns the suite red, and reverting turns it green.
+
+`tools/drive-refinement.py` drives all of it in Chromium: dock reveal/hide/jump,
+the no-draw record, the folded fields reaching the protocol sheet, filter match/
+no-match/clear/Escape, and the planner in both themes. 0 console errors, 0
+failed requests, no horizontal overflow at 1440 or 390. `verify:data` 44 records
+/ 620 combinations / 0 errors; `check:pages` reproduces all 46 files.
+
+`tools/drive-pages.py` was clicking `#downloadPDF` -- the id on the bar this
+release removes. Repointed at `#downloadPDFTop`, which is the one on the page.
+
 ## 2.7.2 - 2026-08-20
 
 ### A vial that saw two dose sizes was read at only one of them

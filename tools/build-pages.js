@@ -589,6 +589,10 @@ function hubPage(all) {
 ${sections}
 ${DISCLAIMER}
     </main>
+    <!-- Progressive enhancement: the filter input is created by the script, so a
+         page without it is the static directory it always was rather than a
+         search box that does nothing. -->
+    <script type="module" src="../js/hubFilter.js?v=${ASSET_V}"></script>
 ` + foot('../');
 }
 
